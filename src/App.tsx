@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Directory from "./pages/Directory";
 import VCProfile from "./pages/VCProfile";
 import About from "./pages/About";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import { useState } from "react";
 
@@ -26,6 +27,7 @@ const App = () => {
             <Route path="/directory" element={<Directory />} />
             <Route path="/vc/:id" element={<VCProfile />} />
             <Route path="/about" element={<About />} />
+            <Route path="/admin" element={<Admin />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
