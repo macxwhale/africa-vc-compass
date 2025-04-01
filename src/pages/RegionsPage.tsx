@@ -8,6 +8,32 @@ import { useData } from "@/contexts/DataContext";
 import { Link } from "react-router-dom";
 import VCCard from "@/components/VCCard";
 
+// Define country groupings by region
+export const regionCountriesMap = {
+  "East Africa": [
+    "Kenya", "Uganda", "Tanzania", "Rwanda", "Burundi", "Ethiopia", 
+    "Eritrea", "Somalia", "South Sudan", "Djibouti", "Madagascar", 
+    "Mauritius", "Seychelles", "Comoros", "Malawi", "Mozambique", 
+    "Zambia", "Zimbabwe"
+  ],
+  "West Africa": [
+    "Nigeria", "Ghana", "Senegal", "Côte d'Ivoire", "Mali", "Burkina Faso", 
+    "Niger", "Togo", "Benin", "Sierra Leone", "Liberia", "Gambia", 
+    "Guinea", "Guinea-Bissau", "Cape Verde", "Mauritania"
+  ],
+  "Central Africa": [
+    "Cameroon", "Central African Republic", "Chad", "Equatorial Guinea", 
+    "Gabon", "Republic of the Congo", "Democratic Republic of the Congo", 
+    "Angola", "São Tomé and Príncipe"
+  ],
+  "North Africa": [
+    "Algeria", "Egypt", "Libya", "Morocco", "Tunisia", "Sudan", "Western Sahara"
+  ],
+  "Southern Africa": [
+    "South Africa", "Namibia", "Botswana", "Lesotho", "Eswatini"
+  ]
+};
+
 const RegionsPage = () => {
   const { vcFirms, regionNames } = useData();
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
@@ -45,20 +71,9 @@ const RegionsPage = () => {
     "Southern Africa": { top: "70%", left: "55%" }
   };
 
-  // Define region areas on the map - simplified for smaller map
-  const getRegionArea = (region: string) => {
-    if (region === "North Africa") {
-      return "Morocco,Algeria,Tunisia,Libya,Egypt";
-    } else if (region === "West Africa") {
-      return "Mauritania,Mali,Niger,Senegal,Guinea,Burkina Faso,Nigeria,Ghana,Côte d'Ivoire,Liberia,Sierra Leone";
-    } else if (region === "East Africa") {
-      return "Sudan,South Sudan,Ethiopia,Somalia,Kenya,Uganda,Tanzania,Rwanda,Burundi";
-    } else if (region === "Central Africa") {
-      return "Chad,Central African Republic,Cameroon,Democratic Republic of the Congo,Congo,Gabon,Equatorial Guinea";
-    } else if (region === "Southern Africa") {
-      return "Angola,Zambia,Zimbabwe,Namibia,Botswana,South Africa,Mozambique,Malawi";
-    }
-    return "";
+  // Get countries string for a region - for tooltip or additional display
+  const getRegionCountries = (region: string) => {
+    return regionCountriesMap[region as keyof typeof regionCountriesMap]?.join(", ") || "";
   };
 
   return (
@@ -89,6 +104,7 @@ const RegionsPage = () => {
                           ${selectedRegion === "North Africa" ? 'bg-sky-500 opacity-40' : 'bg-transparent hover:bg-sky-500 hover:opacity-20'} 
                           cursor-pointer transition-all duration-300`}
                         onClick={() => setSelectedRegion(selectedRegion === "North Africa" ? null : "North Africa")}
+                        title={getRegionCountries("North Africa")}
                       />
                       
                       {/* West Africa region highlight */}
@@ -97,6 +113,7 @@ const RegionsPage = () => {
                           ${selectedRegion === "West Africa" ? 'bg-amber-500 opacity-40' : 'bg-transparent hover:bg-amber-500 hover:opacity-20'} 
                           cursor-pointer transition-all duration-300`}
                         onClick={() => setSelectedRegion(selectedRegion === "West Africa" ? null : "West Africa")}
+                        title={getRegionCountries("West Africa")}
                       />
                       
                       {/* Central Africa region highlight */}
@@ -105,6 +122,7 @@ const RegionsPage = () => {
                           ${selectedRegion === "Central Africa" ? 'bg-lime-500 opacity-40' : 'bg-transparent hover:bg-lime-500 hover:opacity-20'} 
                           cursor-pointer transition-all duration-300`}
                         onClick={() => setSelectedRegion(selectedRegion === "Central Africa" ? null : "Central Africa")}
+                        title={getRegionCountries("Central Africa")}
                       />
                       
                       {/* East Africa region highlight */}
@@ -113,6 +131,7 @@ const RegionsPage = () => {
                           ${selectedRegion === "East Africa" ? 'bg-emerald-500 opacity-40' : 'bg-transparent hover:bg-emerald-500 hover:opacity-20'} 
                           cursor-pointer transition-all duration-300`}
                         onClick={() => setSelectedRegion(selectedRegion === "East Africa" ? null : "East Africa")}
+                        title={getRegionCountries("East Africa")}
                       />
                       
                       {/* Southern Africa region highlight */}
@@ -121,6 +140,7 @@ const RegionsPage = () => {
                           ${selectedRegion === "Southern Africa" ? 'bg-orange-500 opacity-40' : 'bg-transparent hover:bg-orange-500 hover:opacity-20'} 
                           cursor-pointer transition-all duration-300`}
                         onClick={() => setSelectedRegion(selectedRegion === "Southern Africa" ? null : "Southern Africa")}
+                        title={getRegionCountries("Southern Africa")}
                       />
                       
                       {/* VC Count markers */}
@@ -135,6 +155,7 @@ const RegionsPage = () => {
                             className={`absolute transform -translate-x-1/2 -translate-y-1/2 transition-all ${isSelected ? 'scale-125 z-10' : 'hover:scale-110'}`}
                             style={{ top: position.top, left: position.left }}
                             onClick={() => setSelectedRegion(region === selectedRegion ? null : region)}
+                            title={getRegionCountries(region)}
                           >
                             <div className="flex flex-col items-center cursor-pointer">
                               <div className={`w-12 h-12 rounded-full ${color} flex items-center justify-center text-white font-bold shadow-lg text-sm ${isSelected ? 'ring-2 ring-white' : ''}`}>
@@ -178,6 +199,12 @@ const RegionsPage = () => {
                               {regionCounts[region]} VCs
                             </Badge>
                           </div>
+                          
+                          {selectedRegion === region && (
+                            <div className="mt-2 text-xs text-white/80 line-clamp-2 hover:line-clamp-none">
+                              {getRegionCountries(region)}
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -188,9 +215,14 @@ const RegionsPage = () => {
             
             {selectedRegion && (
               <div className="mt-8">
-                <h2 className="text-2xl font-bold text-africa-blue mb-4">
+                <h2 className="text-2xl font-bold text-africa-blue mb-4 flex items-center gap-2">
                   VCs in {selectedRegion} <Badge className="ml-2">{regionalVCs.length}</Badge>
                 </h2>
+                
+                <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
+                  <h3 className="text-sm font-medium text-gray-500 mb-2">Countries in this region:</h3>
+                  <p className="text-sm">{getRegionCountries(selectedRegion)}</p>
+                </div>
                 
                 {regionalVCs.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

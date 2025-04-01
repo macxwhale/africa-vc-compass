@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { useData } from "@/contexts/DataContext";
+import { regionCountriesMap } from "@/pages/RegionsPage";
 
 const RegionMap = () => {
   const { regionNames, vcFirms } = useData();
@@ -62,6 +63,7 @@ const RegionMap = () => {
                 {regionsWithCounts.map((region) => {
                   // Get positions from the predefined positions map
                   const position = regionPositions[region.name as keyof typeof regionPositions];
+                  const countries = regionCountriesMap[region.name as keyof typeof regionCountriesMap];
                   
                   return (
                     <Link 
@@ -69,6 +71,7 @@ const RegionMap = () => {
                       to="/regions"
                       className="absolute transform -translate-x-1/2 -translate-y-1/2 transition-all hover:scale-110"
                       style={{ top: position.top, left: position.left }}
+                      title={countries?.join(", ")}
                     >
                       <div className="flex flex-col items-center">
                         <div className={`w-10 h-10 rounded-full ${region.color} flex items-center justify-center text-white font-bold shadow-md text-sm`}>
@@ -96,6 +99,7 @@ const RegionMap = () => {
                   <Link 
                     key={region.name} 
                     to={`/regions`}
+                    title={regionCountriesMap[region.name as keyof typeof regionCountriesMap]?.join(", ")}
                   >
                     <div className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-md transition-colors">
                       <div className="flex items-center">
