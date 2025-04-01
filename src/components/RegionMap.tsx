@@ -7,25 +7,26 @@ import { useData } from "@/contexts/DataContext";
 const RegionMap = () => {
   const { regionNames, vcFirms } = useData();
 
-  // Count VCs per region
-  const regionsWithCounts = regionNames.map((name) => {
-    const count = vcFirms.filter(vc => vc.regionsOfInterest.includes(name)).length;
-    
-    // Assign colors based on region names
-    let color = "bg-africa-blue";
-    if (name.includes("East")) color = "bg-emerald-500";
-    if (name.includes("West")) color = "bg-amber-500";
-    if (name.includes("North")) color = "bg-sky-500";
-    if (name.includes("Southern")) color = "bg-orange-500";
-    if (name.includes("Central")) color = "bg-lime-500";
-    if (name.includes("Pan")) color = "bg-purple-500";
-    
-    return {
-      name,
-      count,
-      color
-    };
-  }).sort((a, b) => b.count - a.count);
+  // Count VCs per region and filter out Pan-African
+  const regionsWithCounts = regionNames
+    .filter(name => name !== "Pan-African")
+    .map((name) => {
+      const count = vcFirms.filter(vc => vc.regionsOfInterest.includes(name)).length;
+      
+      // Assign colors based on region names
+      let color = "bg-africa-blue";
+      if (name.includes("East")) color = "bg-emerald-500";
+      if (name.includes("West")) color = "bg-amber-500";
+      if (name.includes("North")) color = "bg-sky-500";
+      if (name.includes("Southern")) color = "bg-orange-500";
+      if (name.includes("Central")) color = "bg-lime-500";
+      
+      return {
+        name,
+        count,
+        color
+      };
+    }).sort((a, b) => b.count - a.count);
 
   // Define region positions on the map
   const regionPositions = {
@@ -33,8 +34,7 @@ const RegionMap = () => {
     "West Africa": { top: "40%", left: "30%" },
     "Central Africa": { top: "48%", left: "50%" },
     "East Africa": { top: "40%", left: "65%" },
-    "Southern Africa": { top: "70%", left: "55%" },
-    "Pan-African": { top: "35%", left: "50%" }
+    "Southern Africa": { top: "70%", left: "55%" }
   };
 
   return (

@@ -12,8 +12,11 @@ const RegionsPage = () => {
   const { vcFirms, regionNames } = useData();
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
 
+  // Filter out Pan-African from the region names
+  const filteredRegionNames = regionNames.filter(region => region !== "Pan-African");
+
   // Count VCs per region
-  const regionCounts = regionNames.reduce((acc, region) => {
+  const regionCounts = filteredRegionNames.reduce((acc, region) => {
     const count = vcFirms.filter(vc => vc.regionsOfInterest.includes(region)).length;
     return { ...acc, [region]: count };
   }, {} as Record<string, number>);
@@ -30,7 +33,6 @@ const RegionsPage = () => {
     if (name.includes("North")) return "bg-sky-500";
     if (name.includes("Southern")) return "bg-orange-500";
     if (name.includes("Central")) return "bg-lime-500";
-    if (name.includes("Pan")) return "bg-purple-500";
     return "bg-africa-blue";
   };
 
@@ -40,8 +42,7 @@ const RegionsPage = () => {
     "West Africa": { top: "40%", left: "25%" },
     "Central Africa": { top: "48%", left: "50%" },
     "East Africa": { top: "40%", left: "70%" },
-    "Southern Africa": { top: "70%", left: "55%" },
-    "Pan-African": { top: "35%", left: "50%" }
+    "Southern Africa": { top: "70%", left: "55%" }
   };
 
   // Define region areas on the map - simplified for smaller map
@@ -122,13 +123,8 @@ const RegionsPage = () => {
                         onClick={() => setSelectedRegion(selectedRegion === "Southern Africa" ? null : "Southern Africa")}
                       />
                       
-                      {/* Pan-African indicator */}
-                      {selectedRegion === "Pan-African" && (
-                        <div className="absolute inset-0 bg-purple-500 opacity-20 border-4 border-purple-500 border-dashed rounded-lg" />
-                      )}
-                      
                       {/* VC Count markers */}
-                      {regionNames.map((region) => {
+                      {filteredRegionNames.map((region) => {
                         const position = regionPositions[region as keyof typeof regionPositions];
                         const isSelected = region === selectedRegion;
                         const color = getRegionColor(region);
@@ -167,7 +163,7 @@ const RegionsPage = () => {
                     <h3 className="text-lg font-medium mb-4">VC Distribution by Region</h3>
                     
                     <div className="space-y-3">
-                      {regionNames.map((region) => (
+                      {filteredRegionNames.map((region) => (
                         <div 
                           key={region} 
                           className={`p-3 rounded-md cursor-pointer transition-colors ${selectedRegion === region ? 'bg-africa-blue text-white' : 'hover:bg-gray-50'}`}
