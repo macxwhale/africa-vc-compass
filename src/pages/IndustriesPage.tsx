@@ -19,14 +19,32 @@ const IndustriesPage = () => {
     return { ...acc, [industry]: count };
   }, {} as Record<string, number>);
   
-  // Prepare data for pie chart
-  const chartData = industryNames
+  // Sort industries by count
+  const sortedIndustries = industryNames
     .filter(industry => industryCounts[industry] > 0)
-    .map((industry, index) => ({
-      name: industry,
-      value: industryCounts[industry],
-      color: getIndustryColor(index)
-    }));
+    .sort((a, b) => industryCounts[b] - industryCounts[a]);
+  
+  // Prepare data for pie chart - use only top 9 industries
+  const topIndustries = sortedIndustries.slice(0, 9);
+  
+  // Calculate count for "Others" category (all industries beyond the top 9)
+  const othersCount = sortedIndustries.slice(9).reduce((sum, industry) => sum + industryCounts[industry], 0);
+  
+  // Create chart data with top 9 industries and "Others" if applicable
+  let chartData = topIndustries.map((industry, index) => ({
+    name: industry,
+    value: industryCounts[industry],
+    color: getIndustryColor(index)
+  }));
+  
+  // Add "Others" category if there are more than 9 industries
+  if (othersCount > 0) {
+    chartData.push({
+      name: "Others",
+      value: othersCount,
+      color: getIndustryColor(9)
+    });
+  }
   
   // Get VCs for selected industry
   const industryVCs = selectedIndustry 
