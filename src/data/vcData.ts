@@ -642,20 +642,51 @@ export const vcFirms: VCFirm[] = [
       twitter: "KalonVP",
       linkedin: "kalon-venture-partners"
     }
-  }
-];
-
-export const industries = [
-  "Fintech", "Healthtech", "Edtech", "Agritech", "Logistics", 
-  "E-commerce", "Energy", "Enterprise Software", "Media & Entertainment",
-  "Essential Services", "Food & Agriculture", "Financial Services",
-  "Insurtech", "Proptech", "Clean Energy", "Mobility", "SaaS"
-];
-
-export const stages = [
-  "Pre-seed", "Seed", "Early Stage", "Series A", "Series B", "Growth"
-];
-
-export const regions = [
-  "East Africa", "West Africa", "North Africa", "Southern Africa", "Central Africa", "Pan-African"
-];
+  },
+  
+  // Additional East Africa VCs
+  {
+    id: "24",
+    name: "Chandaria Capital",
+    logo: "https://placehold.co/100x100/4FD1C5/FFFFFF?text=CC",
+    description: "Chandaria Capital is the investment arm of Chandaria Industries, focusing on early-stage technology startups across East Africa.",
+    website: "https://chandariacapital.com",
+    headquarters: "Nairobi, Kenya",
+    foundedYear: 2017,
+    investmentFocus: ["Seed", "Series A"],
+    industries: ["Fintech", "Healthtech", "E-commerce", "Logistics", "Cleantech"],
+    stagePreference: ["Seed", "Series A"],
+    ticketSize: "$100K-$1M",
+    regionsOfInterest: ["East Africa"],
+    portfolioCompanies: ["Sokowatch", "Kobo360", "Ilara Health", "Turaco"],
+    keyPartners: [
+      {
+        name: "Darshan Chandaria",
+        title: "CEO",
+        image: "https://placehold.co/100x100/4FD1C5/FFFFFF?text=DC"
+      }
+    ],
+    contactInfo: {
+      email: "info@chandariacapital.com",
+      twitter: "chandariafund",
+      linkedin: "chandaria-capital"
+    }
+  },
+  {
+    id: "25",
+    name: "Unconventional Capital",
+    logo: "https://placehold.co/100x100/2DD4BF/FFFFFF?text=UC",
+    description: "Unconventional Capital provides accessible capital to early-stage entrepreneurs in East Africa through a data-driven, automated approach.",
+    website: "https://unconventional.capital",
+    headquarters: "Kigali, Rwanda",
+    foundedYear: 2016,
+    investmentFocus: ["Pre-seed", "Seed"],
+    industries: ["Financial Inclusion", "Agritech", "Retail Tech", "SME Solutions"],
+    stagePreference: ["Pre-seed", "Seed"],
+    ticketSize: "$25K-$100K",
+    regionsOfInterest: ["East Africa"],
+    portfolioCompanies: ["Numida", "Kibanda TopUp", "M-Shule", "Teheca"],
+    keyPartners: [
+      {
+        name: "Franziska Reh",
+        title: "Founder & CEO",
