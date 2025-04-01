@@ -31,12 +31,9 @@ const Navbar = () => {
           </Link>
         </div>
         
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center">
           <Button variant="ghost" size="icon">
             <Search className="h-5 w-5" />
-          </Button>
-          <Button className="bg-africa-green hover:bg-africa-green-light">
-            Submit a VC
           </Button>
         </div>
       </div>
