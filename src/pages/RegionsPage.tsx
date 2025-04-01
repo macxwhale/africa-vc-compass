@@ -13,8 +13,7 @@ export const regionCountriesMap = {
   "East Africa": [
     "Kenya", "Uganda", "Tanzania", "Rwanda", "Burundi", "Ethiopia", 
     "Eritrea", "Somalia", "South Sudan", "Djibouti", "Madagascar", 
-    "Mauritius", "Seychelles", "Comoros", "Malawi", "Mozambique", 
-    "Zambia", "Zimbabwe"
+    "Mauritius", "Seychelles", "Comoros", "Malawi", "Mozambique"
   ],
   "West Africa": [
     "Nigeria", "Ghana", "Senegal", "Côte d'Ivoire", "Mali", "Burkina Faso", 
@@ -30,7 +29,8 @@ export const regionCountriesMap = {
     "Algeria", "Egypt", "Libya", "Morocco", "Tunisia", "Sudan", "Western Sahara"
   ],
   "Southern Africa": [
-    "South Africa", "Namibia", "Botswana", "Lesotho", "Eswatini"
+    "South Africa", "Namibia", "Botswana", "Lesotho", "Eswatini",
+    "Zimbabwe", "Zambia"
   ]
 };
 
