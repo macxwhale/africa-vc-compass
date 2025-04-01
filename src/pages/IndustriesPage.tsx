@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -24,25 +23,25 @@ const IndustriesPage = () => {
     .filter(industry => industryCounts[industry] > 0)
     .sort((a, b) => industryCounts[b] - industryCounts[a]);
   
-  // Prepare data for pie chart - use only top 9 industries
-  const topIndustries = sortedIndustries.slice(0, 9);
+  // Prepare data for pie chart - use only top 7 industries
+  const topIndustries = sortedIndustries.slice(0, 7);
   
-  // Calculate count for "Others" category (all industries beyond the top 9)
-  const othersCount = sortedIndustries.slice(9).reduce((sum, industry) => sum + industryCounts[industry], 0);
+  // Calculate count for "Others" category (all industries beyond the top 7)
+  const othersCount = sortedIndustries.slice(7).reduce((sum, industry) => sum + industryCounts[industry], 0);
   
-  // Create chart data with top 9 industries and "Others" if applicable
+  // Create chart data with top 7 industries and "Others" if applicable
   let chartData = topIndustries.map((industry, index) => ({
     name: industry,
     value: industryCounts[industry],
     color: getIndustryColor(index)
   }));
   
-  // Add "Others" category if there are more than 9 industries
+  // Add "Others" category if there are more than 7 industries
   if (othersCount > 0) {
     chartData.push({
       name: "Others",
       value: othersCount,
-      color: getIndustryColor(9)
+      color: getIndustryColor(7)
     });
   }
   
@@ -143,7 +142,6 @@ const IndustriesPage = () => {
               </div>
             </div>
             
-            {/* Display VCs for selected industry */}
             {selectedIndustry && (
               <div className="mt-8">
                 <h2 className="text-2xl font-bold text-africa-blue mb-4">

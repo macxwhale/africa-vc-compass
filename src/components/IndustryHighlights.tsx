@@ -5,8 +5,8 @@ import { industries } from "@/data/vcData";
 import { Link } from "react-router-dom";
 
 const IndustryHighlights = () => {
-  // Take first 8 industries for the highlights section
-  const highlightedIndustries = industries.slice(0, 8);
+  // Take first 7 industries for the highlights section
+  const highlightedIndustries = industries.slice(0, 7);
   
   return (
     <div>
