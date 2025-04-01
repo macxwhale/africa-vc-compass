@@ -3,10 +3,17 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { industries } from "@/data/vcData";
 import { Link } from "react-router-dom";
+import { useData } from "@/contexts/DataContext";
 
 const IndustryHighlights = () => {
+  const { vcFirms } = useData();
   // Take first 7 industries for the highlights section
   const highlightedIndustries = industries.slice(0, 7);
+  
+  // Count VCs per industry for accurate display
+  const getVCCount = (industry: string) => {
+    return vcFirms.filter(vc => vc.industries.includes(industry)).length;
+  };
   
   return (
     <div>
@@ -27,7 +34,7 @@ const IndustryHighlights = () => {
                 </div>
                 <h3 className="font-semibold">{industry}</h3>
                 <Badge className="mt-2 bg-africa-blue/10 text-africa-blue hover:bg-africa-blue/20">
-                  {Math.floor(Math.random() * 20) + 5} VCs
+                  {getVCCount(industry)} VCs
                 </Badge>
               </CardContent>
             </Card>

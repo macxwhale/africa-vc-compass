@@ -19,6 +19,8 @@ interface DataContextType {
   regionNames: string[];
   industryNames: string[];
   stageNames: string[];
+  getVCsByIndustry: (industry: string, limit?: number) => VCFirm[];
+  getVCsByRegion: (region: string, limit?: number) => VCFirm[];
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -33,6 +35,18 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const regionNames = regionItems.map(item => item.name);
   const industryNames = industryItems.map(item => item.name);
   const stageNames = stageItems.map(item => item.name);
+
+  // Get VCs by industry with optional limit
+  const getVCsByIndustry = (industry: string, limit?: number): VCFirm[] => {
+    const filteredVCs = vcFirms.filter(vc => vc.industries.includes(industry));
+    return limit ? filteredVCs.slice(0, limit) : filteredVCs;
+  };
+
+  // Get VCs by region with optional limit
+  const getVCsByRegion = (region: string, limit?: number): VCFirm[] => {
+    const filteredVCs = vcFirms.filter(vc => vc.regionsOfInterest.includes(region));
+    return limit ? filteredVCs.slice(0, limit) : filteredVCs;
+  };
 
   // Initialize data on component mount
   useEffect(() => {
@@ -55,7 +69,9 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         setVcFirms,
         regionNames,
         industryNames,
-        stageNames
+        stageNames,
+        getVCsByIndustry,
+        getVCsByRegion
       }}
     >
       {children}
