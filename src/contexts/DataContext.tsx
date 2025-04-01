@@ -1,6 +1,6 @@
 
 import { createContext, useState, useEffect, useContext, ReactNode } from "react";
-import { industries, stages, regions } from "@/data/vcData";
+import { industries, stages, regions, vcFirms as initialVcFirms, VCFirm } from "@/data/vcData";
 
 interface Item {
   id: string;
@@ -11,9 +11,11 @@ interface DataContextType {
   regionItems: Item[];
   industryItems: Item[];
   stageItems: Item[];
+  vcFirms: VCFirm[];
   setRegionItems: (items: Item[]) => void;
   setIndustryItems: (items: Item[]) => void;
   setStageItems: (items: Item[]) => void;
+  setVcFirms: (firms: VCFirm[]) => void;
   regionNames: string[];
   industryNames: string[];
   stageNames: string[];
@@ -25,6 +27,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [regionItems, setRegionItems] = useState<Item[]>([]);
   const [industryItems, setIndustryItems] = useState<Item[]>([]);
   const [stageItems, setStageItems] = useState<Item[]>([]);
+  const [vcFirms, setVcFirms] = useState<VCFirm[]>(initialVcFirms);
 
   // Derived data - just the names as string arrays for the filters
   const regionNames = regionItems.map(item => item.name);
@@ -44,10 +47,12 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       value={{ 
         regionItems, 
         industryItems, 
-        stageItems, 
+        stageItems,
+        vcFirms,
         setRegionItems, 
         setIndustryItems, 
         setStageItems,
+        setVcFirms,
         regionNames,
         industryNames,
         stageNames

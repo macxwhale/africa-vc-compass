@@ -4,12 +4,17 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FilterBar, { FilterState } from "@/components/FilterBar";
 import VCCard from "@/components/VCCard";
-import { vcFirms, type VCFirm } from "@/data/vcData";
+import { type VCFirm } from "@/data/vcData";
 import { useData } from "@/contexts/DataContext";
 
 const Directory = () => {
+  const { vcFirms, regionNames, industryNames, stageNames } = useData();
   const [filteredFirms, setFilteredFirms] = useState<VCFirm[]>(vcFirms);
-  const { regionNames, industryNames, stageNames } = useData();
+  
+  // Update filtered firms when vcFirms changes in context
+  useEffect(() => {
+    setFilteredFirms(vcFirms);
+  }, [vcFirms]);
   
   const handleFilterChange = (filters: FilterState) => {
     let results = [...vcFirms];

@@ -9,6 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Edit, Trash, Plus, Check, X } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useData } from "@/contexts/DataContext";
+import { VCFirm } from "@/data/vcData";
+import VCFirmForm from "@/components/admin/VCFirmForm";
+import VCFirmsList from "@/components/admin/VCFirmsList";
 
 interface Item {
   id: string;
@@ -21,10 +24,12 @@ const Admin = () => {
   const { 
     regionItems, 
     industryItems, 
-    stageItems, 
+    stageItems,
+    vcFirms,
     setRegionItems, 
     setIndustryItems, 
-    setStageItems 
+    setStageItems,
+    setVcFirms
   } = useData();
   
   const [newRegion, setNewRegion] = useState("");
@@ -33,6 +38,9 @@ const Admin = () => {
   
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
+
+  const [firmFormOpen, setFirmFormOpen] = useState(false);
+  const [editingFirm, setEditingFirm] = useState<VCFirm | null>(null);
 
   const handleAddRegion = () => {
     if (newRegion.trim() === "") {
@@ -148,6 +156,28 @@ const Admin = () => {
     });
   };
 
+  const handleAddFirm = () => {
+    setEditingFirm(null);
+    setFirmFormOpen(true);
+  };
+
+  const handleEditFirm = (firm: VCFirm) => {
+    setEditingFirm(firm);
+    setFirmFormOpen(true);
+  };
+
+  const handleSaveFirm = (firm: VCFirm) => {
+    if (editingFirm) {
+      setVcFirms(vcFirms.map(f => f.id === firm.id ? firm : f));
+    } else {
+      setVcFirms([...vcFirms, firm]);
+    }
+  };
+
+  const handleDeleteFirm = (firmId: string) => {
+    setVcFirms(vcFirms.filter(firm => firm.id !== firmId));
+  };
+
   const renderItem = (item: Item, type: "region" | "industry" | "stage") => (
     <div key={item.id} className="p-4 border rounded-md flex justify-between items-center">
       {editingId === item.id ? (
@@ -200,7 +230,7 @@ const Admin = () => {
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h1 className="text-3xl md:text-4xl font-bold text-africa-blue mb-2">Admin Dashboard</h1>
-                <p className="text-gray-600">Manage regions, industries, and investment stages</p>
+                <p className="text-gray-600">Manage regions, industries, investment stages, and VC firms</p>
               </div>
               <Button variant="outline" asChild>
                 <Link to="/directory">Back to Directory</Link>
@@ -208,10 +238,11 @@ const Admin = () => {
             </div>
             
             <Tabs defaultValue="regions" value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 mb-8">
+              <TabsList className="grid w-full grid-cols-4 mb-8">
                 <TabsTrigger value="regions">Regions</TabsTrigger>
                 <TabsTrigger value="industries">Industries</TabsTrigger>
                 <TabsTrigger value="stages">Investment Stages</TabsTrigger>
+                <TabsTrigger value="vcfirms">VC Firms</TabsTrigger>
               </TabsList>
               
               <TabsContent value="regions" className="space-y-6">
@@ -312,12 +343,44 @@ const Admin = () => {
                   </CardContent>
                 </Card>
               </TabsContent>
+              
+              <TabsContent value="vcfirms" className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>VC Firms Management</CardTitle>
+                    <CardDescription>Add, edit, or remove venture capital firms</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid gap-4">
+                      <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                        <p className="text-yellow-700">
+                          Changes are stored in React Context and will persist during your session.
+                        </p>
+                      </div>
+                      
+                      <VCFirmsList
+                        firms={vcFirms}
+                        onEdit={handleEditFirm}
+                        onDelete={handleDeleteFirm}
+                        onAddNew={handleAddFirm}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
             </Tabs>
           </div>
         </div>
       </main>
       
       <Footer />
+      
+      <VCFirmForm
+        open={firmFormOpen}
+        onOpenChange={setFirmFormOpen}
+        editingFirm={editingFirm}
+        onSave={handleSaveFirm}
+      />
     </div>
   );
 };
