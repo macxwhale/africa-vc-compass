@@ -29,12 +29,12 @@ const RegionMap = () => {
 
   // Define region positions on the map
   const regionPositions = {
-    "North Africa": { top: "20%", left: "35%" },
-    "West Africa": { top: "40%", left: "22%" },
-    "Central Africa": { top: "50%", left: "40%" },
-    "East Africa": { top: "40%", left: "60%" },
-    "Southern Africa": { top: "75%", left: "45%" },
-    "Pan-African": { top: "50%", left: "50%" }
+    "North Africa": { top: "20%", left: "50%" },
+    "West Africa": { top: "40%", left: "30%" },
+    "Central Africa": { top: "48%", left: "50%" },
+    "East Africa": { top: "40%", left: "65%" },
+    "Southern Africa": { top: "70%", left: "55%" },
+    "Pan-African": { top: "35%", left: "50%" }
   };
 
   return (
@@ -50,38 +50,13 @@ const RegionMap = () => {
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="col-span-1 md:col-span-2">
-              <div className="aspect-[4/3] bg-[#E6F2F5] rounded-lg relative overflow-hidden">
-                {/* Use the uploaded Africa map as background with countries */}
+              <div className="aspect-[4/3] bg-[#E6F2F5] rounded-lg relative overflow-hidden" style={{ maxHeight: "280px" }}>
+                {/* Africa map background with reduced size */}
                 <img 
                   src="/lovable-uploads/a6192766-083c-4f20-b6f1-0ed37fa436de.png" 
                   alt="Map of Africa"
-                  className="absolute inset-0 w-full h-full object-cover opacity-30"
+                  className="absolute inset-0 w-full h-full object-contain opacity-30"
                 />
-                
-                {/* North Africa region highlight */}
-                <div className="absolute top-[15%] left-[35%] w-[35%] h-[15%] hover:bg-sky-500 hover:opacity-20 transition-all duration-300" />
-                
-                {/* West Africa region highlight */}
-                <div className="absolute top-[32%] left-[20%] w-[25%] h-[25%] hover:bg-amber-500 hover:opacity-20 transition-all duration-300" />
-                
-                {/* Central Africa region highlight */}
-                <div className="absolute top-[45%] left-[35%] w-[25%] h-[25%] hover:bg-lime-500 hover:opacity-20 transition-all duration-300" />
-                
-                {/* East Africa region highlight */}
-                <div className="absolute top-[35%] left-[50%] w-[25%] h-[30%] hover:bg-emerald-500 hover:opacity-20 transition-all duration-300" />
-                
-                {/* Southern Africa region highlight */}
-                <div className="absolute top-[65%] left-[35%] w-[30%] h-[25%] hover:bg-orange-500 hover:opacity-20 transition-all duration-300" />
-                
-                {/* Ocean labels */}
-                <div className="absolute top-[78%] left-[15%] text-blue-800 font-medium italic text-xs">Atlantic Ocean</div>
-                <div className="absolute top-[50%] left-[75%] text-blue-800 font-medium italic text-xs">Indian Ocean</div>
-                <div className="absolute top-[15%] left-[43%] text-blue-800 font-medium italic text-xs">Mediterranean Sea</div>
-                
-                {/* Title overlay */}
-                <div className="absolute top-[2%] left-[50%] transform -translate-x-1/2 text-2xl font-bold text-gray-800">
-                  AFRICA
-                </div>
                 
                 {/* Region markers with VC counts */}
                 {regionsWithCounts.map((region) => {
@@ -96,16 +71,21 @@ const RegionMap = () => {
                       style={{ top: position.top, left: position.left }}
                     >
                       <div className="flex flex-col items-center">
-                        <div className={`w-12 h-12 rounded-full ${region.color} flex items-center justify-center text-white font-bold shadow-md`}>
+                        <div className={`w-10 h-10 rounded-full ${region.color} flex items-center justify-center text-white font-bold shadow-md text-sm`}>
                           {region.count}
                         </div>
-                        <div className="bg-white px-2 py-1 rounded-md shadow-sm mt-1 text-xs font-medium">
+                        <div className="bg-white/90 px-2 py-1 rounded-md shadow-sm mt-1 text-xs font-semibold text-gray-800">
                           {region.name}
                         </div>
                       </div>
                     </Link>
                   );
                 })}
+                
+                {/* Title overlay */}
+                <div className="absolute top-[2%] left-[50%] transform -translate-x-1/2 text-xl font-bold text-gray-800">
+                  AFRICA
+                </div>
               </div>
             </div>
             
