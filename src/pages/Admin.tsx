@@ -1,18 +1,14 @@
-
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { industries, stages, regions } from "@/data/vcData";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Edit, Trash, Plus, Check, X } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { useForm } from "react-hook-form";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useData } from "@/contexts/DataContext";
 
 interface Item {
   id: string;
@@ -22,29 +18,22 @@ interface Item {
 const Admin = () => {
   const [activeTab, setActiveTab] = useState("regions");
   
-  // State for each category
-  const [regionItems, setRegionItems] = useState<Item[]>([]);
-  const [industryItems, setIndustryItems] = useState<Item[]>([]);
-  const [stageItems, setStageItems] = useState<Item[]>([]);
+  const { 
+    regionItems, 
+    industryItems, 
+    stageItems, 
+    setRegionItems, 
+    setIndustryItems, 
+    setStageItems 
+  } = useData();
   
-  // State for new item inputs
   const [newRegion, setNewRegion] = useState("");
   const [newIndustry, setNewIndustry] = useState("");
   const [newStage, setNewStage] = useState("");
   
-  // State for editing
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
 
-  // Initialize data on component mount
-  useEffect(() => {
-    // Convert string arrays to Item arrays with IDs
-    setRegionItems(regions.map((name, index) => ({ id: `region-${index}`, name })));
-    setIndustryItems(industries.map((name, index) => ({ id: `industry-${index}`, name })));
-    setStageItems(stages.map((name, index) => ({ id: `stage-${index}`, name })));
-  }, []);
-
-  // Handle adding new items
   const handleAddRegion = () => {
     if (newRegion.trim() === "") {
       toast({
@@ -102,7 +91,6 @@ const Admin = () => {
     });
   };
 
-  // Handle editing items
   const startEditing = (id: string, currentValue: string) => {
     setEditingId(id);
     setEditValue(currentValue);
@@ -145,7 +133,6 @@ const Admin = () => {
     });
   };
 
-  // Handle deleting items
   const deleteItem = (id: string, type: "region" | "industry" | "stage") => {
     if (type === "region") {
       setRegionItems(regionItems.filter(item => item.id !== id));
@@ -161,7 +148,6 @@ const Admin = () => {
     });
   };
 
-  // Render item with edit/delete controls
   const renderItem = (item: Item, type: "region" | "industry" | "stage") => (
     <div key={item.id} className="p-4 border rounded-md flex justify-between items-center">
       {editingId === item.id ? (
@@ -217,7 +203,7 @@ const Admin = () => {
                 <p className="text-gray-600">Manage regions, industries, and investment stages</p>
               </div>
               <Button variant="outline" asChild>
-                <Link to="/">Back to Home</Link>
+                <Link to="/directory">Back to Directory</Link>
               </Button>
             </div>
             
@@ -238,7 +224,7 @@ const Admin = () => {
                     <div className="grid gap-4">
                       <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
                         <p className="text-yellow-700">
-                          Changes are stored in local state. Backend integration will be implemented later.
+                          Changes are stored in React Context and will persist during your session.
                         </p>
                       </div>
                       
@@ -271,7 +257,7 @@ const Admin = () => {
                     <div className="grid gap-4">
                       <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
                         <p className="text-yellow-700">
-                          Changes are stored in local state. Backend integration will be implemented later.
+                          Changes are stored in React Context and will persist during your session.
                         </p>
                       </div>
                       
@@ -304,7 +290,7 @@ const Admin = () => {
                     <div className="grid gap-4">
                       <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
                         <p className="text-yellow-700">
-                          Changes are stored in local state. Backend integration will be implemented later.
+                          Changes are stored in React Context and will persist during your session.
                         </p>
                       </div>
                       

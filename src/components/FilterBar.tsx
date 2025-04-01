@@ -9,8 +9,8 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { Search, Filter } from "lucide-react";
-import { industries, regions, stages } from "@/data/vcData";
+import { Search } from "lucide-react";
+import { useData } from "@/contexts/DataContext";
 
 interface FilterBarProps {
   onFilterChange: (filters: FilterState) => void;
@@ -24,6 +24,8 @@ export interface FilterState {
 }
 
 const FilterBar = ({ onFilterChange }: FilterBarProps) => {
+  const { regionNames, industryNames, stageNames } = useData();
+  
   const [filters, setFilters] = useState<FilterState>({
     search: "",
     industry: "",
@@ -71,7 +73,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all_industries">All Industries</SelectItem>
-              {industries.map((industry) => (
+              {industryNames.map((industry) => (
                 <SelectItem key={industry} value={industry}>
                   {industry}
                 </SelectItem>
@@ -88,7 +90,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all_stages">All Stages</SelectItem>
-              {stages.map((stage) => (
+              {stageNames.map((stage) => (
                 <SelectItem key={stage} value={stage}>
                   {stage}
                 </SelectItem>
@@ -105,7 +107,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all_regions">All Regions</SelectItem>
-              {regions.map((region) => (
+              {regionNames.map((region) => (
                 <SelectItem key={region} value={region}>
                   {region}
                 </SelectItem>

@@ -2,15 +2,30 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
+import { useData } from "@/contexts/DataContext";
 
 const RegionMap = () => {
-  const regions = [
-    { name: "East Africa", count: 18, color: "bg-africa-blue" },
-    { name: "West Africa", count: 25, color: "bg-africa-green" },
-    { name: "North Africa", count: 12, color: "bg-africa-gold" },
-    { name: "Southern Africa", count: 15, color: "bg-africa-blue-light" },
-    { name: "Central Africa", count: 5, color: "bg-africa-green-light" },
-  ];
+  const { regionNames } = useData();
+
+  // Create a display of regions with mock counts
+  const regionsWithCounts = regionNames.map((name, index) => {
+    const colors = [
+      "bg-africa-blue",
+      "bg-africa-green",
+      "bg-africa-gold",
+      "bg-africa-blue-light",
+      "bg-africa-green-light"
+    ];
+    
+    // Generate a random count between 5 and 30
+    const count = Math.floor(Math.random() * 25) + 5;
+    
+    return {
+      name,
+      count,
+      color: colors[index % colors.length]
+    };
+  });
 
   return (
     <div>
@@ -34,8 +49,11 @@ const RegionMap = () => {
             <div>
               <h3 className="text-lg font-medium mb-3">VC Distribution</h3>
               <div className="space-y-4">
-                {regions.map((region) => (
-                  <Link key={region.name} to={`/regions/${region.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                {regionsWithCounts.map((region) => (
+                  <Link 
+                    key={region.name} 
+                    to={`/directory?region=${encodeURIComponent(region.name)}`}
+                  >
                     <div className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-md transition-colors">
                       <div className="flex items-center">
                         <div className={`w-3 h-3 rounded-full ${region.color} mr-2`}></div>

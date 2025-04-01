@@ -5,9 +5,11 @@ import Footer from "@/components/Footer";
 import FilterBar, { FilterState } from "@/components/FilterBar";
 import VCCard from "@/components/VCCard";
 import { vcFirms, type VCFirm } from "@/data/vcData";
+import { useData } from "@/contexts/DataContext";
 
 const Directory = () => {
   const [filteredFirms, setFilteredFirms] = useState<VCFirm[]>(vcFirms);
+  const { regionNames, industryNames, stageNames } = useData();
   
   const handleFilterChange = (filters: FilterState) => {
     let results = [...vcFirms];
