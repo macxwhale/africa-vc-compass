@@ -70,7 +70,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
               <SelectValue placeholder="Industry" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Industries</SelectItem>
+              <SelectItem value="all_industries">All Industries</SelectItem>
               {industries.map((industry) => (
                 <SelectItem key={industry} value={industry}>
                   {industry}
@@ -87,7 +87,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
               <SelectValue placeholder="Investment Stage" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Stages</SelectItem>
+              <SelectItem value="all_stages">All Stages</SelectItem>
               {stages.map((stage) => (
                 <SelectItem key={stage} value={stage}>
                   {stage}
@@ -104,7 +104,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
               <SelectValue placeholder="Region" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Regions</SelectItem>
+              <SelectItem value="all_regions">All Regions</SelectItem>
               {regions.map((region) => (
                 <SelectItem key={region} value={region}>
                   {region}

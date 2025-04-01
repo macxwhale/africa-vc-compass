@@ -22,21 +22,21 @@ const Directory = () => {
     }
     
     // Filter by industry
-    if (filters.industry) {
+    if (filters.industry && filters.industry !== "all_industries") {
       results = results.filter((vc) => 
         vc.industries.includes(filters.industry)
       );
     }
     
     // Filter by stage
-    if (filters.stage) {
+    if (filters.stage && filters.stage !== "all_stages") {
       results = results.filter((vc) => 
         vc.stagePreference.includes(filters.stage)
       );
     }
     
     // Filter by region
-    if (filters.region) {
+    if (filters.region && filters.region !== "all_regions") {
       results = results.filter((vc) => 
         vc.regionsOfInterest.includes(filters.region)
       );
