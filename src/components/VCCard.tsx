@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
 import { type VCFirm } from "@/data/vcData";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface VCCardProps {
   vc: VCFirm;
@@ -15,13 +16,16 @@ const VCCard = ({ vc }: VCCardProps) => {
       <Card className="h-full card-hover">
         <CardContent className="p-6">
           <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 rounded-md overflow-hidden flex-shrink-0">
-              <img 
+            <Avatar className="w-16 h-16 rounded-md">
+              <AvatarImage 
                 src={vc.logo} 
                 alt={`${vc.name} logo`}
-                className="w-full h-full object-cover"
+                className="object-cover"
               />
-            </div>
+              <AvatarFallback className="rounded-md text-lg font-bold bg-africa-blue text-white">
+                {vc.name.split(' ').map(word => word[0]).join('')}
+              </AvatarFallback>
+            </Avatar>
             <div>
               <h3 className="text-xl font-bold">{vc.name}</h3>
               <p className="text-sm text-gray-500">{vc.headquarters}</p>
