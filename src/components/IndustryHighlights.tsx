@@ -4,9 +4,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { industries } from "@/data/vcData";
 import { Link } from "react-router-dom";
 import { useData } from "@/contexts/DataContext";
+import { useState } from "react";
+import VCCard from "./VCCard";
 
 const IndustryHighlights = () => {
-  const { vcFirms } = useData();
+  const { vcFirms, getVCsByIndustry } = useData();
+  const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
+  
   // Take first 7 industries for the highlights section
   const highlightedIndustries = industries.slice(0, 7);
   
@@ -14,6 +18,9 @@ const IndustryHighlights = () => {
   const getVCCount = (industry: string) => {
     return vcFirms.filter(vc => vc.industries.includes(industry)).length;
   };
+  
+  // Get VCs for the selected industry
+  const industryVCs = selectedIndustry ? getVCsByIndustry(selectedIndustry, 6) : [];
   
   return (
     <div>
@@ -26,8 +33,8 @@ const IndustryHighlights = () => {
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {highlightedIndustries.map((industry) => (
-          <Link to={`/industries`} key={industry}>
-            <Card className="card-hover h-full">
+          <div key={industry} onClick={() => setSelectedIndustry(selectedIndustry === industry ? null : industry)}>
+            <Card className={`card-hover h-full cursor-pointer ${selectedIndustry === industry ? 'ring-2 ring-africa-blue' : ''}`}>
               <CardContent className="p-4 flex flex-col items-center text-center">
                 <div className="w-12 h-12 rounded-full bg-africa-blue/10 flex items-center justify-center mb-3">
                   <span className="text-africa-blue font-bold">{industry.slice(0, 2)}</span>
@@ -38,9 +45,26 @@ const IndustryHighlights = () => {
                 </Badge>
               </CardContent>
             </Card>
-          </Link>
+          </div>
         ))}
       </div>
+      
+      {/* Display VCs for selected industry */}
+      {selectedIndustry && industryVCs.length > 0 && (
+        <div className="mt-8">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-medium">Top VC Firms in {selectedIndustry}</h3>
+            <Link to={`/industries`} className="text-africa-blue hover:underline text-sm">
+              View all from this sector →
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {industryVCs.map((vc) => (
+              <VCCard key={vc.id} vc={vc} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

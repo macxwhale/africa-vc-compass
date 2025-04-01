@@ -4,9 +4,12 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { useData } from "@/contexts/DataContext";
 import { regionCountriesMap } from "@/pages/RegionsPage";
+import { useState } from "react";
+import VCCard from "./VCCard";
 
 const RegionMap = () => {
-  const { regionNames, vcFirms } = useData();
+  const { regionNames, vcFirms, getVCsByRegion } = useData();
+  const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
 
   // Count VCs per region and filter out Pan-African
   const regionsWithCounts = regionNames
@@ -38,6 +41,9 @@ const RegionMap = () => {
     "Southern Africa": { top: "70%", left: "55%" }
   };
 
+  // Get VCs for the selected region
+  const regionalVCs = selectedRegion ? getVCsByRegion(selectedRegion, 6) : [];
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -64,24 +70,25 @@ const RegionMap = () => {
                   // Get positions from the predefined positions map
                   const position = regionPositions[region.name as keyof typeof regionPositions];
                   const countries = regionCountriesMap[region.name as keyof typeof regionCountriesMap];
+                  const isSelected = selectedRegion === region.name;
                   
                   return (
-                    <Link 
-                      key={region.name} 
-                      to="/regions"
-                      className="absolute transform -translate-x-1/2 -translate-y-1/2 transition-all hover:scale-110"
+                    <div 
+                      key={region.name}
+                      className={`absolute transform -translate-x-1/2 -translate-y-1/2 transition-all ${isSelected ? 'scale-110' : 'hover:scale-110'}`}
                       style={{ top: position.top, left: position.left }}
                       title={countries?.join(", ")}
+                      onClick={() => setSelectedRegion(isSelected ? null : region.name)}
                     >
-                      <div className="flex flex-col items-center">
-                        <div className={`w-10 h-10 rounded-full ${region.color} flex items-center justify-center text-white font-bold shadow-md text-sm`}>
+                      <div className="flex flex-col items-center cursor-pointer">
+                        <div className={`w-10 h-10 rounded-full ${region.color} flex items-center justify-center text-white font-bold shadow-md text-sm ${isSelected ? 'ring-2 ring-white' : ''}`}>
                           {region.count}
                         </div>
                         <div className="bg-white/90 px-2 py-1 rounded-md shadow-sm mt-1 text-xs font-semibold text-gray-800">
                           {region.name}
                         </div>
                       </div>
-                    </Link>
+                    </div>
                   );
                 })}
                 
@@ -96,25 +103,41 @@ const RegionMap = () => {
               <h3 className="text-lg font-medium mb-3">VC Distribution</h3>
               <div className="space-y-4">
                 {regionsWithCounts.map((region) => (
-                  <Link 
-                    key={region.name} 
-                    to={`/regions`}
+                  <div 
+                    key={region.name}
+                    className={`flex items-center justify-between p-3 ${selectedRegion === region.name ? 'bg-gray-100' : 'hover:bg-gray-50'} rounded-md transition-colors cursor-pointer`}
+                    onClick={() => setSelectedRegion(selectedRegion === region.name ? null : region.name)}
                     title={regionCountriesMap[region.name as keyof typeof regionCountriesMap]?.join(", ")}
                   >
-                    <div className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-md transition-colors">
-                      <div className="flex items-center">
-                        <div className={`w-3 h-3 rounded-full ${region.color} mr-2`}></div>
-                        <span>{region.name}</span>
-                      </div>
-                      <Badge variant="outline">
-                        {region.count} VCs
-                      </Badge>
+                    <div className="flex items-center">
+                      <div className={`w-3 h-3 rounded-full ${region.color} mr-2`}></div>
+                      <span>{region.name}</span>
                     </div>
-                  </Link>
+                    <Badge variant="outline">
+                      {region.count} VCs
+                    </Badge>
+                  </div>
                 ))}
               </div>
             </div>
           </div>
+
+          {/* Display VCs for selected region */}
+          {selectedRegion && regionalVCs.length > 0 && (
+            <div className="mt-8">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-medium">Top VC Firms in {selectedRegion}</h3>
+                <Link to={`/regions`} className="text-africa-blue hover:underline text-sm">
+                  View all from this region →
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {regionalVCs.map((vc) => (
+                  <VCCard key={vc.id} vc={vc} />
+                ))}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
