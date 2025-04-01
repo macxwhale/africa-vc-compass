@@ -12,6 +12,8 @@ import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import { useState } from "react";
 import { DataProvider } from "./contexts/DataContext";
+import RegionsPage from "./pages/RegionsPage";
+import IndustriesPage from "./pages/IndustriesPage";
 
 const App = () => {
   // Create a new QueryClient instance inside the component to ensure proper React hooks usage
@@ -30,6 +32,8 @@ const App = () => {
               <Route path="/vc/:id" element={<VCProfile />} />
               <Route path="/about" element={<About />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/regions" element={<RegionsPage />} />
+              <Route path="/industries" element={<IndustriesPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

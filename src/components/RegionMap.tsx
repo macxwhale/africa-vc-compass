@@ -29,7 +29,12 @@ const RegionMap = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-africa-blue mb-6">Regional Investment Activity</h2>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-africa-blue">Regional Investment Activity</h2>
+        <Link to="/regions" className="text-africa-blue hover:underline text-sm">
+          Explore all regions →
+        </Link>
+      </div>
       
       <Card>
         <CardContent className="p-6">
@@ -52,7 +57,7 @@ const RegionMap = () => {
                 {regionsWithCounts.map((region) => (
                   <Link 
                     key={region.name} 
-                    to={`/directory?region=${encodeURIComponent(region.name)}`}
+                    to={`/regions`}
                   >
                     <div className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-md transition-colors">
                       <div className="flex items-center">
