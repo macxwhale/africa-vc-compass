@@ -38,7 +38,7 @@ const RegionsPage = () => {
   const { vcFirms, regionNames } = useData();
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
 
-  // Filter out Pan-African from the region names
+  // Filter out Pan-African from the region names for map display
   const filteredRegionNames = regionNames.filter(region => region !== "Pan-African");
 
   // Count VCs per region
@@ -63,12 +63,14 @@ const RegionsPage = () => {
   };
 
   // Define region positions on the map
-  const regionPositions = {
+  const regionPositions: Record<string, { top: string; left: string }> = {
     "North Africa": { top: "20%", left: "50%" },
     "West Africa": { top: "40%", left: "25%" },
     "Central Africa": { top: "48%", left: "50%" },
     "East Africa": { top: "40%", left: "70%" },
-    "Southern Africa": { top: "70%", left: "55%" }
+    "Southern Africa": { top: "70%", left: "55%" },
+    // Add default position for any other regions
+    "Pan-African": { top: "50%", left: "50%" }
   };
 
   // Get countries string for a region - for tooltip or additional display
@@ -145,7 +147,8 @@ const RegionsPage = () => {
                       
                       {/* VC Count markers */}
                       {filteredRegionNames.map((region) => {
-                        const position = regionPositions[region as keyof typeof regionPositions];
+                        // Safely get position with fallback to prevent errors
+                        const position = regionPositions[region] || { top: "50%", left: "50%" };
                         const isSelected = region === selectedRegion;
                         const color = getRegionColor(region);
                         

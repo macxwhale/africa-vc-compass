@@ -32,13 +32,15 @@ const RegionMap = () => {
       };
     }).sort((a, b) => b.count - a.count);
 
-  // Define region positions on the map
-  const regionPositions = {
+  // Define region positions on the map with added safeguards
+  const regionPositions: Record<string, { top: string; left: string }> = {
     "North Africa": { top: "20%", left: "50%" },
     "West Africa": { top: "40%", left: "30%" },
     "Central Africa": { top: "48%", left: "50%" },
     "East Africa": { top: "40%", left: "65%" },
-    "Southern Africa": { top: "70%", left: "55%" }
+    "Southern Africa": { top: "70%", left: "55%" },
+    // Default position for any other regions that might be added
+    "Pan-African": { top: "50%", left: "50%" }
   };
 
   // Get VCs for the selected region
@@ -67,8 +69,8 @@ const RegionMap = () => {
                 
                 {/* Region markers with VC counts */}
                 {regionsWithCounts.map((region) => {
-                  // Get positions from the predefined positions map
-                  const position = regionPositions[region.name as keyof typeof regionPositions];
+                  // Get positions from the predefined positions map with a fallback
+                  const position = regionPositions[region.name] || { top: "50%", left: "50%" };
                   const countries = regionCountriesMap[region.name as keyof typeof regionCountriesMap];
                   const isSelected = selectedRegion === region.name;
                   
