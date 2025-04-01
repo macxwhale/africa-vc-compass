@@ -1,3 +1,4 @@
+
 export interface VCFirm {
   id: string;
   name: string;
@@ -690,4 +691,29 @@ export const vcFirms: VCFirm[] = [
       {
         name: "Franziska Reh",
         title: "Founder & CEO",
-        image:
+        image: "https://placehold.co/100x100/2DD4BF/FFFFFF?text=FR"
+      }
+    ],
+    contactInfo: {
+      email: "info@unconventional.capital",
+      twitter: "unconventional_c",
+      linkedin: "unconventional-capital"
+    }
+  }
+];
+
+export const industries = [
+  "Fintech", "Healthtech", "Edtech", "Agritech", "Logistics", 
+  "E-commerce", "Energy", "Enterprise Software", "Media & Entertainment",
+  "Essential Services", "Food & Agriculture", "Financial Services",
+  "Insurtech", "Proptech", "Clean Energy", "Mobility", "SaaS",
+  "Financial Inclusion", "Retail Tech", "SME Solutions", "Cleantech"
+];
+
+export const stages = [
+  "Pre-seed", "Seed", "Early Stage", "Series A", "Series B", "Growth"
+];
+
+export const regions = [
+  "East Africa", "West Africa", "North Africa", "Southern Africa", "Central Africa", "Pan-African"
+];
