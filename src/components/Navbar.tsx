@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
+import { Home, Search } from "lucide-react";
 
 const Navbar = () => {
   return (
@@ -17,6 +17,10 @@ const Navbar = () => {
         </div>
         
         <div className="hidden md:flex items-center space-x-6">
+          <Link to="/" className="flex items-center text-gray-700 hover:text-africa-blue-light transition-colors">
+            <Home className="h-4 w-4 mr-1" />
+            <span>Home</span>
+          </Link>
           <Link to="/directory" className="text-gray-700 hover:text-africa-blue-light transition-colors">
             Directory
           </Link>
