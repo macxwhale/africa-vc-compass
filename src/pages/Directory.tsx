@@ -6,10 +6,13 @@ import FilterBar, { FilterState } from "@/components/FilterBar";
 import VCCard from "@/components/VCCard";
 import { type VCFirm } from "@/data/vcData";
 import { useData } from "@/contexts/DataContext";
+import { Button } from "@/components/ui/button";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 const Directory = () => {
   const { vcFirms, regionNames, industryNames, stageNames } = useData();
   const [filteredFirms, setFilteredFirms] = useState<VCFirm[]>(vcFirms);
+  const [showAll, setShowAll] = useState(false);
   
   // Update filtered firms when vcFirms changes in context
   useEffect(() => {
@@ -50,7 +53,13 @@ const Directory = () => {
     }
     
     setFilteredFirms(results);
+    // Reset showAll when filters change
+    setShowAll(false);
   };
+
+  // Calculate the firms to display based on showAll state
+  const displayedFirms = showAll ? filteredFirms : filteredFirms.slice(0, 5);
+  const hasMoreFirms = filteredFirms.length > 5;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -67,12 +76,34 @@ const Directory = () => {
             <div className="mt-8">
               {filteredFirms.length > 0 ? (
                 <>
-                  <p className="text-gray-500 mb-4">Showing {filteredFirms.length} results</p>
+                  <p className="text-gray-500 mb-4">
+                    Showing {displayedFirms.length} of {filteredFirms.length} results
+                  </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredFirms.map((vc) => (
+                    {displayedFirms.map((vc) => (
                       <VCCard key={vc.id} vc={vc} />
                     ))}
                   </div>
+                  
+                  {hasMoreFirms && (
+                    <div className="mt-8 flex justify-center">
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowAll(!showAll)}
+                        className="flex items-center gap-2"
+                      >
+                        {showAll ? (
+                          <>
+                            Show Less <ChevronUp className="h-4 w-4" />
+                          </>
+                        ) : (
+                          <>
+                            Show More <ChevronDown className="h-4 w-4" />
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  )}
                 </>
               ) : (
                 <div className="text-center py-12">
