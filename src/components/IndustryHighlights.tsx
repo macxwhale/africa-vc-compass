@@ -59,7 +59,7 @@ const IndustryHighlights = () => {
         <div className="mt-8">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-medium">Top VC Firms in {selectedIndustry}</h3>
-            <Link to={`/industries`} className="text-africa-blue hover:underline text-sm">
+            <Link to="/industries" className="text-africa-blue hover:underline text-sm">
               View all from this sector →
             </Link>
           </div>

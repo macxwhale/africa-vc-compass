@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 // Use memo to prevent unnecessary re-renders of the entire page
-const Index = memo(() => {
+const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -61,6 +61,6 @@ const Index = memo(() => {
       <Footer />
     </div>
   );
-});
+};
 
-export default Index;
+export default memo(Index);
