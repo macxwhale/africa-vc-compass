@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -6,12 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { Edit, Trash, Plus, Check, X } from "lucide-react";
+import { Edit, Trash, Plus, Check, X, AlertTriangle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useData } from "@/contexts/DataContext";
 import { VCFirm } from "@/data/vcData";
 import VCFirmForm from "@/components/admin/VCFirmForm";
 import VCFirmsList from "@/components/admin/VCFirmsList";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface Item {
   id: string;
@@ -20,6 +21,7 @@ interface Item {
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState("regions");
+  const [isSupabaseConnected, setIsSupabaseConnected] = useState(false);
   
   const { 
     regionItems, 
@@ -41,6 +43,12 @@ const Admin = () => {
 
   const [firmFormOpen, setFirmFormOpen] = useState(false);
   const [editingFirm, setEditingFirm] = useState<VCFirm | null>(null);
+
+  useEffect(() => {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    setIsSupabaseConnected(!!supabaseUrl && !!supabaseKey);
+  }, []);
 
   const handleAddRegion = () => {
     if (newRegion.trim() === "") {
@@ -237,6 +245,25 @@ const Admin = () => {
               </Button>
             </div>
             
+            {!isSupabaseConnected && (
+              <Alert variant="warning" className="mb-6">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>Database connection not detected</AlertTitle>
+                <AlertDescription>
+                  No Supabase connection configured. Changes will only persist during this session.
+                </AlertDescription>
+              </Alert>
+            )}
+            
+            {isSupabaseConnected && (
+              <Alert variant="default" className="bg-green-50 border-green-200 mb-6">
+                <AlertTitle>Database connected</AlertTitle>
+                <AlertDescription>
+                  Changes are stored in the database and will persist between sessions.
+                </AlertDescription>
+              </Alert>
+            )}
+            
             <Tabs defaultValue="regions" value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-4 mb-8">
                 <TabsTrigger value="regions">Regions</TabsTrigger>
@@ -253,9 +280,11 @@ const Admin = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-4">
-                      <div className="bg-green-50 border-l-4 border-green-400 p-4">
-                        <p className="text-green-700">
-                          Changes are stored in the database and will persist between sessions.
+                      <div className={isSupabaseConnected ? "bg-green-50 border-l-4 border-green-400 p-4" : "bg-yellow-50 border-l-4 border-yellow-400 p-4"}>
+                        <p className={isSupabaseConnected ? "text-green-700" : "text-yellow-700"}>
+                          {isSupabaseConnected 
+                            ? "Changes are stored in the database and will persist between sessions."
+                            : "Supabase not connected. Changes will be lost when you refresh the page."}
                         </p>
                       </div>
                       
@@ -286,9 +315,11 @@ const Admin = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-4">
-                      <div className="bg-green-50 border-l-4 border-green-400 p-4">
-                        <p className="text-green-700">
-                          Changes are stored in the database and will persist between sessions.
+                      <div className={isSupabaseConnected ? "bg-green-50 border-l-4 border-green-400 p-4" : "bg-yellow-50 border-l-4 border-yellow-400 p-4"}>
+                        <p className={isSupabaseConnected ? "text-green-700" : "text-yellow-700"}>
+                          {isSupabaseConnected 
+                            ? "Changes are stored in the database and will persist between sessions."
+                            : "Supabase not connected. Changes will be lost when you refresh the page."}
                         </p>
                       </div>
                       
@@ -319,9 +350,11 @@ const Admin = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-4">
-                      <div className="bg-green-50 border-l-4 border-green-400 p-4">
-                        <p className="text-green-700">
-                          Changes are stored in the database and will persist between sessions.
+                      <div className={isSupabaseConnected ? "bg-green-50 border-l-4 border-green-400 p-4" : "bg-yellow-50 border-l-4 border-yellow-400 p-4"}>
+                        <p className={isSupabaseConnected ? "text-green-700" : "text-yellow-700"}>
+                          {isSupabaseConnected 
+                            ? "Changes are stored in the database and will persist between sessions."
+                            : "Supabase not connected. Changes will be lost when you refresh the page."}
                         </p>
                       </div>
                       
@@ -352,9 +385,11 @@ const Admin = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-4">
-                      <div className="bg-green-50 border-l-4 border-green-400 p-4">
-                        <p className="text-green-700">
-                          Changes are stored in the database and will persist between sessions.
+                      <div className={isSupabaseConnected ? "bg-green-50 border-l-4 border-green-400 p-4" : "bg-yellow-50 border-l-4 border-yellow-400 p-4"}>
+                        <p className={isSupabaseConnected ? "text-green-700" : "text-yellow-700"}>
+                          {isSupabaseConnected 
+                            ? "Changes are stored in the database and will persist between sessions."
+                            : "Supabase not connected. Changes will be lost when you refresh the page."}
                         </p>
                       </div>
                       

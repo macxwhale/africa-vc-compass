@@ -1,12 +1,27 @@
-
 import { createContext, useState, useEffect, useContext, ReactNode } from "react";
 import { industries as initialIndustries, stages as initialStages, regions as initialRegions, vcFirms as initialVcFirms, VCFirm } from "@/data/vcData";
 import { createClient } from '@supabase/supabase-js';
 
-// Initialize Supabase client
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Initialize Supabase client with proper error handling
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+// Create a client with the URL and key, or use dummy client if not available
+let supabase;
+
+if (supabaseUrl && supabaseKey) {
+  supabase = createClient(supabaseUrl, supabaseKey);
+} else {
+  console.error("Supabase credentials are missing. Using local data only.");
+  // Create a mock client that won't actually connect to Supabase
+  supabase = {
+    from: () => ({
+      select: () => Promise.resolve({ data: null, error: null }),
+      insert: () => Promise.resolve({ error: null }),
+      delete: () => Promise.resolve({ error: null })
+    })
+  };
+}
 
 interface Item {
   id: string;
@@ -59,15 +74,17 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const updateRegionItems = async (items: Item[]) => {
     setRegionItems(items);
     try {
-      // First delete all existing regions
-      await supabase.from('regions').delete().neq('id', 'placeholder');
-      
-      // Then insert the new ones
-      const { error } = await supabase.from('regions').insert(
-        items.map(item => ({ id: item.id, name: item.name }))
-      );
-      
-      if (error) throw error;
+      if (supabaseUrl && supabaseKey) {
+        // First delete all existing regions
+        await supabase.from('regions').delete().neq('id', 'placeholder');
+        
+        // Then insert the new ones
+        const { error } = await supabase.from('regions').insert(
+          items.map(item => ({ id: item.id, name: item.name }))
+        );
+        
+        if (error) throw error;
+      }
     } catch (error) {
       console.error('Error saving regions to database:', error);
     }
@@ -77,15 +94,17 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const updateIndustryItems = async (items: Item[]) => {
     setIndustryItems(items);
     try {
-      // First delete all existing industries
-      await supabase.from('industries').delete().neq('id', 'placeholder');
-      
-      // Then insert the new ones
-      const { error } = await supabase.from('industries').insert(
-        items.map(item => ({ id: item.id, name: item.name }))
-      );
-      
-      if (error) throw error;
+      if (supabaseUrl && supabaseKey) {
+        // First delete all existing industries
+        await supabase.from('industries').delete().neq('id', 'placeholder');
+        
+        // Then insert the new ones
+        const { error } = await supabase.from('industries').insert(
+          items.map(item => ({ id: item.id, name: item.name }))
+        );
+        
+        if (error) throw error;
+      }
     } catch (error) {
       console.error('Error saving industries to database:', error);
     }
@@ -95,15 +114,17 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const updateStageItems = async (items: Item[]) => {
     setStageItems(items);
     try {
-      // First delete all existing stages
-      await supabase.from('stages').delete().neq('id', 'placeholder');
-      
-      // Then insert the new ones
-      const { error } = await supabase.from('stages').insert(
-        items.map(item => ({ id: item.id, name: item.name }))
-      );
-      
-      if (error) throw error;
+      if (supabaseUrl && supabaseKey) {
+        // First delete all existing stages
+        await supabase.from('stages').delete().neq('id', 'placeholder');
+        
+        // Then insert the new ones
+        const { error } = await supabase.from('stages').insert(
+          items.map(item => ({ id: item.id, name: item.name }))
+        );
+        
+        if (error) throw error;
+      }
     } catch (error) {
       console.error('Error saving stages to database:', error);
     }
@@ -113,13 +134,15 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const updateVcFirms = async (firms: VCFirm[]) => {
     setVcFirms(firms);
     try {
-      // First delete all existing VC firms
-      await supabase.from('vc_firms').delete().neq('id', 'placeholder');
-      
-      // Then insert the new ones
-      const { error } = await supabase.from('vc_firms').insert(firms);
-      
-      if (error) throw error;
+      if (supabaseUrl && supabaseKey) {
+        // First delete all existing VC firms
+        await supabase.from('vc_firms').delete().neq('id', 'placeholder');
+        
+        // Then insert the new ones
+        const { error } = await supabase.from('vc_firms').insert(firms);
+        
+        if (error) throw error;
+      }
     } catch (error) {
       console.error('Error saving VC firms to database:', error);
     }
@@ -129,87 +152,95 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const initializeTablesIfNeeded = async () => {
     setIsLoading(true);
     try {
-      // Check if tables have data
-      const { data: regionsData, error: regionsError } = await supabase
-        .from('regions')
-        .select('*');
-      
-      if (regionsError) {
-        console.error('Error checking regions:', regionsError);
+      // Always set initial data to default values to ensure the app works without Supabase
+      let regionsData = initialRegions.map((name, index) => ({ id: `region-${index}`, name }));
+      let industriesData = initialIndustries.map((name, index) => ({ id: `industry-${index}`, name }));
+      let stagesData = initialStages.map((name, index) => ({ id: `stage-${index}`, name }));
+      let vcFirmsData = initialVcFirms;
+
+      // Only attempt to load from Supabase if credentials are available
+      if (supabaseUrl && supabaseKey) {
+        // Check if tables have data
+        const { data: dbRegionsData, error: regionsError } = await supabase
+          .from('regions')
+          .select('*');
+        
+        if (regionsError) {
+          console.error('Error checking regions:', regionsError);
+        }
+
+        // If regions data exists in database, use it
+        if (dbRegionsData && dbRegionsData.length > 0) {
+          regionsData = dbRegionsData as Item[];
+        } else {
+          // Otherwise initialize with default data
+          await supabase.from('regions').insert(regionsData);
+        }
+
+        // Check industries
+        const { data: dbIndustriesData, error: industriesError } = await supabase
+          .from('industries')
+          .select('*');
+        
+        if (industriesError) {
+          console.error('Error checking industries:', industriesError);
+        }
+
+        // If industries data exists in database, use it
+        if (dbIndustriesData && dbIndustriesData.length > 0) {
+          industriesData = dbIndustriesData as Item[];
+        } else {
+          // Otherwise initialize with default data
+          await supabase.from('industries').insert(industriesData);
+        }
+
+        // Check stages
+        const { data: dbStagesData, error: stagesError } = await supabase
+          .from('stages')
+          .select('*');
+        
+        if (stagesError) {
+          console.error('Error checking stages:', stagesError);
+        }
+
+        // If stages data exists in database, use it
+        if (dbStagesData && dbStagesData.length > 0) {
+          stagesData = dbStagesData as Item[];
+        } else {
+          // Otherwise initialize with default data
+          await supabase.from('stages').insert(stagesData);
+        }
+
+        // Check VC firms
+        const { data: dbVCFirmsData, error: vcFirmsError } = await supabase
+          .from('vc_firms')
+          .select('*');
+        
+        if (vcFirmsError) {
+          console.error('Error checking VC firms:', vcFirmsError);
+        }
+
+        // If VC firms data exists in database, use it
+        if (dbVCFirmsData && dbVCFirmsData.length > 0) {
+          vcFirmsData = dbVCFirmsData as VCFirm[];
+        } else {
+          // Otherwise initialize with default data
+          await supabase.from('vc_firms').insert(vcFirmsData);
+        }
       }
 
-      // If no regions data, initialize with default data
-      if (!regionsData || regionsData.length === 0) {
-        const defaultRegions = initialRegions.map((name, index) => ({ 
-          id: `region-${index}`, 
-          name 
-        }));
-        await supabase.from('regions').insert(defaultRegions);
-        setRegionItems(defaultRegions);
-      } else {
-        setRegionItems(regionsData as Item[]);
-      }
-
-      // Check industries
-      const { data: industriesData, error: industriesError } = await supabase
-        .from('industries')
-        .select('*');
-      
-      if (industriesError) {
-        console.error('Error checking industries:', industriesError);
-      }
-
-      // If no industries data, initialize with default data
-      if (!industriesData || industriesData.length === 0) {
-        const defaultIndustries = initialIndustries.map((name, index) => ({ 
-          id: `industry-${index}`, 
-          name 
-        }));
-        await supabase.from('industries').insert(defaultIndustries);
-        setIndustryItems(defaultIndustries);
-      } else {
-        setIndustryItems(industriesData as Item[]);
-      }
-
-      // Check stages
-      const { data: stagesData, error: stagesError } = await supabase
-        .from('stages')
-        .select('*');
-      
-      if (stagesError) {
-        console.error('Error checking stages:', stagesError);
-      }
-
-      // If no stages data, initialize with default data
-      if (!stagesData || stagesData.length === 0) {
-        const defaultStages = initialStages.map((name, index) => ({ 
-          id: `stage-${index}`, 
-          name 
-        }));
-        await supabase.from('stages').insert(defaultStages);
-        setStageItems(defaultStages);
-      } else {
-        setStageItems(stagesData as Item[]);
-      }
-
-      // Check VC firms
-      const { data: vcFirmsData, error: vcFirmsError } = await supabase
-        .from('vc_firms')
-        .select('*');
-      
-      if (vcFirmsError) {
-        console.error('Error checking VC firms:', vcFirmsError);
-      }
-
-      // If no VC firms data, initialize with default data
-      if (!vcFirmsData || vcFirmsData.length === 0) {
-        await supabase.from('vc_firms').insert(initialVcFirms);
-        setVcFirms(initialVcFirms);
-      } else {
-        setVcFirms(vcFirmsData as VCFirm[]);
-      }
+      // Set state with either database data or default data
+      setRegionItems(regionsData);
+      setIndustryItems(industriesData);
+      setStageItems(stagesData);
+      setVcFirms(vcFirmsData);
     } catch (error) {
       console.error('Error initializing database:', error);
+      // In case of error, use the default data
+      setRegionItems(initialRegions.map((name, index) => ({ id: `region-${index}`, name })));
+      setIndustryItems(initialIndustries.map((name, index) => ({ id: `industry-${index}`, name })));
+      setStageItems(initialStages.map((name, index) => ({ id: `stage-${index}`, name })));
+      setVcFirms(initialVcFirms);
     } finally {
       setIsLoading(false);
     }
