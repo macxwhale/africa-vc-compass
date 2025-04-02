@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -245,6 +246,8 @@ const Admin = () => {
                 <AlertTitle>Database connection not detected</AlertTitle>
                 <AlertDescription>
                   No Supabase connection configured. Changes will only persist during this session.
+                  <br />
+                  You need to set the VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables.
                 </AlertDescription>
               </Alert>
             )}

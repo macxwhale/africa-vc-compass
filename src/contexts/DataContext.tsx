@@ -1,21 +1,60 @@
+
 import { createContext, useState, useEffect, useContext, ReactNode } from "react";
 import { industries as initialIndustries, stages as initialStages, regions as initialRegions, vcFirms as initialVcFirms, VCFirm } from "@/data/vcData";
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 // Initialize Supabase client with proper error handling
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
-// Create a supabase client - we'll use this regardless, but handle missing credentials gracefully
-const supabase = createClient(supabaseUrl, supabaseKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-  }
-});
-
 // Check if we have valid credentials
 const isSupabaseConfigured = !!supabaseUrl && !!supabaseKey;
+
+// Create a mock Supabase client that just logs operations
+const createMockClient = () => {
+  const mockClient = {
+    from: (table: string) => ({
+      select: (query: string) => ({ 
+        data: null, 
+        error: new Error('Mock Supabase client: No connection available'),
+        count: 0
+      }),
+      insert: (data: any) => ({ 
+        data: null, 
+        error: new Error('Mock Supabase client: No connection available') 
+      }),
+      update: (data: any) => ({ 
+        data: null, 
+        error: new Error('Mock Supabase client: No connection available') 
+      }),
+      delete: () => ({ 
+        data: null, 
+        error: new Error('Mock Supabase client: No connection available') 
+      }),
+      eq: (column: string, value: any) => ({ 
+        data: null, 
+        error: new Error('Mock Supabase client: No connection available') 
+      }),
+      neq: (column: string, value: any) => mockClient.from(table),
+    }),
+    auth: {
+      getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+    }
+  };
+  
+  return mockClient as unknown as SupabaseClient;
+};
+
+// Use real client only if properly configured, otherwise use mock
+const supabase = isSupabaseConfigured 
+  ? createClient(supabaseUrl, supabaseKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+      }
+    }) 
+  : createMockClient();
 
 interface Item {
   id: string;
@@ -47,7 +86,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [stageItems, setStageItems] = useState<Item[]>([]);
   const [vcFirms, setVcFirms] = useState<VCFirm[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSupabaseConnected, setIsSupabaseConnected] = useState(isSupabaseConfigured);
+  const [isSupabaseConnected, setIsSupabaseConnected] = useState(false);
 
   // Derived data - just the names as string arrays for the filters
   const regionNames = regionItems.map(item => item.name);
@@ -171,20 +210,26 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       let stagesData = initialStages.map((name, index) => ({ id: `stage-${index}`, name }));
       let vcFirmsData = initialVcFirms;
 
-      // Check if we can connect to Supabase by making a simple query
+      // Only attempt to connect to Supabase if it's configured
       if (isSupabaseConfigured) {
-        const { data, error } = await supabase.from('regions').select('count');
-        
-        if (error) {
-          console.error("Failed to connect to Supabase:", error);
-          setIsSupabaseConnected(false);
-        } else {
-          console.log("Successfully connected to Supabase!");
-          setIsSupabaseConnected(true);
+        try {
+          // Check if we can connect to Supabase by making a simple query
+          const { data, error } = await supabase.from('regions').select('count');
           
-          // Now try to load data from Supabase
-          await loadDataFromSupabase(regionsData, industriesData, stagesData, vcFirmsData);
-          return; // Exit early as we've already set the state in loadDataFromSupabase
+          if (error) {
+            console.error("Failed to connect to Supabase:", error);
+            setIsSupabaseConnected(false);
+          } else {
+            console.log("Successfully connected to Supabase!");
+            setIsSupabaseConnected(true);
+            
+            // Now try to load data from Supabase
+            await loadDataFromSupabase(regionsData, industriesData, stagesData, vcFirmsData);
+            return; // Exit early as we've already set the state in loadDataFromSupabase
+          }
+        } catch (error) {
+          console.error("Error checking Supabase connection:", error);
+          setIsSupabaseConnected(false);
         }
       } else {
         console.warn("Supabase credentials are missing. Using local data only.");
