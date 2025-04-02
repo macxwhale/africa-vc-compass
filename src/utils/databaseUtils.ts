@@ -1,4 +1,15 @@
-import { supabase, isSupabaseConfigured, executeSQL, testDatabaseConnection, createAllTables, regionService, industryService, stageService, vcFirmService } from "@/services/supabaseService";
+
+import { 
+  supabase, 
+  isSupabaseConfigured, 
+  executeSQL, 
+  testDatabaseConnection, 
+  createAllTables, 
+  regionService, 
+  industryService, 
+  stageService, 
+  vcFirmService 
+} from "@/services/supabaseService";
 import { Item } from "@/contexts/DataContext";
 import { VCFirm } from "@/data/vcData";
 import { toast } from "@/hooks/use-toast";
