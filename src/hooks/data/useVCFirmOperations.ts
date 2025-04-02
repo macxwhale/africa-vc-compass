@@ -5,7 +5,7 @@ import { vcFirmService } from "@/services/supabaseService";
 
 export function useVCFirmOperations(
   vcFirms: VCFirm[],
-  setVcFirmsState: (firms: VCFirm[]) => void,
+  setVcFirmsState: React.Dispatch<React.SetStateAction<VCFirm[]>>,
   isSupabaseConnected: boolean
 ) {
   const getVCsByIndustry = (industry: string, limit?: number): VCFirm[] => {
@@ -31,6 +31,7 @@ export function useVCFirmOperations(
         firm.id = `firm-${Date.now()}`;
       }
       
+      // Update the state using the function-based state update pattern
       setVcFirmsState(prevFirms => [...prevFirms, firm]);
       
       if (!isSupabaseConnected) {
@@ -67,6 +68,7 @@ export function useVCFirmOperations(
     try {
       console.log("Updating VC firm with isSupabaseConnected:", isSupabaseConnected);
       
+      // Update the state using the function-based state update pattern
       setVcFirmsState(prevFirms => prevFirms.map(f => f.id === firm.id ? firm : f));
       
       if (!isSupabaseConnected) {
@@ -103,6 +105,7 @@ export function useVCFirmOperations(
     try {
       console.log("Deleting VC firm with isSupabaseConnected:", isSupabaseConnected);
       
+      // Update the state using the function-based state update pattern
       setVcFirmsState(prevFirms => prevFirms.filter(f => f.id !== id));
       
       if (!isSupabaseConnected) {
