@@ -39,18 +39,21 @@ export function useDataOperations(
 
   // Update regions
   const updateRegions = async (items: Item[]) => {
+    console.log("Updating regions with isSupabaseConnected:", isSupabaseConnected);
     setRegionItems(items);
     await updateRegionItems(items, isSupabaseConnected);
   };
 
   // Update industries
   const updateIndustries = async (items: Item[]) => {
+    console.log("Updating industries with isSupabaseConnected:", isSupabaseConnected);
     setIndustryItems(items);
     await updateIndustryItems(items, isSupabaseConnected);
   };
 
   // Update stages
   const updateStages = async (items: Item[]) => {
+    console.log("Updating stages with isSupabaseConnected:", isSupabaseConnected);
     setStageItems(items);
     await updateStageItems(items, isSupabaseConnected);
   };
@@ -58,6 +61,8 @@ export function useDataOperations(
   // CRUD Operations for VC Firms
   const addVCFirm = async (firm: VCFirm) => {
     try {
+      console.log("Adding VC firm with isSupabaseConnected:", isSupabaseConnected);
+      
       if (!isSupabaseConnected) {
         // Local only operation
         setVcFirms([...vcFirms, firm]);
@@ -95,6 +100,8 @@ export function useDataOperations(
 
   const updateVCFirm = async (firm: VCFirm) => {
     try {
+      console.log("Updating VC firm with isSupabaseConnected:", isSupabaseConnected);
+      
       if (!isSupabaseConnected) {
         // Local only operation
         setVcFirms(vcFirms.map(f => f.id === firm.id ? firm : f));
@@ -128,6 +135,8 @@ export function useDataOperations(
 
   const deleteVCFirm = async (id: string) => {
     try {
+      console.log("Deleting VC firm with isSupabaseConnected:", isSupabaseConnected);
+      
       if (!isSupabaseConnected) {
         // Local only operation
         setVcFirms(vcFirms.filter(f => f.id !== id));

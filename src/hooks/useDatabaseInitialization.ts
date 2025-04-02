@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { VCFirm } from "@/data/vcData";
-import { supabase, isSupabaseConfigured } from "@/services/supabaseService";
+import { supabase, isSupabaseConfigured, testDatabaseConnection } from "@/services/supabaseService";
 import { toast } from "@/hooks/use-toast";
 import { Item } from "@/contexts/DataContext";
 import { 
@@ -41,42 +41,19 @@ export function useDatabaseInitialization(
       // Only attempt to connect to Supabase if it's configured
       if (isSupabaseConfigured) {
         try {
-          console.log("Attempting to connect to Supabase and create tables if needed...");
+          console.log("Checking Supabase connection...");
           
-          // First, create the tables if they don't exist
-          const tablesCreated = await createTablesIfNeeded();
+          // Test connection
+          const isConnected = await testDatabaseConnection();
           
-          if (!tablesCreated) {
-            console.log("Tables could not be created automatically. SQL has been provided in the console for manual execution.");
-            toast({
-              title: "Database Setup Required",
-              description: "Tables need to be created in your Supabase dashboard. A SQL script has been provided in the console.",
-              variant: "destructive",
-            });
-          } else {
-            console.log("Tables exist or were created successfully.");
-          }
-          
-          // Check if we can connect to Supabase by making a simple query
-          const { data: connectionTestData, error } = await supabase.from('regions').select('count');
-          
-          if (error) {
-            console.error("Failed to connect to Supabase:", error);
+          if (!isConnected) {
+            console.error("Failed to connect to Supabase");
             setIsSupabaseConnected(false);
             toast({
               title: "Database Connection Failed",
               description: "Could not connect to Supabase database. Running in local-only mode.",
               variant: "destructive",
             });
-            
-            if (error.message.includes("does not exist")) {
-              console.log("Tables don't exist in Supabase. Please create them manually using the SQL in the console.");
-              toast({
-                title: "Database Tables Missing",
-                description: "You need to create the necessary tables in your Supabase project. See console for SQL statements.",
-                variant: "destructive",
-              });
-            }
           } else {
             console.log("Successfully connected to Supabase!");
             setIsSupabaseConnected(true);
@@ -86,7 +63,14 @@ export function useDatabaseInitialization(
             });
             
             // Now try to load data from Supabase
-            await loadDataFromSupabase(regionsData, industriesData, stagesData, vcFirmsData, setItems);
+            const dataLoaded = await loadDataFromSupabase(regionsData, industriesData, stagesData, vcFirmsData, setItems);
+            
+            if (!dataLoaded) {
+              console.log("Could not load data from Supabase. Using default data.");
+              // If we couldn't load data, try to initialize with default data
+              await initializeDatabaseWithDefaultData(regionsData, industriesData, stagesData, vcFirmsData);
+            }
+            
             setIsLoading(false);
             return; // Exit early as we've already set the state in loadDataFromSupabase
           }

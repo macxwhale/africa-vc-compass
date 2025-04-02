@@ -1,5 +1,5 @@
 
-import { ReactNode, useMemo } from "react";
+import { ReactNode, useMemo, useEffect } from "react";
 import { DataContext } from "@/contexts/DataContext";
 import { industries as initialIndustries, stages as initialStages, regions as initialRegions, vcFirms as initialVcFirms } from "@/data/vcData";
 import { useDatabaseInitialization } from "@/hooks/useDatabaseInitialization";
@@ -27,7 +27,23 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     vcFirms: defaultVcFirms
   };
 
-  // Initialize data operations (this is where the state is managed)
+  // Initialize database and connection
+  const { isLoading, isSupabaseConnected } = useDatabaseInitialization(
+    {
+      regions: defaultRegions,
+      industries: defaultIndustries,
+      stages: defaultStages,
+      vcFirms: defaultVcFirms
+    },
+    {
+      setRegionItems: () => {},
+      setIndustryItems: () => {},
+      setStageItems: () => {},
+      setVcFirms: () => {}
+    }
+  );
+
+  // Initialize data operations with the isSupabaseConnected flag
   const {
     vcFirms,
     regionItems,
@@ -45,7 +61,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     addVCFirm,
     updateVCFirm,
     deleteVCFirm
-  } = useDataOperations(initialData, false); // Initially false, updated after initialization
+  } = useDataOperations(initialData, isSupabaseConnected);
 
   // Create a setter object for database initialization
   const setters = {
@@ -55,16 +71,25 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     setVcFirms
   };
 
-  // Initialize database and connection
-  const { isLoading, isSupabaseConnected } = useDatabaseInitialization(
-    {
-      regions: defaultRegions,
-      industries: defaultIndustries,
-      stages: defaultStages,
-      vcFirms: defaultVcFirms
-    },
-    setters
-  );
+  // Re-initialize database when connection status changes
+  useEffect(() => {
+    if (!isLoading) {
+      useDatabaseInitialization(
+        {
+          regions: defaultRegions,
+          industries: defaultIndustries,
+          stages: defaultStages,
+          vcFirms: defaultVcFirms
+        },
+        setters
+      );
+    }
+  }, [isSupabaseConnected]);
+
+  // Output the connection status for debugging
+  useEffect(() => {
+    console.log("DataProvider - isSupabaseConnected:", isSupabaseConnected);
+  }, [isSupabaseConnected]);
 
   return (
     <DataContext.Provider 
