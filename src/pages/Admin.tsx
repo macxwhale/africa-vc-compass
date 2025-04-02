@@ -21,7 +21,6 @@ interface Item {
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState("regions");
-  const [isSupabaseConnected, setIsSupabaseConnected] = useState(false);
   
   const { 
     regionItems, 
@@ -31,7 +30,8 @@ const Admin = () => {
     setRegionItems, 
     setIndustryItems, 
     setStageItems,
-    setVcFirms
+    setVcFirms,
+    isSupabaseConnected
   } = useData();
   
   const [newRegion, setNewRegion] = useState("");
@@ -43,12 +43,6 @@ const Admin = () => {
 
   const [firmFormOpen, setFirmFormOpen] = useState(false);
   const [editingFirm, setEditingFirm] = useState<VCFirm | null>(null);
-
-  useEffect(() => {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-    setIsSupabaseConnected(!!supabaseUrl && !!supabaseKey);
-  }, []);
 
   const handleAddRegion = () => {
     if (newRegion.trim() === "") {
@@ -65,7 +59,7 @@ const Admin = () => {
     setNewRegion("");
     toast({
       title: "Success",
-      description: "Region added successfully and saved to database",
+      description: `Region added successfully${isSupabaseConnected ? " and saved to database" : " (local only)"}`,
     });
   };
 
@@ -84,7 +78,7 @@ const Admin = () => {
     setNewIndustry("");
     toast({
       title: "Success",
-      description: "Industry added successfully and saved to database",
+      description: `Industry added successfully${isSupabaseConnected ? " and saved to database" : " (local only)"}`,
     });
   };
 
@@ -103,7 +97,7 @@ const Admin = () => {
     setNewStage("");
     toast({
       title: "Success",
-      description: "Investment stage added successfully and saved to database",
+      description: `Investment stage added successfully${isSupabaseConnected ? " and saved to database" : " (local only)"}`,
     });
   };
 
@@ -145,7 +139,7 @@ const Admin = () => {
     setEditValue("");
     toast({
       title: "Success",
-      description: "Item updated successfully and saved to database",
+      description: `Item updated successfully${isSupabaseConnected ? " and saved to database" : " (local only)"}`,
     });
   };
 
@@ -160,7 +154,7 @@ const Admin = () => {
 
     toast({
       title: "Success",
-      description: "Item deleted successfully and removed from database",
+      description: `Item deleted successfully${isSupabaseConnected ? " and removed from database" : " (local only)"}`,
     });
   };
 
