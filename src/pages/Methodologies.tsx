@@ -62,7 +62,7 @@ const Methodologies = () => {
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
               <div>
-                <h2 className="text-3xl font-bold mb-4">My Research Approach</h2>
+                <h2 className="text-3xl font-bold mb-4">Our Research Approach</h2>
                 <p className="text-lg text-gray-700 mb-4">
                   The Africa VC Compass employs a rigorous, multi-faceted research methodology to identify, 
                   catalog, and evaluate venture capital firms actively investing in African startups.
@@ -100,7 +100,7 @@ const Methodologies = () => {
                     </CardHeader>
                     <CardContent>
                       <p className="text-gray-700">
-                        I conducted interviews with VC firm partners, fund managers, and executives. This includes 
+                        We conducted interviews with VC firm partners, fund managers, and executives. This includes 
                         detailed questionnaires about investment criteria, portfolio structure, and fund deployment strategies.
                         Analysis of annual reports, portfolio announcements, and direct engagement with funded startups
                         provided key insights into actual investment patterns.
@@ -116,7 +116,7 @@ const Methodologies = () => {
                     </CardHeader>
                     <CardContent>
                       <p className="text-gray-700">
-                        I systematically reviewed industry reports from organizations like AVCA, Partech Africa, 
+                        We systematically reviewed industry reports from organizations like AVCA, Partech Africa, 
                         and Disrupt Africa. Academic studies, public databases, press releases, 
                         funding announcements, and regulatory filings were thoroughly analyzed. 
                         Cross-validation of data points across multiple sources ensured accuracy.
@@ -132,7 +132,7 @@ const Methodologies = () => {
                     </CardHeader>
                     <CardContent>
                       <p className="text-gray-700">
-                        I mapped connections between VCs, startups, accelerators, and other ecosystem players,
+                        We mapped connections between VCs, startups, accelerators, and other ecosystem players,
                         identifying co-investment patterns, sector specialization trends, and regional investment flows.
                         This allowed for understanding the structure of VC networks and how capital flows
                         through the African startup ecosystem.
@@ -151,7 +151,7 @@ const Methodologies = () => {
                     </CardHeader>
                     <CardContent>
                       <p className="text-gray-700">
-                        I tracked deal flow, investment stages (seed, Series A, B, etc.), ticket sizes, and
+                        We tracked deal flow, investment stages (seed, Series A, B, etc.), ticket sizes, and
                         follow-on investment patterns. This included analyzing investment frequency,
                         portfolio construction strategies, and changes in investment focus over time.
                         Special attention was paid to changes in investment theses and adaptation to market conditions.
@@ -166,7 +166,7 @@ const Methodologies = () => {
                     </CardHeader>
                     <CardContent>
                       <p className="text-gray-700">
-                        I classified investments by industry vertical (fintech, healthtech, agritech, etc.)
+                        We classified investments by industry vertical (fintech, healthtech, agritech, etc.)
                         and conducted comparative analysis across sectors. This included tracking
                         emerging sector trends, investment concentration, and identifying underserved 
                         sectors with growth potential. Sector-specific return profiles were also evaluated.
@@ -181,7 +181,7 @@ const Methodologies = () => {
                     </CardHeader>
                     <CardContent>
                       <p className="text-gray-700">
-                        I mapped investment distribution across African regions and countries,
+                        We mapped investment distribution across African regions and countries,
                         identifying investment hotspots and emerging markets. Analysis included
                         comparing investment allocation across different markets,
                         country-specific investment barriers, and strategic geographic positioning
@@ -201,7 +201,7 @@ const Methodologies = () => {
                     </CardHeader>
                     <CardContent>
                       <p className="text-gray-700">
-                        I conducted validation interviews with ecosystem stakeholders including
+                        We conducted validation interviews with ecosystem stakeholders including
                         entrepreneurs, industry experts, and policy makers. This helped verify
                         findings, identify blind spots, and incorporate diverse perspectives.
                         Feedback sessions with VC representatives ensured accurate representation
@@ -217,7 +217,7 @@ const Methodologies = () => {
                     </CardHeader>
                     <CardContent>
                       <p className="text-gray-700">
-                        I analyzed portfolio company performance metrics where available, including
+                        We analyzed portfolio company performance metrics where available, including
                         growth rates, follow-on funding success, market traction, and exits.
                         This provided insights into the effectiveness of various VC investment
                         strategies and their actual market outcomes. Success patterns across
@@ -233,7 +233,7 @@ const Methodologies = () => {
                     </CardHeader>
                     <CardContent>
                       <p className="text-gray-700">
-                        I compared African VC investment patterns with global benchmarks and
+                        We compared African VC investment patterns with global benchmarks and
                         other emerging markets. This contextualized findings within broader
                         venture capital trends and highlighted unique aspects of the African
                         VC landscape. Comparative analysis included investment terms, 
@@ -312,7 +312,7 @@ const Methodologies = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-700">
-                    I studied how VCs conduct technological, market, financial, and legal due diligence
+                    We studied how VCs conduct technological, market, financial, and legal due diligence
                     on potential investments. This included evaluation of proprietary deal flow channels,
                     screening criteria, and decision-making processes. Special attention was paid to
                     Africa-specific due diligence challenges and adaptations.
@@ -328,7 +328,7 @@ const Methodologies = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-700">
-                    I analyzed how VCs evaluate founding teams, including experience assessment methods,
+                    We analyzed how VCs evaluate founding teams, including experience assessment methods,
                     background verification approaches, and criteria for determining team capability.
                     This included studying the importance placed on local market knowledge,
                     previous entrepreneurial experience, and team composition diversity.
@@ -344,7 +344,7 @@ const Methodologies = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-700">
-                    I explored methodologies used by VCs to determine market size, growth potential,
+                    We explored methodologies used by VCs to determine market size, growth potential,
                     competitive landscape, and entry barriers for African startups. This included
                     analysis of tools and frameworks used for market sizing in emerging economies
                     with limited data availability and high market uncertainty.
@@ -364,7 +364,7 @@ const Methodologies = () => {
                 </AccordionTrigger>
                 <AccordionContent className="text-gray-700">
                   <p className="mb-4">
-                    I analyzed how African VCs measure investment performance across multiple dimensions:
+                    We analyzed how African VCs measure investment performance across multiple dimensions:
                   </p>
                   <ul className="list-disc pl-6 space-y-2">
                     <li>Financial return metrics (IRR, MOIC, DPI, TVPI) interpretation and benchmarking</li>
@@ -382,7 +382,7 @@ const Methodologies = () => {
                 </AccordionTrigger>
                 <AccordionContent className="text-gray-700">
                   <p className="mb-4">
-                    I documented approaches to evaluating and mitigating investment risks:
+                    We documented approaches to evaluating and mitigating investment risks:
                   </p>
                   <ul className="list-disc pl-6 space-y-2">
                     <li>Currency risk management strategies specific to African markets</li>
@@ -400,7 +400,7 @@ const Methodologies = () => {
                 </AccordionTrigger>
                 <AccordionContent className="text-gray-700">
                   <p className="mb-4">
-                    I researched investment terms and structures used in African venture deals:
+                    We researched investment terms and structures used in African venture deals:
                   </p>
                   <ul className="list-disc pl-6 space-y-2">
                     <li>Equity structures, valuations, and term sheet provisions commonly used</li>
@@ -418,7 +418,7 @@ const Methodologies = () => {
                 </AccordionTrigger>
                 <AccordionContent className="text-gray-700">
                   <p className="mb-4">
-                    I analyzed post-investment management approaches:
+                    We analyzed post-investment management approaches:
                   </p>
                   <ul className="list-disc pl-6 space-y-2">
                     <li>Board representation practices and governance approaches</li>
@@ -444,7 +444,7 @@ const Methodologies = () => {
                     private transaction details, and rapidly evolving ecosystems.
                   </p>
                   <p className="text-gray-700">
-                    My research approach addresses these challenges through multi-source 
+                    Our research approach addresses these challenges through multi-source 
                     triangulation, primary data collection, local ecosystem engagement, 
                     and continuous database updating to ensure comprehensive and accurate 
                     representation of the African VC landscape.
@@ -462,7 +462,7 @@ const Methodologies = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-700 mb-4">
-                    My research documentation includes:
+                    Our research documentation includes:
                   </p>
                   <ul className="list-disc pl-6 space-y-2 text-gray-700">
                     <li>Comprehensive VC firm profiles with standardized information architecture</li>
@@ -481,7 +481,7 @@ const Methodologies = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-700 mb-4">
-                    My approach to identifying and analyzing investment trends includes:
+                    Our approach to identifying and analyzing investment trends includes:
                   </p>
                   <ul className="list-disc pl-6 space-y-2 text-gray-700">
                     <li>Longitudinal tracking of investment patterns over time</li>
