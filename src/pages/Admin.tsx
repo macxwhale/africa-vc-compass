@@ -246,7 +246,7 @@ const Admin = () => {
             </div>
             
             {!isSupabaseConnected && (
-              <Alert variant="warning" className="mb-6">
+              <Alert variant="destructive" className="mb-6">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertTitle>Database connection not detected</AlertTitle>
                 <AlertDescription>
