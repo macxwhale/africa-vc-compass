@@ -1,3 +1,4 @@
+
 import { createContext, useState, useEffect, useContext, ReactNode } from "react";
 import { industries as initialIndustries, stages as initialStages, regions as initialRegions, vcFirms as initialVcFirms, VCFirm } from "@/data/vcData";
 import { supabase, isSupabaseConfigured, vcFirmService } from "@/services/supabaseService";
@@ -75,7 +76,7 @@ const createTablesIfNeeded = async () => {
     `);
     
     // Check if we can access any of the tables
-    const { data, error } = await supabase.from('regions').select('count');
+    const { data: regionsData, error } = await supabase.from('regions').select('count');
     if (error) {
       console.error('Tables need to be created manually in Supabase dashboard:', error.message);
       return false;
