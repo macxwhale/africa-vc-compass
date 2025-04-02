@@ -1,3 +1,4 @@
+
 import { createContext, useState, useEffect, useContext, ReactNode } from "react";
 import { industries as initialIndustries, stages as initialStages, regions as initialRegions, vcFirms as initialVcFirms, VCFirm } from "@/data/vcData";
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
@@ -87,6 +88,73 @@ interface DataContextType {
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
+
+// Function to create the necessary tables in Supabase if they don't exist
+const createTablesIfNeeded = async () => {
+  if (!isSupabaseConfigured) return;
+
+  try {
+    // Define SQL statements to create tables if they don't exist
+    const createTableStatements = [
+      `
+      CREATE TABLE IF NOT EXISTS regions (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL
+      )
+      `,
+      `
+      CREATE TABLE IF NOT EXISTS industries (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL
+      )
+      `,
+      `
+      CREATE TABLE IF NOT EXISTS stages (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL
+      )
+      `,
+      `
+      CREATE TABLE IF NOT EXISTS vc_firms (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        logo TEXT,
+        description TEXT,
+        website TEXT,
+        headquarters TEXT,
+        "foundedYear" INTEGER,
+        "investmentFocus" TEXT[],
+        industries TEXT[],
+        "stagePreference" TEXT[],
+        "ticketSize" TEXT,
+        "regionsOfInterest" TEXT[],
+        "portfolioCompanies" TEXT[],
+        "keyPartners" JSONB,
+        "contactInfo" JSONB
+      )
+      `
+    ];
+
+    // Execute each statement to create tables
+    for (const sql of createTableStatements) {
+      const { error } = await supabase.rpc('exec', { query: sql });
+      if (error) {
+        console.error('Error creating table:', error);
+        
+        // If the 'exec' RPC function doesn't exist, we need to handle it differently
+        if (error.message.includes('function "exec" does not exist')) {
+          console.log('The exec RPC function does not exist. Tables need to be created manually in the Supabase dashboard.');
+          return false;
+        }
+      }
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error creating tables:', error);
+    return false;
+  }
+};
 
 export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [regionItems, setRegionItems] = useState<Item[]>([]);
@@ -221,18 +289,36 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       // Only attempt to connect to Supabase if it's configured
       if (isSupabaseConfigured) {
         try {
+          // First, create the tables if they don't exist
+          const tablesCreated = await createTablesIfNeeded();
+          
+          if (!tablesCreated) {
+            console.log("Tables could not be created automatically. You may need to create them manually.");
+          }
+          
           // Check if we can connect to Supabase by making a simple query
           const { data, error } = await supabase.from('regions').select('count');
           
           if (error) {
             console.error("Failed to connect to Supabase:", error);
             setIsSupabaseConnected(false);
+            
+            if (error.message.includes("does not exist")) {
+              console.log("Tables don't exist in Supabase. Going to try creating them...");
+              
+              // Retry creating tables one more time
+              await createTablesIfNeeded();
+              
+              // Try to initialize the tables with default data
+              await initializeDatabaseWithDefaultData(regionsData, industriesData, stagesData, vcFirmsData);
+            }
           } else {
             console.log("Successfully connected to Supabase!");
             setIsSupabaseConnected(true);
             
             // Now try to load data from Supabase
             await loadDataFromSupabase(regionsData, industriesData, stagesData, vcFirmsData);
+            setIsLoading(false);
             return; // Exit early as we've already set the state in loadDataFromSupabase
           }
         } catch (error) {
@@ -260,6 +346,58 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       setIsSupabaseConnected(false);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Helper function to initialize the database with default data
+  const initializeDatabaseWithDefaultData = async (
+    defaultRegions: Item[], 
+    defaultIndustries: Item[], 
+    defaultStages: Item[],
+    defaultVcFirms: VCFirm[]
+  ) => {
+    try {
+      // Try to insert the default data into each table
+      const { error: regionsError } = await supabase.from('regions').insert(defaultRegions);
+      if (regionsError) {
+        console.error('Error initializing regions:', regionsError);
+      } else {
+        console.log('Successfully initialized regions table with default data');
+      }
+      
+      const { error: industriesError } = await supabase.from('industries').insert(defaultIndustries);
+      if (industriesError) {
+        console.error('Error initializing industries:', industriesError);
+      } else {
+        console.log('Successfully initialized industries table with default data');
+      }
+      
+      const { error: stagesError } = await supabase.from('stages').insert(defaultStages);
+      if (stagesError) {
+        console.error('Error initializing stages:', stagesError);
+      } else {
+        console.log('Successfully initialized stages table with default data');
+      }
+      
+      const { error: vcFirmsError } = await supabase.from('vc_firms').insert(defaultVcFirms);
+      if (vcFirmsError) {
+        console.error('Error initializing VC firms:', vcFirmsError);
+      } else {
+        console.log('Successfully initialized VC firms table with default data');
+      }
+      
+      // Set the state with the default data
+      setRegionItems(defaultRegions);
+      setIndustryItems(defaultIndustries);
+      setStageItems(defaultStages);
+      setVcFirms(defaultVcFirms);
+      
+      // If we got here without throwing, we have a Supabase connection
+      setIsSupabaseConnected(true);
+      
+    } catch (error) {
+      console.error('Error initializing database with default data:', error);
+      throw error;
     }
   };
   
