@@ -27,7 +27,7 @@ const Footer = () => {
             <h4 className="font-semibold mb-4">Resources</h4>
             <ul className="space-y-2">
               <li><Link to="/about" className="text-sm opacity-80 hover:opacity-100">About Us</Link></li>
-              <li><Link to="/methodology" className="text-sm opacity-80 hover:opacity-100">Methodology</Link></li>
+              <li><Link to="/methodologies" className="text-sm opacity-80 hover:opacity-100">Methodology</Link></li>
               <li><Link to="/contact" className="text-sm opacity-80 hover:opacity-100">Contact</Link></li>
               <li><Link to="/submit" className="text-sm opacity-80 hover:opacity-100">Submit a VC</Link></li>
             </ul>
