@@ -47,11 +47,18 @@ const Index = () => {
             <p className="max-w-2xl mx-auto mb-8">
               Explore our comprehensive directory of venture capital firms investing in African startups.
             </p>
-            <Button asChild size="lg" className="bg-africa-gold hover:bg-africa-gold-light text-black font-semibold">
-              <Link to="/directory">
-                Explore the Directory
-              </Link>
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button asChild size="lg" className="bg-africa-gold hover:bg-africa-gold-light text-black font-semibold">
+                <Link to="/directory">
+                  Explore the Directory
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
+                <Link to="/methodologies">
+                  Research Methodologies
+                </Link>
+              </Button>
+            </div>
           </div>
         </section>
       </main>

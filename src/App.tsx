@@ -15,6 +15,7 @@ import DataProvider from "./components/providers/DataProvider";
 import RegionsPage from "./pages/RegionsPage";
 import IndustriesPage from "./pages/IndustriesPage";
 import SupabaseSetup from "./pages/SupabaseSetup";
+import Methodologies from "./pages/Methodologies";
 
 // Create a stable QueryClient with caching configuration
 const queryClient = new QueryClient({
@@ -43,6 +44,7 @@ const App = () => {
               <Route path="/admin" element={<Admin />} />
               <Route path="/regions" element={<RegionsPage />} />
               <Route path="/industries" element={<IndustriesPage />} />
+              <Route path="/methodologies" element={<Methodologies />} />
               <Route path="/supabase-setup" element={<SupabaseSetup />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
