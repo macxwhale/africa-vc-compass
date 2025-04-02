@@ -253,9 +253,9 @@ const Admin = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-4">
-                      <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-                        <p className="text-yellow-700">
-                          Changes are stored in React Context and will persist during your session.
+                      <div className="bg-green-50 border-l-4 border-green-400 p-4">
+                        <p className="text-green-700">
+                          Changes are stored in your browser and will persist between sessions.
                         </p>
                       </div>
                       
@@ -286,9 +286,9 @@ const Admin = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-4">
-                      <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-                        <p className="text-yellow-700">
-                          Changes are stored in React Context and will persist during your session.
+                      <div className="bg-green-50 border-l-4 border-green-400 p-4">
+                        <p className="text-green-700">
+                          Changes are stored in your browser and will persist between sessions.
                         </p>
                       </div>
                       
@@ -319,9 +319,9 @@ const Admin = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-4">
-                      <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-                        <p className="text-yellow-700">
-                          Changes are stored in React Context and will persist during your session.
+                      <div className="bg-green-50 border-l-4 border-green-400 p-4">
+                        <p className="text-green-700">
+                          Changes are stored in your browser and will persist between sessions.
                         </p>
                       </div>
                       
@@ -352,9 +352,9 @@ const Admin = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-4">
-                      <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-                        <p className="text-yellow-700">
-                          Changes are stored in React Context and will persist during your session.
+                      <div className="bg-green-50 border-l-4 border-green-400 p-4">
+                        <p className="text-green-700">
+                          Changes are stored in your browser and will persist between sessions.
                         </p>
                       </div>
                       

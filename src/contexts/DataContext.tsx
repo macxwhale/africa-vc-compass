@@ -23,6 +23,13 @@ interface DataContextType {
   getVCsByRegion: (region: string, limit?: number) => VCFirm[];
 }
 
+const DATA_STORAGE_KEY = {
+  REGIONS: 'africa_vc_regions',
+  INDUSTRIES: 'africa_vc_industries',
+  STAGES: 'africa_vc_stages',
+  VC_FIRMS: 'africa_vc_firms'
+};
+
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const DataProvider = ({ children }: { children: ReactNode }) => {
@@ -48,39 +55,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     return limit ? filteredVCs.slice(0, limit) : filteredVCs;
   };
 
-  // Load data from localStorage on component mount
-  useEffect(() => {
-    // Try to get stored data from localStorage first
-    const loadStoredItems = (key: string, initialItems: string[]) => {
-      try {
-        const storedItems = localStorage.getItem(key);
-        if (storedItems) {
-          return JSON.parse(storedItems);
-        }
-      } catch (error) {
-        console.error(`Error loading ${key} from localStorage:`, error);
-      }
-      // Fall back to initial data if nothing in localStorage or error occurs
-      return initialItems.map((name, index) => ({ id: `${key.toLowerCase()}-${index}`, name }));
-    };
-
-    setRegionItems(loadStoredItems('regions', initialRegions));
-    setIndustryItems(loadStoredItems('industries', initialIndustries));
-    setStageItems(loadStoredItems('stages', initialStages));
-
-    // Try to load VC firms
-    try {
-      const storedVcFirms = localStorage.getItem('vcFirms');
-      if (storedVcFirms) {
-        setVcFirms(JSON.parse(storedVcFirms));
-      }
-    } catch (error) {
-      console.error('Error loading VC firms from localStorage:', error);
-    }
-  }, []);
-
-  // Save data to localStorage whenever it changes
-  const saveToLocalStorage = (key: string, data: any) => {
+  // Save data to localStorage function
+  const saveToLocalStorage = <T,>(key: string, data: T): void => {
     try {
       localStorage.setItem(key, JSON.stringify(data));
     } catch (error) {
@@ -88,22 +64,73 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Watch for changes in the state and update localStorage
-  useEffect(() => {
-    saveToLocalStorage('regions', regionItems);
-  }, [regionItems]);
+  // Load data from localStorage function
+  const loadFromLocalStorage = <T,>(key: string, defaultData: T): T => {
+    try {
+      const storedData = localStorage.getItem(key);
+      if (storedData) {
+        return JSON.parse(storedData) as T;
+      }
+    } catch (error) {
+      console.error(`Error loading ${key} from localStorage:`, error);
+    }
+    return defaultData;
+  };
 
-  useEffect(() => {
-    saveToLocalStorage('industries', industryItems);
-  }, [industryItems]);
+  // Set regions with persistence
+  const setPersistentRegionItems = (items: Item[]) => {
+    setRegionItems(items);
+    saveToLocalStorage(DATA_STORAGE_KEY.REGIONS, items);
+  };
 
-  useEffect(() => {
-    saveToLocalStorage('stages', stageItems);
-  }, [stageItems]);
+  // Set industries with persistence
+  const setPersistentIndustryItems = (items: Item[]) => {
+    setIndustryItems(items);
+    saveToLocalStorage(DATA_STORAGE_KEY.INDUSTRIES, items);
+  };
 
+  // Set stages with persistence
+  const setPersistentStageItems = (items: Item[]) => {
+    setStageItems(items);
+    saveToLocalStorage(DATA_STORAGE_KEY.STAGES, items);
+  };
+
+  // Set VC firms with persistence
+  const setPersistentVcFirms = (firms: VCFirm[]) => {
+    setVcFirms(firms);
+    saveToLocalStorage(DATA_STORAGE_KEY.VC_FIRMS, firms);
+  };
+
+  // Load all data on component mount
   useEffect(() => {
-    saveToLocalStorage('vcFirms', vcFirms);
-  }, [vcFirms]);
+    // Initialize regions
+    const storedRegions = loadFromLocalStorage<Item[]>(
+      DATA_STORAGE_KEY.REGIONS, 
+      initialRegions.map((name, index) => ({ id: `region-${index}`, name }))
+    );
+    setRegionItems(storedRegions);
+
+    // Initialize industries
+    const storedIndustries = loadFromLocalStorage<Item[]>(
+      DATA_STORAGE_KEY.INDUSTRIES, 
+      initialIndustries.map((name, index) => ({ id: `industry-${index}`, name }))
+    );
+    setIndustryItems(storedIndustries);
+
+    // Initialize stages
+    const storedStages = loadFromLocalStorage<Item[]>(
+      DATA_STORAGE_KEY.STAGES, 
+      initialStages.map((name, index) => ({ id: `stage-${index}`, name }))
+    );
+    setStageItems(storedStages);
+
+    // Initialize VC firms
+    const storedVcFirms = loadFromLocalStorage<VCFirm[]>(
+      DATA_STORAGE_KEY.VC_FIRMS, 
+      initialVcFirms
+    );
+    setVcFirms(storedVcFirms);
+  }, []);
 
   return (
     <DataContext.Provider 
@@ -112,10 +139,10 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         industryItems, 
         stageItems,
         vcFirms,
-        setRegionItems, 
-        setIndustryItems, 
-        setStageItems,
-        setVcFirms,
+        setRegionItems: setPersistentRegionItems, 
+        setIndustryItems: setPersistentIndustryItems, 
+        setStageItems: setPersistentStageItems,
+        setVcFirms: setPersistentVcFirms,
         regionNames,
         industryNames,
         stageNames,
