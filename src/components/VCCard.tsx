@@ -11,13 +11,6 @@ interface VCCardProps {
 }
 
 const VCCard = ({ vc }: VCCardProps) => {
-  // Prevent link click propagation
-  const handleWebsiteLinkClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    window.open(vc.website, '_blank');
-  };
-  
   return (
     <Link to={`/vc/${vc.id}`}>
       <Card className="h-full card-hover">
@@ -68,13 +61,16 @@ const VCCard = ({ vc }: VCCardProps) => {
           
           <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
             <span className="text-sm font-medium">Founded {vc.foundedYear}</span>
-            <button 
-              onClick={handleWebsiteLinkClick}
+            <a 
+              href={vc.website} 
+              target="_blank" 
+              rel="noopener noreferrer"
               className="flex items-center text-africa-blue-light hover:text-africa-blue"
+              onClick={(e) => e.stopPropagation()}
             >
               <span className="text-sm">Website</span>
               <ExternalLink className="ml-1 h-3 w-3" />
-            </button>
+            </a>
           </div>
         </CardContent>
       </Card>

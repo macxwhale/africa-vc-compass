@@ -1,5 +1,5 @@
 
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import { vcFirms } from "@/data/vcData";
 import VCCard from "./VCCard";
 import { Button } from "@/components/ui/button";
@@ -7,9 +7,14 @@ import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 
 const FeaturedVCs = () => {
-  // Use useMemo to prevent unnecessary re-renders
-  const featured = useMemo(() => vcFirms.slice(0, 3), []);
+  const [featured, setFeatured] = useState(vcFirms.slice(0, 3));
   
+  // You could implement logic to randomly select featured VCs
+  useEffect(() => {
+    // For now we'll just use the first 3 VCs as featured
+    setFeatured(vcFirms.slice(0, 3));
+  }, []);
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">

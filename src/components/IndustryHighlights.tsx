@@ -4,29 +4,23 @@ import { Card, CardContent } from "@/components/ui/card";
 import { industries } from "@/data/vcData";
 import { Link } from "react-router-dom";
 import { useData } from "@/contexts/DataContext";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import VCCard from "./VCCard";
 
 const IndustryHighlights = () => {
   const { vcFirms, getVCsByIndustry } = useData();
   const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
   
-  // Memoize highlighted industries to prevent re-renders
-  const highlightedIndustries = useMemo(() => industries.slice(0, 7), []);
+  // Take first 7 industries for the highlights section
+  const highlightedIndustries = industries.slice(0, 7);
   
-  // Memoize industry VCs for the selected industry
-  const industryVCs = useMemo(() => {
-    return selectedIndustry ? getVCsByIndustry(selectedIndustry, 6) : [];
-  }, [selectedIndustry, getVCsByIndustry]);
-
-  // Memoize VC counts to avoid recalculation on every render
-  const getVCCount = useMemo(() => {
-    const counts: Record<string, number> = {};
-    highlightedIndustries.forEach(industry => {
-      counts[industry] = vcFirms.filter(vc => vc.industries.includes(industry)).length;
-    });
-    return (industry: string) => counts[industry] || 0;
-  }, [vcFirms, highlightedIndustries]);
+  // Count VCs per industry for accurate display
+  const getVCCount = (industry: string) => {
+    return vcFirms.filter(vc => vc.industries.includes(industry)).length;
+  };
+  
+  // Get VCs for the selected industry
+  const industryVCs = selectedIndustry ? getVCsByIndustry(selectedIndustry, 6) : [];
   
   return (
     <div>
@@ -55,11 +49,12 @@ const IndustryHighlights = () => {
         ))}
       </div>
       
+      {/* Display VCs for selected industry */}
       {selectedIndustry && industryVCs.length > 0 && (
         <div className="mt-8">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-medium">Top VC Firms in {selectedIndustry}</h3>
-            <Link to="/industries" className="text-africa-blue hover:underline text-sm">
+            <Link to={`/industries`} className="text-africa-blue hover:underline text-sm">
               View all from this sector →
             </Link>
           </div>

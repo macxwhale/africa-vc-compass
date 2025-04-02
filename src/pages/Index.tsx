@@ -1,5 +1,4 @@
 
-import { memo } from "react";
 import Hero from "@/components/Hero";
 import StatsHighlight from "@/components/StatsHighlight";
 import FeaturedVCs from "@/components/FeaturedVCs";
@@ -10,7 +9,6 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
-// Use memo to prevent unnecessary re-renders of the entire page
 const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
@@ -63,4 +61,4 @@ const Index = () => {
   );
 };
 
-export default memo(Index);
+export default Index;

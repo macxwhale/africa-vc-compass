@@ -18,22 +18,15 @@ import SupabaseSetup from "./pages/SupabaseSetup";
 
 const App = () => {
   // Create a new QueryClient instance inside the component to ensure proper React hooks usage
-  const [queryClient] = useState(() => new QueryClient({
-    defaultOptions: {
-      queries: {
-        refetchOnWindowFocus: false, // Prevent refetching when window regains focus
-        retry: false, // Disable retries to prevent re-renders
-      },
-    },
-  }));
+  const [queryClient] = useState(() => new QueryClient());
 
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <DataProvider>
+          <Toaster />
+          <Sonner />
           <BrowserRouter>
-            <Toaster />
-            <Sonner />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/directory" element={<Directory />} />
