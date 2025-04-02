@@ -7,7 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { useData } from "@/contexts/DataContext";
 import { Link } from "react-router-dom";
 import VCCard from "@/components/VCCard";
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
 const StagesPage = () => {
   const { vcFirms, stageNames } = useData();
@@ -29,6 +30,12 @@ const StagesPage = () => {
     name: stage,
     value: stageCounts[stage],
     color: getStageColor(index)
+  }));
+  
+  // Format bar chart data
+  const barChartData = sortedStages.map((stage) => ({
+    name: stage,
+    value: stageCounts[stage]
   }));
   
   // Get VCs for selected stage
@@ -61,11 +68,11 @@ const StagesPage = () => {
             <h1 className="text-3xl md:text-4xl font-bold text-africa-blue mb-2">Investment Stages</h1>
             <p className="text-gray-600 mb-6">Explore venture capital firms by their preferred investment stages in Africa</p>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="md:col-span-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <div>
                 <Card>
                   <CardContent className="p-6">
-                    <h3 className="text-lg font-medium mb-4">Investment Stage Distribution</h3>
+                    <h3 className="text-lg font-medium mb-4">Investment Stage Distribution (Pie Chart)</h3>
                     
                     <div className="h-[350px]">
                       <ResponsiveContainer width="100%" height="100%">
@@ -99,11 +106,60 @@ const StagesPage = () => {
               </div>
               
               <div>
+                <Card>
+                  <CardContent className="p-6">
+                    <h3 className="text-lg font-medium mb-4">Investment Stage Distribution (Bar Chart)</h3>
+                    
+                    <div className="h-[350px]">
+                      <ChartContainer
+                        config={{
+                          stage: {
+                            theme: {
+                              light: "var(--africa-blue, #1A365D)",
+                              dark: "var(--africa-blue-light, #2C5282)",
+                            },
+                            label: "VCs per Stage",
+                          },
+                        }}
+                      >
+                        <BarChart data={barChartData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis 
+                            dataKey="name" 
+                            angle={-45} 
+                            textAnchor="end" 
+                            height={60}
+                            tick={{ fontSize: 12 }}
+                          />
+                          <YAxis />
+                          <ChartTooltip
+                            content={props => {
+                              if (!props.active || !props.payload?.length) {
+                                return null;
+                              }
+                              return (
+                                <ChartTooltipContent
+                                  className="border-none"
+                                  {...props}
+                                  formatter={(value) => [`${value} VCs`, 'Count']}
+                                />
+                              );
+                            }}
+                          />
+                          <Bar dataKey="value" fill="var(--africa-blue, #1A365D)" name="VCs per Stage" />
+                        </BarChart>
+                      </ChartContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              
+              <div className="md:col-span-2">
                 <Card className="h-full">
                   <CardContent className="p-4">
                     <h3 className="text-lg font-medium mb-4">Browse by Investment Stage</h3>
                     
-                    <div className="space-y-3 max-h-[350px] overflow-y-auto pr-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 max-h-[200px] overflow-y-auto pr-2">
                       {stageNames.map((stage) => (
                         <div 
                           key={stage} 
@@ -111,9 +167,9 @@ const StagesPage = () => {
                           onClick={() => setSelectedStage(stage === selectedStage ? null : stage)}
                         >
                           <div className="flex items-center justify-between">
-                            <span className="font-medium">{stage}</span>
-                            <Badge variant={selectedStage === stage ? "secondary" : "outline"}>
-                              {stageCounts[stage] || 0} VCs
+                            <span className="font-medium text-sm">{stage}</span>
+                            <Badge variant={selectedStage === stage ? "secondary" : "outline"} className="text-xs">
+                              {stageCounts[stage] || 0}
                             </Badge>
                           </div>
                         </div>
