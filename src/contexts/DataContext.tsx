@@ -1,6 +1,6 @@
 
 import { createContext, useState, useEffect, useContext, ReactNode } from "react";
-import { industries, stages, regions, vcFirms as initialVcFirms, VCFirm } from "@/data/vcData";
+import { industries as initialIndustries, stages as initialStages, regions as initialRegions, vcFirms as initialVcFirms, VCFirm } from "@/data/vcData";
 
 interface Item {
   id: string;
@@ -48,13 +48,62 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     return limit ? filteredVCs.slice(0, limit) : filteredVCs;
   };
 
-  // Initialize data on component mount
+  // Load data from localStorage on component mount
   useEffect(() => {
-    // Convert string arrays to Item arrays with IDs
-    setRegionItems(regions.map((name, index) => ({ id: `region-${index}`, name })));
-    setIndustryItems(industries.map((name, index) => ({ id: `industry-${index}`, name })));
-    setStageItems(stages.map((name, index) => ({ id: `stage-${index}`, name })));
+    // Try to get stored data from localStorage first
+    const loadStoredItems = (key: string, initialItems: string[]) => {
+      try {
+        const storedItems = localStorage.getItem(key);
+        if (storedItems) {
+          return JSON.parse(storedItems);
+        }
+      } catch (error) {
+        console.error(`Error loading ${key} from localStorage:`, error);
+      }
+      // Fall back to initial data if nothing in localStorage or error occurs
+      return initialItems.map((name, index) => ({ id: `${key.toLowerCase()}-${index}`, name }));
+    };
+
+    setRegionItems(loadStoredItems('regions', initialRegions));
+    setIndustryItems(loadStoredItems('industries', initialIndustries));
+    setStageItems(loadStoredItems('stages', initialStages));
+
+    // Try to load VC firms
+    try {
+      const storedVcFirms = localStorage.getItem('vcFirms');
+      if (storedVcFirms) {
+        setVcFirms(JSON.parse(storedVcFirms));
+      }
+    } catch (error) {
+      console.error('Error loading VC firms from localStorage:', error);
+    }
   }, []);
+
+  // Save data to localStorage whenever it changes
+  const saveToLocalStorage = (key: string, data: any) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(data));
+    } catch (error) {
+      console.error(`Error saving ${key} to localStorage:`, error);
+    }
+  };
+
+  // Watch for changes in the state and update localStorage
+  useEffect(() => {
+    saveToLocalStorage('regions', regionItems);
+  }, [regionItems]);
+
+  useEffect(() => {
+    saveToLocalStorage('industries', industryItems);
+  }, [industryItems]);
+
+  useEffect(() => {
+    saveToLocalStorage('stages', stageItems);
+  }, [stageItems]);
+
+  useEffect(() => {
+    saveToLocalStorage('vcFirms', vcFirms);
+  }, [vcFirms]);
 
   return (
     <DataContext.Provider 

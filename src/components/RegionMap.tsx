@@ -11,24 +11,26 @@ const RegionMap = () => {
   const { regionNames, vcFirms, getVCsByRegion } = useData();
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
 
+  // Generate colors for regions
+  const getRegionColor = (name: string): string => {
+    if (name.includes("East")) return "bg-emerald-500";
+    if (name.includes("West")) return "bg-amber-500";
+    if (name.includes("North")) return "bg-sky-500";
+    if (name.includes("Southern")) return "bg-orange-500";
+    if (name.includes("Central")) return "bg-lime-500";
+    return "bg-africa-blue"; // Default color
+  };
+
   // Count VCs per region and filter out Pan-African
   const regionsWithCounts = regionNames
     .filter(name => name !== "Pan-African")
     .map((name) => {
       const count = vcFirms.filter(vc => vc.regionsOfInterest.includes(name)).length;
       
-      // Assign colors based on region names
-      let color = "bg-africa-blue";
-      if (name.includes("East")) color = "bg-emerald-500";
-      if (name.includes("West")) color = "bg-amber-500";
-      if (name.includes("North")) color = "bg-sky-500";
-      if (name.includes("Southern")) color = "bg-orange-500";
-      if (name.includes("Central")) color = "bg-lime-500";
-      
       return {
         name,
         count,
-        color
+        color: getRegionColor(name)
       };
     }).sort((a, b) => b.count - a.count);
 
@@ -41,6 +43,26 @@ const RegionMap = () => {
     "Southern Africa": { top: "70%", left: "55%" },
     // Default position for any other regions that might be added
     "Pan-African": { top: "50%", left: "50%" }
+  };
+
+  // Helper function to get position for a region, with fallback positions for custom regions
+  const getRegionPosition = (regionName: string) => {
+    if (regionPositions[regionName]) {
+      return regionPositions[regionName];
+    }
+    
+    // Generate a semi-random but stable position for custom regions
+    // This uses the string length to generate a predictable position
+    const hashCode = regionName.split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+    
+    // Use the hash to generate a position between 30% and 60% for top and left
+    const topPercent = 30 + Math.abs(hashCode % 30);
+    const leftPercent = 30 + Math.abs((hashCode >> 4) % 30);
+    
+    return { top: `${topPercent}%`, left: `${leftPercent}%` };
   };
 
   // Get VCs for the selected region
@@ -69,8 +91,8 @@ const RegionMap = () => {
                 
                 {/* Region markers with VC counts */}
                 {regionsWithCounts.map((region) => {
-                  // Get positions from the predefined positions map with a fallback
-                  const position = regionPositions[region.name] || { top: "50%", left: "50%" };
+                  // Get positions with our improved positioning function
+                  const position = getRegionPosition(region.name);
                   const countries = regionCountriesMap[region.name as keyof typeof regionCountriesMap];
                   const isSelected = selectedRegion === region.name;
                   
@@ -79,7 +101,7 @@ const RegionMap = () => {
                       key={region.name}
                       className={`absolute transform -translate-x-1/2 -translate-y-1/2 transition-all ${isSelected ? 'scale-110' : 'hover:scale-110'}`}
                       style={{ top: position.top, left: position.left }}
-                      title={countries?.join(", ")}
+                      title={countries?.join(", ") || region.name}
                       onClick={() => setSelectedRegion(isSelected ? null : region.name)}
                     >
                       <div className="flex flex-col items-center cursor-pointer">
@@ -109,7 +131,7 @@ const RegionMap = () => {
                     key={region.name}
                     className={`flex items-center justify-between p-3 ${selectedRegion === region.name ? 'bg-gray-100' : 'hover:bg-gray-50'} rounded-md transition-colors cursor-pointer`}
                     onClick={() => setSelectedRegion(selectedRegion === region.name ? null : region.name)}
-                    title={regionCountriesMap[region.name as keyof typeof regionCountriesMap]?.join(", ")}
+                    title={regionCountriesMap[region.name as keyof typeof regionCountriesMap]?.join(", ") || region.name}
                   >
                     <div className="flex items-center">
                       <div className={`w-3 h-3 rounded-full ${region.color} mr-2`}></div>
