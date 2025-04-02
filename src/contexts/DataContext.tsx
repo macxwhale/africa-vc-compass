@@ -1,4 +1,3 @@
-
 import { createContext, useState, useEffect, useContext, ReactNode } from "react";
 import { industries as initialIndustries, stages as initialStages, regions as initialRegions, vcFirms as initialVcFirms, VCFirm } from "@/data/vcData";
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
@@ -85,6 +84,9 @@ interface DataContextType {
   getVCsByIndustry: (industry: string, limit?: number) => VCFirm[];
   getVCsByRegion: (region: string, limit?: number) => VCFirm[];
   isSupabaseConnected: boolean;
+  addVCFirm: (firm: VCFirm) => Promise<void>;
+  updateVCFirm: (firm: VCFirm) => Promise<void>;
+  deleteVCFirm: (id: string) => Promise<void>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -181,6 +183,75 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     return limit ? filteredVCs.slice(0, limit) : filteredVCs;
   };
 
+  // CRUD Operations for VC Firms
+  const addVCFirm = async (firm: VCFirm) => {
+    try {
+      if (!isSupabaseConnected) {
+        // Local only operation
+        setVcFirms([...vcFirms, firm]);
+        return;
+      }
+
+      // Add to Supabase
+      const { error } = await supabase.from('vc_firms').insert(firm);
+      if (error) throw error;
+      
+      // Update local state
+      setVcFirms([...vcFirms, firm]);
+    } catch (error) {
+      console.error("Error adding VC firm:", error);
+      throw error;
+    }
+  };
+
+  const updateVCFirm = async (firm: VCFirm) => {
+    try {
+      if (!isSupabaseConnected) {
+        // Local only operation
+        setVcFirms(vcFirms.map(f => f.id === firm.id ? firm : f));
+        return;
+      }
+
+      // Update in Supabase
+      const { error } = await supabase
+        .from('vc_firms')
+        .update(firm)
+        .eq('id', firm.id);
+        
+      if (error) throw error;
+      
+      // Update local state
+      setVcFirms(vcFirms.map(f => f.id === firm.id ? firm : f));
+    } catch (error) {
+      console.error("Error updating VC firm:", error);
+      throw error;
+    }
+  };
+
+  const deleteVCFirm = async (id: string) => {
+    try {
+      if (!isSupabaseConnected) {
+        // Local only operation
+        setVcFirms(vcFirms.filter(f => f.id !== id));
+        return;
+      }
+
+      // Delete from Supabase
+      const { error } = await supabase
+        .from('vc_firms')
+        .delete()
+        .eq('id', id);
+        
+      if (error) throw error;
+      
+      // Update local state
+      setVcFirms(vcFirms.filter(f => f.id !== id));
+    } catch (error) {
+      console.error("Error deleting VC firm:", error);
+      throw error;
+    }
+  };
+
   // Set regions and save to database
   const updateRegionItems = async (items: Item[]) => {
     setRegionItems(items);
@@ -250,102 +321,6 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       if (error) throw error;
     } catch (error) {
       console.error('Error saving stages to database:', error);
-    }
-  };
-
-  // Set VC firms and save to database
-  const updateVcFirms = async (firms: VCFirm[]) => {
-    setVcFirms(firms);
-    
-    if (!isSupabaseConnected) {
-      console.log("Supabase not connected. Changes will only persist in memory.");
-      return;
-    }
-    
-    try {
-      // First delete all existing VC firms
-      await supabase.from('vc_firms').delete().neq('id', 'placeholder');
-      
-      // Then insert the new ones
-      const { error } = await supabase.from('vc_firms').insert(firms);
-      
-      if (error) throw error;
-    } catch (error) {
-      console.error('Error saving VC firms to database:', error);
-    }
-  };
-
-  // Test Supabase connection and initialize tables if connected
-  const initializeTablesIfNeeded = async () => {
-    setIsLoading(true);
-    
-    try {
-      // Always set initial data to default values to ensure the app works without Supabase
-      let regionsData = initialRegions.map((name, index) => ({ id: `region-${index}`, name }));
-      let industriesData = initialIndustries.map((name, index) => ({ id: `industry-${index}`, name }));
-      let stagesData = initialStages.map((name, index) => ({ id: `stage-${index}`, name }));
-      let vcFirmsData = initialVcFirms;
-
-      // Only attempt to connect to Supabase if it's configured
-      if (isSupabaseConfigured) {
-        try {
-          // First, create the tables if they don't exist
-          const tablesCreated = await createTablesIfNeeded();
-          
-          if (!tablesCreated) {
-            console.log("Tables could not be created automatically. You may need to create them manually.");
-          }
-          
-          // Check if we can connect to Supabase by making a simple query
-          const { data, error } = await supabase.from('regions').select('count');
-          
-          if (error) {
-            console.error("Failed to connect to Supabase:", error);
-            setIsSupabaseConnected(false);
-            
-            if (error.message.includes("does not exist")) {
-              console.log("Tables don't exist in Supabase. Going to try creating them...");
-              
-              // Retry creating tables one more time
-              await createTablesIfNeeded();
-              
-              // Try to initialize the tables with default data
-              await initializeDatabaseWithDefaultData(regionsData, industriesData, stagesData, vcFirmsData);
-            }
-          } else {
-            console.log("Successfully connected to Supabase!");
-            setIsSupabaseConnected(true);
-            
-            // Now try to load data from Supabase
-            await loadDataFromSupabase(regionsData, industriesData, stagesData, vcFirmsData);
-            setIsLoading(false);
-            return; // Exit early as we've already set the state in loadDataFromSupabase
-          }
-        } catch (error) {
-          console.error("Error checking Supabase connection:", error);
-          setIsSupabaseConnected(false);
-        }
-      } else {
-        console.warn("Supabase credentials are missing. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables to enable Supabase integration.");
-        setIsSupabaseConnected(false);
-      }
-      
-      // If we reach here, we're using local data
-      setRegionItems(regionsData);
-      setIndustryItems(industriesData);
-      setStageItems(stagesData);
-      setVcFirms(vcFirmsData);
-      
-    } catch (error) {
-      console.error('Error initializing database:', error);
-      // In case of error, use the default data
-      setRegionItems(initialRegions.map((name, index) => ({ id: `region-${index}`, name })));
-      setIndustryItems(initialIndustries.map((name, index) => ({ id: `industry-${index}`, name })));
-      setStageItems(initialStages.map((name, index) => ({ id: `stage-${index}`, name })));
-      setVcFirms(initialVcFirms);
-      setIsSupabaseConnected(false);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -486,6 +461,80 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Test Supabase connection and initialize tables if connected
+  const initializeTablesIfNeeded = async () => {
+    setIsLoading(true);
+    
+    try {
+      // Always set initial data to default values to ensure the app works without Supabase
+      let regionsData = initialRegions.map((name, index) => ({ id: `region-${index}`, name }));
+      let industriesData = initialIndustries.map((name, index) => ({ id: `industry-${index}`, name }));
+      let stagesData = initialStages.map((name, index) => ({ id: `stage-${index}`, name }));
+      let vcFirmsData = initialVcFirms;
+
+      // Only attempt to connect to Supabase if it's configured
+      if (isSupabaseConfigured) {
+        try {
+          // First, create the tables if they don't exist
+          const tablesCreated = await createTablesIfNeeded();
+          
+          if (!tablesCreated) {
+            console.log("Tables could not be created automatically. You may need to create them manually.");
+          }
+          
+          // Check if we can connect to Supabase by making a simple query
+          const { data, error } = await supabase.from('regions').select('count');
+          
+          if (error) {
+            console.error("Failed to connect to Supabase:", error);
+            setIsSupabaseConnected(false);
+            
+            if (error.message.includes("does not exist")) {
+              console.log("Tables don't exist in Supabase. Going to try creating them...");
+              
+              // Retry creating tables one more time
+              await createTablesIfNeeded();
+              
+              // Try to initialize the tables with default data
+              await initializeDatabaseWithDefaultData(regionsData, industriesData, stagesData, vcFirmsData);
+            }
+          } else {
+            console.log("Successfully connected to Supabase!");
+            setIsSupabaseConnected(true);
+            
+            // Now try to load data from Supabase
+            await loadDataFromSupabase(regionsData, industriesData, stagesData, vcFirmsData);
+            setIsLoading(false);
+            return; // Exit early as we've already set the state in loadDataFromSupabase
+          }
+        } catch (error) {
+          console.error("Error checking Supabase connection:", error);
+          setIsSupabaseConnected(false);
+        }
+      } else {
+        console.warn("Supabase credentials are missing. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables to enable Supabase integration.");
+        setIsSupabaseConnected(false);
+      }
+      
+      // If we reach here, we're using local data
+      setRegionItems(regionsData);
+      setIndustryItems(industriesData);
+      setStageItems(stagesData);
+      setVcFirms(vcFirmsData);
+      
+    } catch (error) {
+      console.error('Error initializing database:', error);
+      // In case of error, use the default data
+      setRegionItems(initialRegions.map((name, index) => ({ id: `region-${index}`, name })));
+      setIndustryItems(initialIndustries.map((name, index) => ({ id: `industry-${index}`, name })));
+      setStageItems(initialStages.map((name, index) => ({ id: `stage-${index}`, name })));
+      setVcFirms(initialVcFirms);
+      setIsSupabaseConnected(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Load all data on component mount
   useEffect(() => {
     // Initialize database tables and load data
@@ -508,7 +557,10 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         stageNames,
         getVCsByIndustry,
         getVCsByRegion,
-        isSupabaseConnected
+        isSupabaseConnected,
+        addVCFirm,
+        updateVCFirm,
+        deleteVCFirm
       }}
     >
       {isLoading ? <div>Loading data...</div> : children}

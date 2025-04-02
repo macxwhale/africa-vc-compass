@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -31,8 +30,10 @@ const Admin = () => {
     setRegionItems, 
     setIndustryItems, 
     setStageItems,
-    setVcFirms,
-    isSupabaseConnected
+    isSupabaseConnected,
+    addVCFirm,
+    updateVCFirm,
+    deleteVCFirm
   } = useData();
   
   const [newRegion, setNewRegion] = useState("");
@@ -169,16 +170,24 @@ const Admin = () => {
     setFirmFormOpen(true);
   };
 
-  const handleSaveFirm = (firm: VCFirm) => {
-    if (editingFirm) {
-      setVcFirms(vcFirms.map(f => f.id === firm.id ? firm : f));
-    } else {
-      setVcFirms([...vcFirms, firm]);
+  const handleSaveFirm = async (firm: VCFirm) => {
+    try {
+      if (editingFirm) {
+        await updateVCFirm(firm);
+      } else {
+        await addVCFirm(firm);
+      }
+    } catch (error) {
+      console.error('Error saving firm:', error);
     }
   };
 
-  const handleDeleteFirm = (firmId: string) => {
-    setVcFirms(vcFirms.filter(firm => firm.id !== firmId));
+  const handleDeleteFirm = async (firmId: string) => {
+    try {
+      await deleteVCFirm(firmId);
+    } catch (error) {
+      console.error('Error deleting firm:', error);
+    }
   };
 
   const renderItem = (item: Item, type: "region" | "industry" | "stage") => (

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { 
@@ -61,11 +60,12 @@ export default function VCFirmForm({
   editingFirm,
   onSave
 }: VCFirmFormProps) {
-  const { regionNames, industryNames, stageNames } = useData();
+  const { regionNames, industryNames, stageNames, addVCFirm, updateVCFirm } = useData();
   const [partners, setPartners] = useState<Person[]>([]);
   const [newPartner, setNewPartner] = useState<Person>({ name: "", title: "" });
   const [portfolioCompanies, setPortfolioCompanies] = useState<string[]>([]);
   const [newCompany, setNewCompany] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<VCFirm>({
     defaultValues: defaultFirm
@@ -120,25 +120,41 @@ export default function VCFirmForm({
     setPortfolioCompanies(portfolioCompanies.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (data: VCFirm) => {
-    // Generate random ID if new firm
-    const firmId = editingFirm?.id || `firm-${Date.now()}`;
-    
-    // Combine form data with partners and portfolio companies
-    const finalFirm: VCFirm = {
-      ...data,
-      id: firmId,
-      keyPartners: partners,
-      portfolioCompanies: portfolioCompanies
-    };
-    
-    onSave(finalFirm);
-    onOpenChange(false);
-    
-    toast({
-      title: "Success",
-      description: `VC Firm ${editingFirm ? 'updated' : 'added'} successfully`,
-    });
+  const handleSubmit = async (data: VCFirm) => {
+    try {
+      setIsSubmitting(true);
+      
+      // Generate random ID if new firm
+      const firmId = editingFirm?.id || `firm-${Date.now()}`;
+      
+      // Combine form data with partners and portfolio companies
+      const finalFirm: VCFirm = {
+        ...data,
+        id: firmId,
+        keyPartners: partners,
+        portfolioCompanies: portfolioCompanies
+      };
+      
+      // Use Supabase operations from context
+      if (editingFirm) {
+        await updateVCFirm(finalFirm);
+      } else {
+        await addVCFirm(finalFirm);
+      }
+      
+      // Call the onSave callback 
+      onSave(finalFirm);
+      onOpenChange(false);
+    } catch (error) {
+      console.error('Error saving VC firm:', error);
+      toast({
+        title: "Error",
+        description: `Failed to ${editingFirm ? 'update' : 'add'} VC firm`,
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
