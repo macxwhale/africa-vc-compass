@@ -14,6 +14,7 @@ import NotFound from "./pages/NotFound";
 import DataProvider from "./components/providers/DataProvider";
 import RegionsPage from "./pages/RegionsPage";
 import IndustriesPage from "./pages/IndustriesPage";
+import StagesPage from "./pages/StagesPage";
 import SupabaseSetup from "./pages/SupabaseSetup";
 import Methodologies from "./pages/Methodologies";
 import Contact from "./pages/Contact";
@@ -45,6 +46,7 @@ const App = () => {
               <Route path="/admin" element={<Admin />} />
               <Route path="/regions" element={<RegionsPage />} />
               <Route path="/industries" element={<IndustriesPage />} />
+              <Route path="/stages" element={<StagesPage />} />
               <Route path="/methodologies" element={<Methodologies />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/supabase-setup" element={<SupabaseSetup />} />
