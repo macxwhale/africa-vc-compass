@@ -34,12 +34,12 @@ try {
   supabase = createMockClient();
 }
 
-// Function to create the necessary tables if they don't exist
-export const createTablesIfNeeded = async () => {
+// Function to check if tables exist
+export const checkIfTablesExist = async () => {
   if (!isSupabaseConfigured) return false;
 
   try {
-    // For each table, check if it exists, if not create it
+    // For each table, check if it exists
     const tables = ['regions', 'industries', 'stages', 'vc_firms'];
     let allTablesExist = true;
     
@@ -49,11 +49,8 @@ export const createTablesIfNeeded = async () => {
         .select('count');
       
       if (error) {
-        console.error(`Table ${table} doesn't exist, trying to create it...`);
+        console.error(`Table ${table} doesn't exist: ${error.message}`);
         allTablesExist = false;
-        
-        // We can't use SQL directly with Supabase JS client without RPC
-        // Instead we'll handle table creation for each specific table below
       }
     }
     
@@ -64,7 +61,7 @@ export const createTablesIfNeeded = async () => {
   }
 };
 
-// Ensure VC firms table exists
+// Ensure VC firms table exists by checking if we can query it
 export const ensureVCFirmsTableExists = async () => {
   try {
     const { error } = await supabase
@@ -72,31 +69,11 @@ export const ensureVCFirmsTableExists = async () => {
       .select('count');
       
     if (error) {
-      // Table doesn't exist, create it using the REST API
-      const { error: createError } = await supabase
-        .schema.createTable('vc_firms', (table) => {
-          table.text('id').primaryKey();
-          table.text('name').notNull();
-          table.text('logo');
-          table.text('description');
-          table.text('website');
-          table.text('headquarters');
-          table.integer('foundedYear');
-          table.text('investmentFocus', { isArray: true });
-          table.text('industries', { isArray: true });
-          table.text('stagePreference', { isArray: true });
-          table.text('ticketSize');
-          table.text('regionsOfInterest', { isArray: true });
-          table.text('portfolioCompanies', { isArray: true });
-          table.jsonb('keyPartners');
-          table.jsonb('contactInfo');
-        });
-        
-      if (createError) {
-        console.error('Error creating VC firms table:', createError);
-        return false;
-      }
-      return true;
+      console.error('VC firms table does not exist:', error.message);
+      // The approach needs to be different as createTable is not available
+      // We should guide the user to create tables via SQL or the Supabase dashboard
+      console.log('Please create the vc_firms table manually in the Supabase dashboard');
+      return false;
     }
     return true;
   } catch (error) {
@@ -109,7 +86,11 @@ export const ensureVCFirmsTableExists = async () => {
 export const vcFirmService = {
   // Create a new VC firm
   createVCFirm: async (firm: VCFirm) => {
-    await ensureVCFirmsTableExists();
+    const tableExists = await ensureVCFirmsTableExists();
+    if (!tableExists) {
+      console.error('VC firms table does not exist. Cannot create VC firm.');
+      throw new Error('VC firms table does not exist');
+    }
     
     const { data, error } = await supabase
       .from('vc_firms')
@@ -126,7 +107,11 @@ export const vcFirmService = {
   
   // Read all VC firms
   getAllVCFirms: async () => {
-    await ensureVCFirmsTableExists();
+    const tableExists = await ensureVCFirmsTableExists();
+    if (!tableExists) {
+      console.error('VC firms table does not exist. Cannot fetch VC firms.');
+      return [] as VCFirm[];
+    }
     
     const { data, error } = await supabase
       .from('vc_firms')

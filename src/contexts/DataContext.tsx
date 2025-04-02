@@ -551,7 +551,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         setRegionItems: updateRegionItems, 
         setIndustryItems: updateIndustryItems, 
         setStageItems: updateStageItems,
-        setVcFirms: updateVcFirms,
+        setVcFirms,
         regionNames,
         industryNames,
         stageNames,
