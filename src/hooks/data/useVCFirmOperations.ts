@@ -31,9 +31,8 @@ export function useVCFirmOperations(
         firm.id = `firm-${Date.now()}`;
       }
       
-      // Create a new array with the firm added
-      const updatedFirms = [...vcFirms, firm];
-      setVcFirmsState(updatedFirms);
+      // Using a functional update to avoid dependency on vcFirms
+      setVcFirmsState(prevFirms => [...prevFirms, firm]);
       
       if (!isSupabaseConnected) {
         toast({
@@ -69,9 +68,8 @@ export function useVCFirmOperations(
     try {
       console.log("Updating VC firm with isSupabaseConnected:", isSupabaseConnected);
       
-      // Create a new array with the updated firm
-      const updatedFirms = vcFirms.map(f => f.id === firm.id ? firm : f);
-      setVcFirmsState(updatedFirms);
+      // Using a functional update to avoid dependency on vcFirms
+      setVcFirmsState(prevFirms => prevFirms.map(f => f.id === firm.id ? firm : f));
       
       if (!isSupabaseConnected) {
         toast({
@@ -107,9 +105,8 @@ export function useVCFirmOperations(
     try {
       console.log("Deleting VC firm with isSupabaseConnected:", isSupabaseConnected);
       
-      // Create a new array without the deleted firm
-      const updatedFirms = vcFirms.filter(f => f.id !== id);
-      setVcFirmsState(updatedFirms);
+      // Using a functional update to avoid dependency on vcFirms
+      setVcFirmsState(prevFirms => prevFirms.filter(f => f.id !== id));
       
       if (!isSupabaseConnected) {
         toast({
