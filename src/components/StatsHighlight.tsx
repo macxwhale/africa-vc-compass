@@ -2,6 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { useData } from "@/contexts/DataContext";
 import { useEffect, useState } from "react";
+import { regionCountriesMap } from "@/pages/RegionsPage";
 
 const StatsHighlight = () => {
   const { vcFirms, regionItems, industryItems } = useData();
@@ -18,10 +19,16 @@ const StatsHighlight = () => {
       // Count unique VCs
       const activeVcCount = vcFirms.length;
       
-      // Count unique countries - extract country names from region items
-      // Assuming region names are in format like "East Africa", "West Africa", etc.
-      // This counts the number of unique region entries as countries
-      const countriesCount = regionItems.length;
+      // Count unique countries by extracting from regionCountriesMap
+      // First collect all countries from all regions
+      const allCountries = new Set<string>();
+      regionItems.forEach(region => {
+        const countries = regionCountriesMap[region.name as keyof typeof regionCountriesMap];
+        if (countries) {
+          countries.forEach(country => allCountries.add(country));
+        }
+      });
+      const countriesCount = allCountries.size;
       
       // Count unique industries
       const industriesCount = industryItems.length;
