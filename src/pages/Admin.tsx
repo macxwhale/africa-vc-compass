@@ -57,7 +57,7 @@ const Admin = () => {
     setNewRegion("");
     toast({
       title: "Success",
-      description: "Region added successfully",
+      description: "Region added successfully and saved to database",
     });
   };
 
@@ -76,7 +76,7 @@ const Admin = () => {
     setNewIndustry("");
     toast({
       title: "Success",
-      description: "Industry added successfully",
+      description: "Industry added successfully and saved to database",
     });
   };
 
@@ -95,7 +95,7 @@ const Admin = () => {
     setNewStage("");
     toast({
       title: "Success",
-      description: "Investment stage added successfully",
+      description: "Investment stage added successfully and saved to database",
     });
   };
 
@@ -137,7 +137,7 @@ const Admin = () => {
     setEditValue("");
     toast({
       title: "Success",
-      description: "Item updated successfully",
+      description: "Item updated successfully and saved to database",
     });
   };
 
@@ -152,7 +152,7 @@ const Admin = () => {
 
     toast({
       title: "Success",
-      description: "Item deleted successfully",
+      description: "Item deleted successfully and removed from database",
     });
   };
 
@@ -255,7 +255,7 @@ const Admin = () => {
                     <div className="grid gap-4">
                       <div className="bg-green-50 border-l-4 border-green-400 p-4">
                         <p className="text-green-700">
-                          Changes are stored in your browser and will persist between sessions.
+                          Changes are stored in the database and will persist between sessions.
                         </p>
                       </div>
                       
@@ -288,7 +288,7 @@ const Admin = () => {
                     <div className="grid gap-4">
                       <div className="bg-green-50 border-l-4 border-green-400 p-4">
                         <p className="text-green-700">
-                          Changes are stored in your browser and will persist between sessions.
+                          Changes are stored in the database and will persist between sessions.
                         </p>
                       </div>
                       
@@ -321,7 +321,7 @@ const Admin = () => {
                     <div className="grid gap-4">
                       <div className="bg-green-50 border-l-4 border-green-400 p-4">
                         <p className="text-green-700">
-                          Changes are stored in your browser and will persist between sessions.
+                          Changes are stored in the database and will persist between sessions.
                         </p>
                       </div>
                       
@@ -354,7 +354,7 @@ const Admin = () => {
                     <div className="grid gap-4">
                       <div className="bg-green-50 border-l-4 border-green-400 p-4">
                         <p className="text-green-700">
-                          Changes are stored in your browser and will persist between sessions.
+                          Changes are stored in the database and will persist between sessions.
                         </p>
                       </div>
                       
