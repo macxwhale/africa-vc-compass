@@ -11,7 +11,7 @@ import About from "./pages/About";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import { useState } from "react";
-import { DataProvider } from "./contexts/DataContext";
+import DataProvider from "./components/providers/DataProvider";
 import RegionsPage from "./pages/RegionsPage";
 import IndustriesPage from "./pages/IndustriesPage";
 
