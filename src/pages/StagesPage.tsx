@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { useData } from "@/contexts/DataContext";
 import { Link } from "react-router-dom";
 import VCCard from "@/components/VCCard";
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
 const StagesPage = () => {
@@ -92,10 +92,8 @@ const StagesPage = () => {
                               <Cell key={`cell-${index}`} fill={entry.color} />
                             ))}
                           </Pie>
-                          <Tooltip 
-                            formatter={(value: number, name: string) => [
-                              `${value} VCs`, name
-                            ]}
+                          <ChartTooltip
+                            formatter={(value: number, name: string) => [`${value} VCs`, name]}
                           />
                           <Legend />
                         </PieChart>
@@ -220,3 +218,4 @@ const StagesPage = () => {
 };
 
 export default StagesPage;
+
