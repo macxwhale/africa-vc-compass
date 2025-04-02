@@ -1,4 +1,3 @@
-
 import { createContext, useState, useEffect, useContext, ReactNode } from "react";
 import { industries as initialIndustries, stages as initialStages, regions as initialRegions, vcFirms as initialVcFirms, VCFirm } from "@/data/vcData";
 import { supabase, isSupabaseConfigured, vcFirmService } from "@/services/supabaseService";
@@ -127,7 +126,11 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       }
 
       // Add to Supabase
-      const { data } = await vcFirmService.createVCFirm(firm);
+      const { error } = await vcFirmService.createVCFirm(firm);
+      
+      if (error) {
+        throw error;
+      }
       
       // Update local state
       setVcFirms([...vcFirms, firm]);
@@ -473,7 +476,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
           }
           
           // Check if we can connect to Supabase by making a simple query
-          const { data, error } = await supabase.from('regions').select('count');
+          const { data: connectionTestData, error } = await supabase.from('regions').select('count');
           
           if (error) {
             console.error("Failed to connect to Supabase:", error);

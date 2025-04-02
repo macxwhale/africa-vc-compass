@@ -64,7 +64,7 @@ export const checkIfTablesExist = async () => {
 // Ensure VC firms table exists by checking if we can query it
 export const ensureVCFirmsTableExists = async () => {
   try {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('vc_firms')
       .select('count');
       
@@ -102,7 +102,7 @@ export const vcFirmService = {
       throw error;
     }
     
-    return data;
+    return { data, error };
   },
   
   // Read all VC firms
@@ -138,7 +138,7 @@ export const vcFirmService = {
       throw error;
     }
     
-    return data;
+    return { data, error };
   },
   
   // Delete a VC firm
