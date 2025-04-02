@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { VCFirm } from "@/data/vcData";
 import { toast } from "@/hooks/use-toast";
@@ -21,35 +20,30 @@ export function useDataOperations(
   const [industryItems, setIndustryItemsState] = useState<Item[]>(initialData.industryItems);
   const [stageItems, setStageItemsState] = useState<Item[]>(initialData.stageItems);
 
-  // Load data from Supabase if connected
   useEffect(() => {
     const loadDataFromSupabase = async () => {
       if (isSupabaseConnected) {
         try {
           console.log("Loading data from Supabase...");
           
-          // Load regions
           const dbRegions = await regionService.getAllRegions();
           if (dbRegions && dbRegions.length > 0) {
             console.log("Loaded regions from database:", dbRegions);
             setRegionItemsState(dbRegions as Item[]);
           }
           
-          // Load industries
           const dbIndustries = await industryService.getAllIndustries();
           if (dbIndustries && dbIndustries.length > 0) {
             console.log("Loaded industries from database:", dbIndustries);
             setIndustryItemsState(dbIndustries as Item[]);
           }
           
-          // Load stages
           const dbStages = await stageService.getAllStages();
           if (dbStages && dbStages.length > 0) {
             console.log("Loaded stages from database:", dbStages);
             setStageItemsState(dbStages as Item[]);
           }
           
-          // Load VC firms
           const dbVCFirms = await vcFirmService.getAllVCFirms();
           if (dbVCFirms && dbVCFirms.length > 0) {
             console.log("Loaded VC firms from database:", dbVCFirms);
@@ -74,24 +68,20 @@ export function useDataOperations(
     loadDataFromSupabase();
   }, [isSupabaseConnected]);
 
-  // Derived data - just the names as string arrays for the filters
   const regionNames = regionItems.map(item => item.name);
   const industryNames = industryItems.map(item => item.name);
   const stageNames = stageItems.map(item => item.name);
 
-  // Get VCs by industry with optional limit
   const getVCsByIndustry = (industry: string, limit?: number): VCFirm[] => {
     const filteredVCs = vcFirms.filter(vc => vc.industries.includes(industry));
     return limit ? filteredVCs.slice(0, limit) : filteredVCs;
   };
 
-  // Get VCs by region with optional limit
   const getVCsByRegion = (region: string, limit?: number): VCFirm[] => {
     const filteredVCs = vcFirms.filter(vc => vc.regionsOfInterest.includes(region));
     return limit ? filteredVCs.slice(0, limit) : filteredVCs;
   };
 
-  // Update regions wrapper
   const setRegionItems = async (items: Item[]) => {
     console.log("Setting region items:", items);
     setRegionItemsState(items);
@@ -115,7 +105,6 @@ export function useDataOperations(
     }
   };
 
-  // Update industries wrapper
   const setIndustryItems = async (items: Item[]) => {
     console.log("Setting industry items:", items);
     setIndustryItemsState(items);
@@ -139,7 +128,6 @@ export function useDataOperations(
     }
   };
 
-  // Update stages wrapper
   const setStageItems = async (items: Item[]) => {
     console.log("Setting stage items:", items);
     setStageItemsState(items);
@@ -163,19 +151,20 @@ export function useDataOperations(
     }
   };
 
-  // Update VC firms wrapper
   const setVcFirms = async (firms: VCFirm[]) => {
     console.log("Setting VC firms:", firms);
     setVcFirmsState(firms);
   };
 
-  // CRUD Operations for VC Firms
   const addVCFirm = async (firm: VCFirm) => {
     try {
       console.log("Adding VC firm with isSupabaseConnected:", isSupabaseConnected);
       
-      // Update local state immediately
-      setVcFirmsState([...vcFirms, firm]);
+      if (!firm.id) {
+        firm.id = `firm-${Date.now()}`;
+      }
+      
+      setVcFirmsState(prevFirms => [...prevFirms, firm]);
       
       if (!isSupabaseConnected) {
         toast({
@@ -185,13 +174,14 @@ export function useDataOperations(
         return;
       }
 
-      // Add to Supabase
-      const { error } = await vcFirmService.createVCFirm(firm);
+      console.log("Attempting to save VC firm to Supabase:", firm);
+      const result = await vcFirmService.createVCFirm(firm);
       
-      if (error) {
-        throw error;
+      if (result.error) {
+        throw result.error;
       }
       
+      console.log("VC firm successfully saved to database:", result.data);
       toast({
         title: "Success",
         description: "VC firm added successfully and saved to database",
@@ -203,7 +193,6 @@ export function useDataOperations(
         description: `Failed to add VC firm: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: "destructive",
       });
-      throw error;
     }
   };
 
@@ -211,8 +200,7 @@ export function useDataOperations(
     try {
       console.log("Updating VC firm with isSupabaseConnected:", isSupabaseConnected);
       
-      // Update local state immediately
-      setVcFirmsState(vcFirms.map(f => f.id === firm.id ? firm : f));
+      setVcFirmsState(prevFirms => prevFirms.map(f => f.id === firm.id ? firm : f));
       
       if (!isSupabaseConnected) {
         toast({
@@ -222,9 +210,14 @@ export function useDataOperations(
         return;
       }
 
-      // Update in Supabase
-      await vcFirmService.updateVCFirm(firm);
+      console.log("Attempting to update VC firm in Supabase:", firm);
+      const result = await vcFirmService.updateVCFirm(firm);
       
+      if (result.error) {
+        throw result.error;
+      }
+      
+      console.log("VC firm successfully updated in database:", result.data);
       toast({
         title: "Success",
         description: "VC firm updated successfully and saved to database",
@@ -236,7 +229,6 @@ export function useDataOperations(
         description: `Failed to update VC firm: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: "destructive",
       });
-      throw error;
     }
   };
 
@@ -244,8 +236,7 @@ export function useDataOperations(
     try {
       console.log("Deleting VC firm with isSupabaseConnected:", isSupabaseConnected);
       
-      // Update local state immediately
-      setVcFirmsState(vcFirms.filter(f => f.id !== id));
+      setVcFirmsState(prevFirms => prevFirms.filter(f => f.id !== id));
       
       if (!isSupabaseConnected) {
         toast({
@@ -255,9 +246,14 @@ export function useDataOperations(
         return;
       }
 
-      // Delete from Supabase
-      await vcFirmService.deleteVCFirm(id);
+      console.log("Attempting to delete VC firm from Supabase:", id);
+      const success = await vcFirmService.deleteVCFirm(id);
       
+      if (!success) {
+        throw new Error("Failed to delete VC firm from database");
+      }
+      
+      console.log("VC firm successfully deleted from database");
       toast({
         title: "Success",
         description: "VC firm deleted successfully and removed from database",
@@ -269,33 +265,27 @@ export function useDataOperations(
         description: `Failed to delete VC firm: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: "destructive",
       });
-      throw error;
     }
   };
 
   return {
-    // State
     vcFirms,
     regionItems,
     industryItems,
     stageItems,
     
-    // Derived data
     regionNames,
     industryNames,
     stageNames,
     
-    // State setters
     setVcFirms,
     setRegionItems,
     setIndustryItems,
     setStageItems,
     
-    // Helper functions
     getVCsByIndustry,
     getVCsByRegion,
     
-    // CRUD operations
     addVCFirm,
     updateVCFirm,
     deleteVCFirm

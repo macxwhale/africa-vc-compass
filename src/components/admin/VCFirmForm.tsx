@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { 
@@ -135,21 +136,23 @@ export default function VCFirmForm({
         portfolioCompanies: portfolioCompanies
       };
       
-      // Use Supabase operations from context
-      if (editingFirm) {
-        await updateVCFirm(finalFirm);
-      } else {
-        await addVCFirm(finalFirm);
-      }
+      console.log("Submitting VC firm:", finalFirm);
       
       // Call the onSave callback 
-      onSave(finalFirm);
+      await onSave(finalFirm);
+      
+      // Close the dialog after successful save
       onOpenChange(false);
+      
+      toast({
+        title: "Success",
+        description: `VC firm ${editingFirm ? 'updated' : 'added'} successfully`,
+      });
     } catch (error) {
       console.error('Error saving VC firm:', error);
       toast({
         title: "Error",
-        description: `Failed to ${editingFirm ? 'update' : 'add'} VC firm`,
+        description: `Failed to ${editingFirm ? 'update' : 'add'} VC firm: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: "destructive",
       });
     } finally {
