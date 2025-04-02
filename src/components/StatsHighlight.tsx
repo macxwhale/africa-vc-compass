@@ -18,7 +18,9 @@ const StatsHighlight = () => {
       // Count unique VCs
       const activeVcCount = vcFirms.length;
       
-      // Count unique countries (from regions)
+      // Count unique countries - extract country names from region items
+      // Assuming region names are in format like "East Africa", "West Africa", etc.
+      // This counts the number of unique region entries as countries
       const countriesCount = regionItems.length;
       
       // Count unique industries
