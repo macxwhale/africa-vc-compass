@@ -4,22 +4,30 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useMemo } from "react";
 import Index from "./pages/Index";
 import Directory from "./pages/Directory";
 import VCProfile from "./pages/VCProfile";
 import About from "./pages/About";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
-import { useState } from "react";
 import DataProvider from "./components/providers/DataProvider";
 import RegionsPage from "./pages/RegionsPage";
 import IndustriesPage from "./pages/IndustriesPage";
 import SupabaseSetup from "./pages/SupabaseSetup";
 
-const App = () => {
-  // Create a new QueryClient instance inside the component to ensure proper React hooks usage
-  const [queryClient] = useState(() => new QueryClient());
+// Create a stable QueryClient with caching configuration
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
+const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>

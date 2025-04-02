@@ -1,5 +1,5 @@
 
-import { ReactNode, useMemo, useEffect } from "react";
+import { ReactNode, useMemo, useEffect, useState } from "react";
 import { DataContext } from "@/contexts/DataContext";
 import { industries as initialIndustries, stages as initialStages, regions as initialRegions, vcFirms as initialVcFirms } from "@/data/vcData";
 import { useDatabaseInitialization } from "@/hooks/useDatabaseInitialization";
@@ -7,6 +7,9 @@ import { useDataOperations } from "@/hooks/useDataOperations";
 import { Item } from "@/contexts/DataContext";
 
 export const DataProvider = ({ children }: { children: ReactNode }) => {
+  // Only show loading state once
+  const [showLoading, setShowLoading] = useState(true);
+  
   // Create default data objects
   const defaultRegions = useMemo(() => 
     initialRegions.map((name, index) => ({ id: `region-${index}`, name })), []);
@@ -20,12 +23,12 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const defaultVcFirms = useMemo(() => initialVcFirms, []);
 
   // Create initial state for the data operations
-  const initialData = {
+  const initialData = useMemo(() => ({
     regionItems: defaultRegions,
     industryItems: defaultIndustries,
     stageItems: defaultStages,
     vcFirms: defaultVcFirms
-  };
+  }), [defaultRegions, defaultIndustries, defaultStages, defaultVcFirms]);
 
   // Initialize database and connection
   const { isLoading, isSupabaseConnected } = useDatabaseInitialization(
@@ -57,30 +60,14 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     deleteVCFirm
   } = useDataOperations(initialData, isSupabaseConnected);
 
-  // Create a setter object for database initialization
-  const setters = {
-    setRegionItems,
-    setIndustryItems,
-    setStageItems,
-    setVcFirms
-  };
-
-  // Re-initialize database when connection status changes
+  // Hide loading state after first load
   useEffect(() => {
-    if (!isLoading) {
-      // Load data from database if connected
-      const loadDatabaseData = async () => {
-        if (isSupabaseConnected) {
-          // This is now handled in the useDatabaseInitialization hook
-          console.log("Database is connected, data will be loaded in the hook");
-        }
-      };
-      
-      loadDatabaseData();
+    if (!isLoading && showLoading) {
+      setShowLoading(false);
     }
-  }, [isSupabaseConnected, isLoading]);
+  }, [isLoading, showLoading]);
 
-  // Output the connection status for debugging
+  // Output the connection status for debugging - only once
   useEffect(() => {
     console.log("DataProvider - isSupabaseConnected:", isSupabaseConnected);
   }, [isSupabaseConnected]);
@@ -107,7 +94,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         deleteVCFirm
       }}
     >
-      {isLoading ? <div>Loading data...</div> : children}
+      {showLoading && isLoading ? <div>Loading data...</div> : children}
     </DataContext.Provider>
   );
 };

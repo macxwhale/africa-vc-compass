@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { VCFirm } from "@/data/vcData";
 import { supabase, isSupabaseConfigured, testDatabaseConnection } from "@/services/supabaseService";
 import { toast } from "@/hooks/use-toast";
@@ -20,10 +20,16 @@ type DefaultData = {
 export function useDatabaseInitialization(defaultData: DefaultData) {
   const [isLoading, setIsLoading] = useState(true);
   const [isSupabaseConnected, setIsSupabaseConnected] = useState(false);
+  const initAttemptedRef = useRef(false);
 
   // Test Supabase connection and initialize tables if connected
   useEffect(() => {
+    // Use ref to prevent multiple initialization attempts
+    if (initAttemptedRef.current) return;
+    
     const initializeTablesIfNeeded = async () => {
+      // Mark initialization as attempted
+      initAttemptedRef.current = true;
       setIsLoading(true);
       
       try {
@@ -94,7 +100,7 @@ export function useDatabaseInitialization(defaultData: DefaultData) {
     };
 
     initializeTablesIfNeeded();
-  }, [defaultData]);
+  }, []); // Remove defaultData from dependency array to prevent multiple initializations
 
   // Helper function to check if tables have data
   const checkTablesHaveData = async () => {

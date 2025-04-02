@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { VCFirm } from "@/data/vcData";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/services/supabaseService";
@@ -19,10 +19,13 @@ export function useDataOperations(
   const [regionItems, setRegionItemsState] = useState<Item[]>(initialData.regionItems);
   const [industryItems, setIndustryItemsState] = useState<Item[]>(initialData.industryItems);
   const [stageItems, setStageItemsState] = useState<Item[]>(initialData.stageItems);
+  
+  const dataLoadedRef = useRef(false);
 
   useEffect(() => {
     const loadDataFromSupabase = async () => {
-      if (isSupabaseConnected) {
+      if (isSupabaseConnected && !dataLoadedRef.current) {
+        dataLoadedRef.current = true;
         try {
           console.log("Loading data from Supabase...");
           
