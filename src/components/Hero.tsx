@@ -20,11 +20,6 @@ const Hero = () => {
                 Explore the Directory
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-white hover:bg-white/10">
-              <Link to="/submit">
-                Submit a VC Firm
-              </Link>
-            </Button>
           </div>
         </div>
       </div>
