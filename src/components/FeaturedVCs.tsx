@@ -1,5 +1,5 @@
 
-import { useEffect, useState, useMemo } from "react";
+import { useMemo } from "react";
 import { vcFirms } from "@/data/vcData";
 import VCCard from "./VCCard";
 import { Button } from "@/components/ui/button";

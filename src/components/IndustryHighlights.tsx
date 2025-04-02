@@ -55,7 +55,6 @@ const IndustryHighlights = () => {
         ))}
       </div>
       
-      {/* Display VCs for selected industry */}
       {selectedIndustry && industryVCs.length > 0 && (
         <div className="mt-8">
           <div className="flex justify-between items-center mb-4">
