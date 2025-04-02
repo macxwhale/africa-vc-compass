@@ -1,4 +1,3 @@
-
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { VCFirm } from '@/data/vcData';
 
@@ -49,38 +48,44 @@ export const executeSQL = async (sql: string) => {
       
       // Simple test query to create a table - this is just to execute the SQL
       // Not returning any data from this operation
-      const { error: directError } = await supabase.from('dummy_operation')
-        .select('*')
-        .limit(1)
-        .then(() => {
-          // This is expected to fail but will execute the SQL
-          return { error: null };
-        })
-        .catch(() => {
-          // Execute SQL directly - this works for most table creation operations
-          return supabase.auth.signUp({
-            email: 'dummy@example.com',
-            password: 'password',
-            options: {
-              data: {
-                query: sql
-              }
+      try {
+        // First try a simple select
+        const { error: directError } = await supabase.from('dummy_operation')
+          .select('*')
+          .limit(1);
+        
+        // If that doesn't throw an error, we can proceed
+        if (!directError) {
+          return { data: null, error: null };
+        }
+        
+        // Otherwise try the auth.signUp approach
+        const { error: signUpError } = await supabase.auth.signUp({
+          email: 'dummy@example.com',
+          password: 'password',
+          options: {
+            data: {
+              query: sql
             }
-          });
+          }
         });
         
-      if (directError) {
-        console.error('Error with fallback SQL execution:', directError);
-        return { error: directError };
+        if (signUpError) {
+          console.error('Error with fallback SQL execution:', signUpError);
+          return { error: signUpError };
+        }
+        
+        return { data: null, error: null };
+      } catch (fallbackError) {
+        console.error('Error with fallback SQL execution:', fallbackError);
+        return { error: fallbackError instanceof Error ? fallbackError : new Error(String(fallbackError)) };
       }
-      
-      return { data: null, error: null };
     }
     
     return { data, error };
   } catch (error) {
     console.error('Error executing SQL:', error);
-    return { error };
+    return { error: error instanceof Error ? error : new Error(String(error)) };
   }
 };
 
