@@ -34,25 +34,45 @@ try {
   supabase = createMockClient();
 }
 
+// Function to execute raw SQL queries
+export const executeSQL = async (sql: string) => {
+  if (!isSupabaseConfigured) return { error: new Error('Supabase not configured') };
+
+  try {
+    const { data, error } = await supabase.rpc('exec_sql', { query: sql });
+    return { data, error };
+  } catch (error) {
+    console.error('Error executing SQL:', error);
+    // Fallback to direct query if rpc not available
+    try {
+      const { data, error } = await supabase.from('_exec_sql').select('*').eq('query', sql).single();
+      return { data, error };
+    } catch (fallbackError) {
+      console.error('Error with fallback SQL execution:', fallbackError);
+      return { error: fallbackError };
+    }
+  }
+};
+
 // Function to check if tables exist
 export const checkIfTablesExist = async () => {
   if (!isSupabaseConfigured) return false;
 
   try {
-    // For each table, check if it exists
-    const tables = ['regions', 'industries', 'stages', 'vc_firms'];
-    let allTablesExist = true;
+    // Try a query that works even if tables don't exist yet
+    const { data, error } = await supabase.from('pg_tables')
+      .select('tablename')
+      .eq('schemaname', 'public');
     
-    for (const table of tables) {
-      const { data, error } = await supabase
-        .from(table)
-        .select('count');
-      
-      if (error) {
-        console.error(`Table ${table} doesn't exist: ${error.message}`);
-        allTablesExist = false;
-      }
+    if (error) {
+      console.error('Error checking tables:', error);
+      return false;
     }
+    
+    // Check if our tables exist in the result
+    const tableNames = data?.map(t => t.tablename);
+    const requiredTables = ['regions', 'industries', 'stages', 'vc_firms'];
+    const allTablesExist = requiredTables.every(table => tableNames?.includes(table));
     
     return allTablesExist;
   } catch (error) {

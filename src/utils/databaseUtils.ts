@@ -1,18 +1,16 @@
-import { supabase, isSupabaseConfigured } from "@/services/supabaseService";
+
+import { supabase, isSupabaseConfigured, executeSQL } from "@/services/supabaseService";
 import { Item } from "@/contexts/DataContext";
 import { VCFirm } from "@/data/vcData";
 import { toast } from "@/hooks/use-toast";
 
-// Function to check if tables exist
+// Function to check if tables exist and create them if they don't
 export const createTablesIfNeeded = async () => {
   if (!isSupabaseConfigured) return false;
 
   try {
-    // To create tables, we need to use the SQL editor in Supabase dashboard
-    // Here we'll just log instructions for the user
-    console.log(`
-      To create the necessary tables in Supabase, go to the SQL Editor in your Supabase dashboard and run the following SQL:
-      
+    // Generate the SQL to create tables
+    const createTableSQL = `
       CREATE TABLE IF NOT EXISTS regions (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL
@@ -45,17 +43,46 @@ export const createTablesIfNeeded = async () => {
         "keyPartners" JSONB,
         "contactInfo" JSONB
       );
-    `);
+    `;
     
-    // Check if we can access any of the tables
-    const { data: regionsData, error } = await supabase.from('regions').select('count');
+    console.log("Attempting to create tables with SQL:", createTableSQL);
+    
+    // Try to execute the SQL directly using custom functions
+    const { error } = await executeSQL(createTableSQL);
+    
     if (error) {
-      console.error('Tables need to be created manually in Supabase dashboard:', error.message);
+      console.error('Error creating tables:', error);
+      // Try an alternative approach - check if we can query any existing table
+      const { data, error: queryError } = await supabase
+        .from('regions')
+        .select('count');
+      
+      if (queryError) {
+        console.error('Tables need to be created manually in Supabase dashboard:', queryError.message);
+        // Show the SQL in the console for manual execution
+        console.log(`
+          To create the necessary tables in Supabase, go to the SQL Editor in your Supabase dashboard and run the following SQL:
+          
+          ${createTableSQL}
+        `);
+        return false;
+      }
+    }
+    
+    // Verify that tables were created successfully
+    const { data, error: verifyError } = await supabase
+      .from('regions')
+      .select('count');
+    
+    if (verifyError) {
+      console.error('Tables were not created successfully:', verifyError);
       return false;
     }
+    
+    console.log('Tables created or already exist!');
     return true;
   } catch (error) {
-    console.error('Error checking tables:', error);
+    console.error('Error checking/creating tables:', error);
     return false;
   }
 };

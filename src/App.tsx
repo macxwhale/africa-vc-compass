@@ -14,6 +14,7 @@ import { useState } from "react";
 import DataProvider from "./components/providers/DataProvider";
 import RegionsPage from "./pages/RegionsPage";
 import IndustriesPage from "./pages/IndustriesPage";
+import SupabaseSetup from "./pages/SupabaseSetup";
 
 const App = () => {
   // Create a new QueryClient instance inside the component to ensure proper React hooks usage
@@ -34,6 +35,7 @@ const App = () => {
               <Route path="/admin" element={<Admin />} />
               <Route path="/regions" element={<RegionsPage />} />
               <Route path="/industries" element={<IndustriesPage />} />
+              <Route path="/supabase-setup" element={<SupabaseSetup />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

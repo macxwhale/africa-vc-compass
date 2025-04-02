@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { Edit, Trash, Plus, Check, X, AlertTriangle } from "lucide-react";
+import { Edit, Trash, Plus, Check, X, AlertTriangle, Database } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useData } from "@/contexts/DataContext";
 import { VCFirm } from "@/data/vcData";
@@ -244,31 +244,38 @@ const Admin = () => {
                 <h1 className="text-3xl md:text-4xl font-bold text-africa-blue mb-2">Admin Dashboard</h1>
                 <p className="text-gray-600">Manage regions, industries, investment stages, and VC firms</p>
               </div>
-              <Button variant="outline" asChild>
-                <Link to="/directory">Back to Directory</Link>
-              </Button>
+              <div className="flex space-x-2">
+                <Button variant="outline" asChild>
+                  <Link to="/directory">Back to Directory</Link>
+                </Button>
+                {!isSupabaseConnected && (
+                  <Button variant="secondary" asChild>
+                    <Link to="/supabase-setup">
+                      <Database className="h-4 w-4 mr-2" />
+                      Setup Supabase
+                    </Link>
+                  </Button>
+                )}
+              </div>
             </div>
             
-            {!isSupabaseConnected && (
+            {!isSupabaseConnected ? (
               <Alert variant="destructive" className="mb-6">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertTitle>Database connection not detected</AlertTitle>
                 <AlertDescription>
-                  No Supabase connection configured. Changes will only persist during this session.
-                  <br />
-                  To enable database connectivity, you need to set these environment variables:
-                  <ul className="list-disc ml-6 mt-2">
-                    <li><code className="bg-gray-100 px-1 rounded">VITE_SUPABASE_URL</code> - Your Supabase project URL</li>
-                    <li><code className="bg-gray-100 px-1 rounded">VITE_SUPABASE_ANON_KEY</code> - Your Supabase anon/public key</li>
-                  </ul>
-                  <p className="mt-2">
-                    For local development, create a <code className="bg-gray-100 px-1 rounded">.env.local</code> file in the project root with these variables.
-                  </p>
+                  No Supabase connection detected. Changes will only persist during this session.
+                  <div className="mt-2 flex flex-col sm:flex-row gap-2">
+                    <Button variant="outline" size="sm" asChild>
+                      <Link to="/supabase-setup">
+                        <Database className="h-4 w-4 mr-2" />
+                        Setup Supabase
+                      </Link>
+                    </Button>
+                  </div>
                 </AlertDescription>
               </Alert>
-            )}
-            
-            {isSupabaseConnected && (
+            ) : (
               <Alert variant="default" className="bg-green-50 border-green-200 mb-6">
                 <AlertTitle>Database connected</AlertTitle>
                 <AlertDescription>

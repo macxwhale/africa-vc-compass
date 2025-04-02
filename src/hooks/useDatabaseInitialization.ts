@@ -41,16 +41,20 @@ export function useDatabaseInitialization(
       // Only attempt to connect to Supabase if it's configured
       if (isSupabaseConfigured) {
         try {
+          console.log("Attempting to connect to Supabase and create tables if needed...");
+          
           // First, create the tables if they don't exist
           const tablesCreated = await createTablesIfNeeded();
           
           if (!tablesCreated) {
-            console.log("Tables could not be created automatically. You may need to create them manually.");
+            console.log("Tables could not be created automatically. SQL has been provided in the console for manual execution.");
             toast({
               title: "Database Setup Required",
-              description: "Tables need to be created in your Supabase dashboard. Check console for SQL statements.",
+              description: "Tables need to be created in your Supabase dashboard. A SQL script has been provided in the console.",
               variant: "destructive",
             });
+          } else {
+            console.log("Tables exist or were created successfully.");
           }
           
           // Check if we can connect to Supabase by making a simple query
@@ -66,18 +70,12 @@ export function useDatabaseInitialization(
             });
             
             if (error.message.includes("does not exist")) {
-              console.log("Tables don't exist in Supabase. Going to try creating them...");
-              
-              // Try to initialize the tables with default data
-              try {
-                await initializeDatabaseWithDefaultData(regionsData, industriesData, stagesData, vcFirmsData);
-                toast({
-                  title: "Database Tables Missing",
-                  description: "You need to create the necessary tables in Supabase. Check console for SQL statements.",
-                });
-              } catch (initError) {
-                console.error("Failed to initialize database:", initError);
-              }
+              console.log("Tables don't exist in Supabase. Please create them manually using the SQL in the console.");
+              toast({
+                title: "Database Tables Missing",
+                description: "You need to create the necessary tables in your Supabase project. See console for SQL statements.",
+                variant: "destructive",
+              });
             }
           } else {
             console.log("Successfully connected to Supabase!");
@@ -102,7 +100,7 @@ export function useDatabaseInitialization(
           });
         }
       } else {
-        console.warn("Supabase credentials are missing. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables to enable Supabase integration.");
+        console.warn("Supabase credentials are missing or invalid. Check your environment variables.");
         setIsSupabaseConnected(false);
       }
       
