@@ -34,12 +34,6 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       industries: defaultIndustries,
       stages: defaultStages,
       vcFirms: defaultVcFirms
-    },
-    {
-      setRegionItems: () => {},
-      setIndustryItems: () => {},
-      setStageItems: () => {},
-      setVcFirms: () => {}
     }
   );
 
@@ -74,17 +68,17 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   // Re-initialize database when connection status changes
   useEffect(() => {
     if (!isLoading) {
-      useDatabaseInitialization(
-        {
-          regions: defaultRegions,
-          industries: defaultIndustries,
-          stages: defaultStages,
-          vcFirms: defaultVcFirms
-        },
-        setters
-      );
+      // Load data from database if connected
+      const loadDatabaseData = async () => {
+        if (isSupabaseConnected) {
+          // This is now handled in the useDatabaseInitialization hook
+          console.log("Database is connected, data will be loaded in the hook");
+        }
+      };
+      
+      loadDatabaseData();
     }
-  }, [isSupabaseConnected]);
+  }, [isSupabaseConnected, isLoading]);
 
   // Output the connection status for debugging
   useEffect(() => {
