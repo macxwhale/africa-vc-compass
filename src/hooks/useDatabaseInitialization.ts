@@ -1,11 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { VCFirm } from "@/data/vcData";
-import { 
-  supabase, 
-  isSupabaseConfigured, 
-  testDatabaseConnection 
-} from "@/services/supabaseService";
+import { supabase, isSupabaseConfigured, testDatabaseConnection } from "@/services/supabaseService";
 import { toast } from "@/hooks/use-toast";
 import { Item } from "@/contexts/DataContext";
 import { 

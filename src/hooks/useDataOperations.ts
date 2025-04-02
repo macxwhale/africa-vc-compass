@@ -1,14 +1,8 @@
-
 import { useState, useEffect } from "react";
 import { VCFirm } from "@/data/vcData";
 import { toast } from "@/hooks/use-toast";
-import { 
-  supabase,
-  vcFirmService, 
-  regionService, 
-  industryService, 
-  stageService 
-} from "@/services/supabaseService";
+import { supabase } from "@/services/supabaseService";
+import { vcFirmService, regionService, industryService, stageService } from "@/services/supabaseService";
 import { Item } from "@/contexts/DataContext";
 import { updateRegionItems, updateIndustryItems, updateStageItems } from "@/utils/databaseUtils";
 
