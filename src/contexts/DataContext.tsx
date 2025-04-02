@@ -1,17 +1,18 @@
-
 import { createContext, useState, useEffect, useContext, ReactNode } from "react";
 import { industries as initialIndustries, stages as initialStages, regions as initialRegions, vcFirms as initialVcFirms, VCFirm } from "@/data/vcData";
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 // Initialize Supabase client with proper error handling
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Check if we have valid credentials
 const isSupabaseConfigured = !!supabaseUrl && !!supabaseKey;
 
 // Create a mock Supabase client that just logs operations
 const createMockClient = () => {
+  console.warn('Using mock Supabase client. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables.');
+  
   const mockClient = {
     from: (table: string) => ({
       select: (query: string) => ({ 
@@ -47,14 +48,21 @@ const createMockClient = () => {
 };
 
 // Use real client only if properly configured, otherwise use mock
-const supabase = isSupabaseConfigured 
-  ? createClient(supabaseUrl, supabaseKey, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-      }
-    }) 
-  : createMockClient();
+let supabase: SupabaseClient;
+
+try {
+  supabase = isSupabaseConfigured 
+    ? createClient(supabaseUrl, supabaseKey, {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+        }
+      }) 
+    : createMockClient();
+} catch (error) {
+  console.error('Error initializing Supabase client:', error);
+  supabase = createMockClient();
+}
 
 interface Item {
   id: string;
@@ -232,7 +240,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
           setIsSupabaseConnected(false);
         }
       } else {
-        console.warn("Supabase credentials are missing. Using local data only.");
+        console.warn("Supabase credentials are missing. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables to enable Supabase integration.");
         setIsSupabaseConnected(false);
       }
       

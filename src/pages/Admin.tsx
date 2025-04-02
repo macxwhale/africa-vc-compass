@@ -247,7 +247,14 @@ const Admin = () => {
                 <AlertDescription>
                   No Supabase connection configured. Changes will only persist during this session.
                   <br />
-                  You need to set the VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables.
+                  To enable database connectivity, you need to set these environment variables:
+                  <ul className="list-disc ml-6 mt-2">
+                    <li><code className="bg-gray-100 px-1 rounded">VITE_SUPABASE_URL</code> - Your Supabase project URL</li>
+                    <li><code className="bg-gray-100 px-1 rounded">VITE_SUPABASE_ANON_KEY</code> - Your Supabase anon/public key</li>
+                  </ul>
+                  <p className="mt-2">
+                    For local development, create a <code className="bg-gray-100 px-1 rounded">.env.local</code> file in the project root with these variables.
+                  </p>
                 </AlertDescription>
               </Alert>
             )}
