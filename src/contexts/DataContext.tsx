@@ -1,68 +1,7 @@
 import { createContext, useState, useEffect, useContext, ReactNode } from "react";
 import { industries as initialIndustries, stages as initialStages, regions as initialRegions, vcFirms as initialVcFirms, VCFirm } from "@/data/vcData";
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-
-// Initialize Supabase client with proper error handling
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-// Check if we have valid credentials
-const isSupabaseConfigured = !!supabaseUrl && !!supabaseKey;
-
-// Create a mock Supabase client that just logs operations
-const createMockClient = () => {
-  console.warn('Using mock Supabase client. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables.');
-  
-  const mockClient = {
-    from: (table: string) => ({
-      select: (query: string) => ({ 
-        data: null, 
-        error: new Error('Mock Supabase client: No connection available'),
-        count: 0
-      }),
-      insert: (data: any) => ({ 
-        data: null, 
-        error: new Error('Mock Supabase client: No connection available') 
-      }),
-      update: (data: any) => ({ 
-        data: null, 
-        error: new Error('Mock Supabase client: No connection available') 
-      }),
-      delete: () => ({ 
-        data: null, 
-        error: new Error('Mock Supabase client: No connection available') 
-      }),
-      eq: (column: string, value: any) => ({ 
-        data: null, 
-        error: new Error('Mock Supabase client: No connection available') 
-      }),
-      neq: (column: string, value: any) => mockClient.from(table),
-    }),
-    auth: {
-      getSession: () => Promise.resolve({ data: { session: null }, error: null }),
-      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
-    }
-  };
-  
-  return mockClient as unknown as SupabaseClient;
-};
-
-// Use real client only if properly configured, otherwise use mock
-let supabase: SupabaseClient;
-
-try {
-  supabase = isSupabaseConfigured 
-    ? createClient(supabaseUrl, supabaseKey, {
-        auth: {
-          persistSession: true,
-          autoRefreshToken: true,
-        }
-      }) 
-    : createMockClient();
-} catch (error) {
-  console.error('Error initializing Supabase client:', error);
-  supabase = createMockClient();
-}
+import { supabase, isSupabaseConfigured, vcFirmService } from "@/services/supabaseService";
+import { toast } from "@/hooks/use-toast";
 
 interface Item {
   id: string;
@@ -93,30 +32,29 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 
 // Function to create the necessary tables in Supabase if they don't exist
 const createTablesIfNeeded = async () => {
-  if (!isSupabaseConfigured) return;
+  if (!isSupabaseConfigured) return false;
 
   try {
-    // Define SQL statements to create tables if they don't exist
-    const createTableStatements = [
-      `
+    // To create tables, we need to use the SQL editor in Supabase dashboard
+    // Here we'll just log instructions for the user
+    console.log(`
+      To create the necessary tables in Supabase, go to the SQL Editor in your Supabase dashboard and run the following SQL:
+      
       CREATE TABLE IF NOT EXISTS regions (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL
-      )
-      `,
-      `
+      );
+      
       CREATE TABLE IF NOT EXISTS industries (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL
-      )
-      `,
-      `
+      );
+      
       CREATE TABLE IF NOT EXISTS stages (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL
-      )
-      `,
-      `
+      );
+      
       CREATE TABLE IF NOT EXISTS vc_firms (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
@@ -133,27 +71,18 @@ const createTablesIfNeeded = async () => {
         "portfolioCompanies" TEXT[],
         "keyPartners" JSONB,
         "contactInfo" JSONB
-      )
-      `
-    ];
-
-    // Execute each statement to create tables
-    for (const sql of createTableStatements) {
-      const { error } = await supabase.rpc('exec', { query: sql });
-      if (error) {
-        console.error('Error creating table:', error);
-        
-        // If the 'exec' RPC function doesn't exist, we need to handle it differently
-        if (error.message.includes('function "exec" does not exist')) {
-          console.log('The exec RPC function does not exist. Tables need to be created manually in the Supabase dashboard.');
-          return false;
-        }
-      }
-    }
+      );
+    `);
     
+    // Check if we can access any of the tables
+    const { data, error } = await supabase.from('regions').select('count');
+    if (error) {
+      console.error('Tables need to be created manually in Supabase dashboard:', error.message);
+      return false;
+    }
     return true;
   } catch (error) {
-    console.error('Error creating tables:', error);
+    console.error('Error checking tables:', error);
     return false;
   }
 };
@@ -189,17 +118,30 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       if (!isSupabaseConnected) {
         // Local only operation
         setVcFirms([...vcFirms, firm]);
+        toast({
+          title: "Success",
+          description: "VC firm added successfully (local only)",
+        });
         return;
       }
 
       // Add to Supabase
-      const { error } = await supabase.from('vc_firms').insert(firm);
-      if (error) throw error;
+      const { data } = await vcFirmService.createVCFirm(firm);
       
       // Update local state
       setVcFirms([...vcFirms, firm]);
+      
+      toast({
+        title: "Success",
+        description: "VC firm added successfully and saved to database",
+      });
     } catch (error) {
       console.error("Error adding VC firm:", error);
+      toast({
+        title: "Error",
+        description: `Failed to add VC firm: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        variant: "destructive",
+      });
       throw error;
     }
   };
@@ -209,21 +151,30 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       if (!isSupabaseConnected) {
         // Local only operation
         setVcFirms(vcFirms.map(f => f.id === firm.id ? firm : f));
+        toast({
+          title: "Success",
+          description: "VC firm updated successfully (local only)",
+        });
         return;
       }
 
       // Update in Supabase
-      const { error } = await supabase
-        .from('vc_firms')
-        .update(firm)
-        .eq('id', firm.id);
-        
-      if (error) throw error;
+      await vcFirmService.updateVCFirm(firm);
       
       // Update local state
       setVcFirms(vcFirms.map(f => f.id === firm.id ? firm : f));
+      
+      toast({
+        title: "Success",
+        description: "VC firm updated successfully and saved to database",
+      });
     } catch (error) {
       console.error("Error updating VC firm:", error);
+      toast({
+        title: "Error",
+        description: `Failed to update VC firm: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        variant: "destructive",
+      });
       throw error;
     }
   };
@@ -233,21 +184,30 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       if (!isSupabaseConnected) {
         // Local only operation
         setVcFirms(vcFirms.filter(f => f.id !== id));
+        toast({
+          title: "Success",
+          description: "VC firm deleted successfully (local only)",
+        });
         return;
       }
 
       // Delete from Supabase
-      const { error } = await supabase
-        .from('vc_firms')
-        .delete()
-        .eq('id', id);
-        
-      if (error) throw error;
+      await vcFirmService.deleteVCFirm(id);
       
       // Update local state
       setVcFirms(vcFirms.filter(f => f.id !== id));
+      
+      toast({
+        title: "Success",
+        description: "VC firm deleted successfully and removed from database",
+      });
     } catch (error) {
       console.error("Error deleting VC firm:", error);
+      toast({
+        title: "Error",
+        description: `Failed to delete VC firm: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        variant: "destructive",
+      });
       throw error;
     }
   };
@@ -271,8 +231,17 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       );
       
       if (error) throw error;
+      toast({
+        title: "Success",
+        description: "Regions updated successfully and saved to database",
+      });
     } catch (error) {
       console.error('Error saving regions to database:', error);
+      toast({
+        title: "Error",
+        description: `Failed to save regions to database: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        variant: "destructive",
+      });
     }
   };
 
@@ -295,8 +264,17 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       );
       
       if (error) throw error;
+      toast({
+        title: "Success",
+        description: "Industries updated successfully and saved to database",
+      });
     } catch (error) {
       console.error('Error saving industries to database:', error);
+      toast({
+        title: "Error",
+        description: `Failed to save industries to database: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        variant: "destructive",
+      });
     }
   };
 
@@ -319,8 +297,17 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       );
       
       if (error) throw error;
+      toast({
+        title: "Success",
+        description: "Investment stages updated successfully and saved to database",
+      });
     } catch (error) {
       console.error('Error saving stages to database:', error);
+      toast({
+        title: "Error",
+        description: `Failed to save stages to database: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        variant: "destructive",
+      });
     }
   };
 
@@ -366,9 +353,6 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       setIndustryItems(defaultIndustries);
       setStageItems(defaultStages);
       setVcFirms(defaultVcFirms);
-      
-      // If we got here without throwing, we have a Supabase connection
-      setIsSupabaseConnected(true);
       
     } catch (error) {
       console.error('Error initializing database with default data:', error);
@@ -480,6 +464,11 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
           
           if (!tablesCreated) {
             console.log("Tables could not be created automatically. You may need to create them manually.");
+            toast({
+              title: "Database Setup Required",
+              description: "Tables need to be created in your Supabase dashboard. Check console for SQL statements.",
+              variant: "destructive",
+            });
           }
           
           // Check if we can connect to Supabase by making a simple query
@@ -488,19 +477,33 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
           if (error) {
             console.error("Failed to connect to Supabase:", error);
             setIsSupabaseConnected(false);
+            toast({
+              title: "Database Connection Failed",
+              description: "Could not connect to Supabase database. Running in local-only mode.",
+              variant: "destructive",
+            });
             
             if (error.message.includes("does not exist")) {
               console.log("Tables don't exist in Supabase. Going to try creating them...");
               
-              // Retry creating tables one more time
-              await createTablesIfNeeded();
-              
               // Try to initialize the tables with default data
-              await initializeDatabaseWithDefaultData(regionsData, industriesData, stagesData, vcFirmsData);
+              try {
+                await initializeDatabaseWithDefaultData(regionsData, industriesData, stagesData, vcFirmsData);
+                toast({
+                  title: "Database Tables Missing",
+                  description: "You need to create the necessary tables in Supabase. Check console for SQL statements.",
+                });
+              } catch (initError) {
+                console.error("Failed to initialize database:", initError);
+              }
             }
           } else {
             console.log("Successfully connected to Supabase!");
             setIsSupabaseConnected(true);
+            toast({
+              title: "Database Connected",
+              description: "Successfully connected to Supabase database.",
+            });
             
             // Now try to load data from Supabase
             await loadDataFromSupabase(regionsData, industriesData, stagesData, vcFirmsData);
@@ -510,6 +513,11 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         } catch (error) {
           console.error("Error checking Supabase connection:", error);
           setIsSupabaseConnected(false);
+          toast({
+            title: "Database Error",
+            description: "An error occurred while connecting to the database.",
+            variant: "destructive",
+          });
         }
       } else {
         console.warn("Supabase credentials are missing. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables to enable Supabase integration.");
@@ -530,6 +538,11 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       setStageItems(initialStages.map((name, index) => ({ id: `stage-${index}`, name })));
       setVcFirms(initialVcFirms);
       setIsSupabaseConnected(false);
+      toast({
+        title: "Database Error",
+        description: "Failed to initialize database. Using local data only.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
