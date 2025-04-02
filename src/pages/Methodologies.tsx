@@ -14,7 +14,13 @@ import {
   PieChart,
   BadgeCheck,
   Scale,
-  Globe
+  Globe,
+  BriefcaseBusiness,
+  LineChart,
+  Handshake,
+  Target,
+  Lightbulb,
+  Building
 } from "lucide-react";
 import { 
   Accordion,
@@ -34,6 +40,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Methodologies = () => {
   return (
@@ -45,8 +52,8 @@ const Methodologies = () => {
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">Research Methodologies</h1>
             <p className="text-xl max-w-3xl mx-auto">
-              Understanding how we research venture capital firms that offer grants to startups,
-              with comprehensive evaluation frameworks and impact assessment techniques.
+              The systematic approach used to identify, analyze, and evaluate venture capital firms 
+              investing in African startups, with comprehensive investment pattern analysis.
             </p>
           </div>
         </div>
@@ -58,77 +65,192 @@ const Methodologies = () => {
                 <h2 className="text-3xl font-bold mb-4">My Research Approach</h2>
                 <p className="text-lg text-gray-700 mb-4">
                   The Africa VC Compass employs a rigorous, multi-faceted research methodology to identify, 
-                  catalog, and evaluate venture capital firms that offer grants to African startups.
+                  catalog, and evaluate venture capital firms actively investing in African startups.
                 </p>
                 <p className="text-lg text-gray-700">
                   Our approach combines quantitative data analysis with qualitative assessments, 
-                  focusing particularly on grant-giving VCs that prioritize social impact alongside 
-                  financial returns in the African innovation ecosystem.
+                  focusing on investment patterns, sector preferences, and geographical focus
+                  within the African startup ecosystem.
                 </p>
               </div>
               <div className="flex items-center justify-center">
                 <div className="bg-gray-100 p-6 rounded-lg">
                   <Search className="h-32 w-32 text-africa-blue mx-auto mb-4" />
                   <p className="text-center text-gray-700 font-medium">
-                    Comprehensive research methods for grant-giving VCs
+                    Comprehensive research methods for African VC investment landscape
                   </p>
                 </div>
               </div>
             </div>
             
+            <Tabs defaultValue="data-collection" className="mb-12">
+              <TabsList className="grid w-full grid-cols-1 md:grid-cols-3">
+                <TabsTrigger value="data-collection">Data Collection</TabsTrigger>
+                <TabsTrigger value="analysis-frameworks">Analysis Frameworks</TabsTrigger>
+                <TabsTrigger value="validation-methods">Validation Methods</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="data-collection" className="mt-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <Database className="h-10 w-10 text-africa-blue mb-2" />
+                      <CardTitle>Primary Research</CardTitle>
+                      <CardDescription>Direct data sources</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-700">
+                        I conducted interviews with VC firm partners, fund managers, and executives. This includes 
+                        detailed questionnaires about investment criteria, portfolio structure, and fund deployment strategies.
+                        Analysis of annual reports, portfolio announcements, and direct engagement with funded startups
+                        provided key insights into actual investment patterns.
+                      </p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <PieChart className="h-10 w-10 text-africa-blue mb-2" />
+                      <CardTitle>Secondary Analysis</CardTitle>
+                      <CardDescription>Existing data utilization</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-700">
+                        I systematically reviewed industry reports from organizations like AVCA, Partech Africa, 
+                        and Disrupt Africa. Academic studies, public databases, press releases, 
+                        funding announcements, and regulatory filings were thoroughly analyzed. 
+                        Cross-validation of data points across multiple sources ensured accuracy.
+                      </p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <Globe className="h-10 w-10 text-africa-blue mb-2" />
+                      <CardTitle>Ecosystem Mapping</CardTitle>
+                      <CardDescription>Network relationship analysis</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-700">
+                        I mapped connections between VCs, startups, accelerators, and other ecosystem players,
+                        identifying co-investment patterns, sector specialization trends, and regional investment flows.
+                        This allowed for understanding the structure of VC networks and how capital flows
+                        through the African startup ecosystem.
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="analysis-frameworks" className="mt-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <BriefcaseBusiness className="h-10 w-10 text-africa-blue mb-2" />
+                      <CardTitle>Investment Pattern Analysis</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-700">
+                        I tracked deal flow, investment stages (seed, Series A, B, etc.), ticket sizes, and
+                        follow-on investment patterns. This included analyzing investment frequency,
+                        portfolio construction strategies, and changes in investment focus over time.
+                        Special attention was paid to changes in investment theses and adaptation to market conditions.
+                      </p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <LineChart className="h-10 w-10 text-africa-blue mb-2" />
+                      <CardTitle>Sector/Vertical Analysis</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-700">
+                        I classified investments by industry vertical (fintech, healthtech, agritech, etc.)
+                        and conducted comparative analysis across sectors. This included tracking
+                        emerging sector trends, investment concentration, and identifying underserved 
+                        sectors with growth potential. Sector-specific return profiles were also evaluated.
+                      </p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <Target className="h-10 w-10 text-africa-blue mb-2" />
+                      <CardTitle>Geographic Focus Evaluation</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-700">
+                        I mapped investment distribution across African regions and countries,
+                        identifying investment hotspots and emerging markets. Analysis included
+                        comparing investment allocation across different markets,
+                        country-specific investment barriers, and strategic geographic positioning
+                        of VC firms across the continent.
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="validation-methods" className="mt-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <Handshake className="h-10 w-10 text-africa-blue mb-2" />
+                      <CardTitle>Stakeholder Validation</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-700">
+                        I conducted validation interviews with ecosystem stakeholders including
+                        entrepreneurs, industry experts, and policy makers. This helped verify
+                        findings, identify blind spots, and incorporate diverse perspectives.
+                        Feedback sessions with VC representatives ensured accurate representation
+                        of investment strategies and priorities.
+                      </p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <Building className="h-10 w-10 text-africa-blue mb-2" />
+                      <CardTitle>Portfolio Performance Assessment</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-700">
+                        I analyzed portfolio company performance metrics where available, including
+                        growth rates, follow-on funding success, market traction, and exits.
+                        This provided insights into the effectiveness of various VC investment
+                        strategies and their actual market outcomes. Success patterns across
+                        different investment approaches were identified.
+                      </p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <Lightbulb className="h-10 w-10 text-africa-blue mb-2" />
+                      <CardTitle>Comparative Benchmarking</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-700">
+                        I compared African VC investment patterns with global benchmarks and
+                        other emerging markets. This contextualized findings within broader
+                        venture capital trends and highlighted unique aspects of the African
+                        VC landscape. Comparative analysis included investment terms, 
+                        return expectations, and fund structures.
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+            </Tabs>
+            
             <Separator className="my-12" />
             
-            <h2 className="text-3xl font-bold mb-8 text-center">Data Collection Methodologies</h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-              <Card>
-                <CardHeader>
-                  <Database className="h-10 w-10 text-africa-blue mb-2" />
-                  <CardTitle>Primary Research</CardTitle>
-                  <CardDescription>Direct data sources</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-700">
-                    We conduct interviews with VC firm partners and executives, focusing on 
-                    grant-giving organizations. This includes questionnaires sent to firms,
-                    analysis of annual reports, and direct engagement with portfolio companies.
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <PieChart className="h-10 w-10 text-africa-blue mb-2" />
-                  <CardTitle>Secondary Analysis</CardTitle>
-                  <CardDescription>Existing data utilization</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-700">
-                    We systematically review industry reports, academic studies, public databases,
-                    news coverage, and regulatory filings to gather data on grant-focused VCs.
-                    Cross-validation ensures accuracy of information collected.
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <Globe className="h-10 w-10 text-africa-blue mb-2" />
-                  <CardTitle>Ecosystem Mapping</CardTitle>
-                  <CardDescription>Network relationship analysis</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-700">
-                    We map connections between VCs, startups, accelerators, and other ecosystem players,
-                    particularly identifying the flow of grant capital and non-financial support to
-                    startups across the African continent.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
+            <h2 className="text-3xl font-bold mb-8 text-center">Investor Evaluation Criteria</h2>
             
             <div className="bg-gray-50 rounded-lg p-8 mb-12">
-              <h3 className="text-2xl font-bold mb-6 text-center">Grant-Specific Evaluation Criteria</h3>
+              <h3 className="text-2xl font-bold mb-6 text-center">VC Firm Assessment Framework</h3>
               
               <Table className="mb-6">
                 <TableHeader>
@@ -139,38 +261,38 @@ const Methodologies = () => {
                 </TableHeader>
                 <TableBody>
                   <TableRow>
-                    <TableCell className="font-medium">Impact Measurement</TableCell>
+                    <TableCell className="font-medium">Fund Structure & Size</TableCell>
                     <TableCell>
-                      Analysis of KPIs used by VCs to measure social/environmental impact;
-                      alignment with SDGs; community benefit assessment methodologies
+                      Analysis of fund capitalization, investment period, fund lifecycle stage,
+                      LP composition, and committed capital vs. deployed capital ratios
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell className="font-medium">Grant Requirements</TableCell>
+                    <TableCell className="font-medium">Investment Thesis</TableCell>
                     <TableCell>
-                      Documentation of eligibility criteria, application processes,
-                      reporting requirements, and conditionality factors
+                      Documentation of stated vs. actual investment focus, stage preferences,
+                      sector specialization, and evolution of investment strategy over time
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell className="font-medium">Technical Assistance</TableCell>
+                    <TableCell className="font-medium">Portfolio Construction</TableCell>
                     <TableCell>
-                      Evaluation of non-financial support mechanisms offered alongside grants;
-                      mentorship quality; operational support infrastructure
+                      Evaluation of portfolio diversity, investment concentration, 
+                      follow-on strategy, check size distribution, and reserve allocation practices
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell className="font-medium">Geographic Focus</TableCell>
+                    <TableCell className="font-medium">Value Addition</TableCell>
                     <TableCell>
-                      Mapping of regional priorities and concentration of grant funding;
-                      urban vs. rural distribution; cross-border capabilities
+                      Assessment of operational support, network access, strategic guidance,
+                      follow-on fundraising assistance, and other non-financial contributions
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell className="font-medium">Ecosystem Development</TableCell>
+                    <TableCell className="font-medium">Track Record & Team</TableCell>
                     <TableCell>
-                      Assessment of VC contributions to broader ecosystem building;
-                      policy influence; knowledge sharing practices
+                      Analysis of historical returns, successful exits, failed investments,
+                      team experience, local presence, sector expertise, and team diversity
                     </TableCell>
                   </TableRow>
                 </TableBody>
@@ -179,20 +301,21 @@ const Methodologies = () => {
             
             <Separator className="my-12" />
             
-            <h2 className="text-3xl font-bold mb-8">Core Research Approaches</h2>
+            <h2 className="text-3xl font-bold mb-8">Core Investment Research Approaches</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
               <Card>
                 <CardHeader>
                   <Microscope className="h-10 w-10 text-africa-blue mb-2" />
-                  <CardTitle>Due Diligence</CardTitle>
-                  <CardDescription>Comprehensive assessment of startups</CardDescription>
+                  <CardTitle>Due Diligence Practices</CardTitle>
+                  <CardDescription>VC investment assessment</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-700">
-                    In-depth investigation into a company's business model, market potential, 
-                    team capabilities, financial health, and legal standing before investment.
-                    Grant-focused VCs also evaluate alignment with impact objectives.
+                    I studied how VCs conduct technological, market, financial, and legal due diligence
+                    on potential investments. This included evaluation of proprietary deal flow channels,
+                    screening criteria, and decision-making processes. Special attention was paid to
+                    Africa-specific due diligence challenges and adaptations.
                   </p>
                 </CardContent>
               </Card>
@@ -200,14 +323,15 @@ const Methodologies = () => {
               <Card>
                 <CardHeader>
                   <Users className="h-10 w-10 text-africa-blue mb-2" />
-                  <CardTitle>Team Evaluation</CardTitle>
-                  <CardDescription>Assessing founder potential</CardDescription>
+                  <CardTitle>Founder Assessment</CardTitle>
+                  <CardDescription>Evaluating entrepreneur potential</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-700">
-                    Analysis of the founding team's experience, domain expertise, track record, 
-                    adaptability, and leadership capabilities. Grant-providing VCs often look for 
-                    mission-driven leadership and values alignment.
+                    I analyzed how VCs evaluate founding teams, including experience assessment methods,
+                    background verification approaches, and criteria for determining team capability.
+                    This included studying the importance placed on local market knowledge,
+                    previous entrepreneurial experience, and team composition diversity.
                   </p>
                 </CardContent>
               </Card>
@@ -215,14 +339,15 @@ const Methodologies = () => {
               <Card>
                 <CardHeader>
                   <BarChart4 className="h-10 w-10 text-africa-blue mb-2" />
-                  <CardTitle>Market Analysis</CardTitle>
-                  <CardDescription>Understanding market dynamics</CardDescription>
+                  <CardTitle>Market Opportunity Analysis</CardTitle>
+                  <CardDescription>Understanding market validation</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-700">
-                    Evaluation of market size, growth potential, competitive landscape, and 
-                    adoption barriers. Grant-oriented investors particularly assess potential for 
-                    system-level change and social impact alongside market variables.
+                    I explored methodologies used by VCs to determine market size, growth potential,
+                    competitive landscape, and entry barriers for African startups. This included
+                    analysis of tools and frameworks used for market sizing in emerging economies
+                    with limited data availability and high market uncertainty.
                   </p>
                 </CardContent>
               </Card>
@@ -230,77 +355,77 @@ const Methodologies = () => {
             
             <Separator className="my-12" />
             
-            <h2 className="text-3xl font-bold mb-8">Grant-Specific Research Methodologies</h2>
+            <h2 className="text-3xl font-bold mb-8">Specialized Research Methodologies</h2>
             
             <Accordion type="single" collapsible className="w-full mb-12">
               <AccordionItem value="item-1">
                 <AccordionTrigger className="text-xl font-medium">
-                  Impact Assessment Frameworks
+                  Investment Performance Measurement
                 </AccordionTrigger>
                 <AccordionContent className="text-gray-700">
                   <p className="mb-4">
-                    Grant-giving VCs utilize specialized frameworks to measure potential social, 
-                    environmental, and economic impacts of startups. These typically include:
+                    I analyzed how African VCs measure investment performance across multiple dimensions:
                   </p>
                   <ul className="list-disc pl-6 space-y-2">
-                    <li>Theory of Change models that map how innovations lead to desired outcomes</li>
-                    <li>Impact measurement metrics tailored to specific sectors and challenges</li>
-                    <li>Alignment assessment with sustainable development goals (SDGs)</li>
-                    <li>Scalability analysis of impact potential</li>
+                    <li>Financial return metrics (IRR, MOIC, DPI, TVPI) interpretation and benchmarking</li>
+                    <li>Exit mechanism analysis including M&A activity, secondary sales, and IPO readiness</li>
+                    <li>Comparative performance analysis against global and regional benchmarks</li>
+                    <li>Portfolio company growth metrics beyond pure financial returns</li>
+                    <li>Methodology adaptations for measuring returns in volatile emerging markets</li>
                   </ul>
                 </AccordionContent>
               </AccordionItem>
               
               <AccordionItem value="item-2">
                 <AccordionTrigger className="text-xl font-medium">
-                  Innovation Evaluation Criteria
+                  Risk Assessment Frameworks
                 </AccordionTrigger>
                 <AccordionContent className="text-gray-700">
                   <p className="mb-4">
-                    Grant-focused VCs assess innovation across multiple dimensions:
+                    I documented approaches to evaluating and mitigating investment risks:
                   </p>
                   <ul className="list-disc pl-6 space-y-2">
-                    <li>Novelty and differentiation from existing solutions</li>
-                    <li>Appropriateness for target communities or problems</li>
-                    <li>Technical feasibility and implementation readiness</li>
-                    <li>Potential for catalyzing broader ecosystem innovation</li>
-                    <li>Capacity to address root causes rather than symptoms</li>
+                    <li>Currency risk management strategies specific to African markets</li>
+                    <li>Political and regulatory risk assessment methodologies</li>
+                    <li>Market risk analysis in nascent and rapidly evolving sectors</li>
+                    <li>Execution risk evaluation for early-stage ventures</li>
+                    <li>Liquidity risk considerations and exit planning in limited-liquidity markets</li>
                   </ul>
                 </AccordionContent>
               </AccordionItem>
               
               <AccordionItem value="item-3">
                 <AccordionTrigger className="text-xl font-medium">
-                  Community-Based Research
+                  Deal Structure Analysis
                 </AccordionTrigger>
                 <AccordionContent className="text-gray-700">
                   <p className="mb-4">
-                    Many grant-giving VCs incorporate community perspectives through:
+                    I researched investment terms and structures used in African venture deals:
                   </p>
                   <ul className="list-disc pl-6 space-y-2">
-                    <li>Participatory evaluation involving stakeholders from target communities</li>
-                    <li>Local advisory panels to assess relevance and potential uptake</li>
-                    <li>Field visits and contextual immersion</li>
-                    <li>User testing and feedback incorporation</li>
-                    <li>Community partnership assessment</li>
+                    <li>Equity structures, valuations, and term sheet provisions commonly used</li>
+                    <li>Convertible instrument design and implementation (SAFE, convertible notes)</li>
+                    <li>Investor protection mechanisms and their adaptation to local contexts</li>
+                    <li>Alternative financing structures including revenue-based financing</li>
+                    <li>Cross-border investment structures and regulatory compliance frameworks</li>
                   </ul>
                 </AccordionContent>
               </AccordionItem>
               
               <AccordionItem value="item-4">
                 <AccordionTrigger className="text-xl font-medium">
-                  Sustainability Frameworks
+                  Portfolio Management Practices
                 </AccordionTrigger>
                 <AccordionContent className="text-gray-700">
                   <p className="mb-4">
-                    Methodologies to evaluate long-term sustainability of grant-funded ventures:
+                    I analyzed post-investment management approaches:
                   </p>
                   <ul className="list-disc pl-6 space-y-2">
-                    <li>Financial sustainability models beyond grant funding</li>
-                    <li>Resource efficiency and environmental impact assessment</li>
-                    <li>Governance structure evaluation for long-term viability</li>
-                    <li>Technology transfer and knowledge sharing capabilities</li>
-                    <li>Exit strategy analysis for grant providers</li>
+                    <li>Board representation practices and governance approaches</li>
+                    <li>Strategic support frameworks and operational assistance methodologies</li>
+                    <li>Monitoring systems and reporting requirements</li>
+                    <li>Follow-on investment decision frameworks</li>
+                    <li>Portfolio company milestone development and progress tracking</li>
                   </ul>
                 </AccordionContent>
               </AccordionItem>
@@ -312,40 +437,39 @@ const Methodologies = () => {
                   <CircleDollarSign className="h-24 w-24 text-africa-gold" />
                 </div>
                 <div className="md:w-2/3">
-                  <h3 className="text-2xl font-bold mb-3">Grant vs. Equity Investment Research</h3>
+                  <h3 className="text-2xl font-bold mb-3">Emerging Market VC Research Challenges</h3>
                   <p className="text-gray-700 mb-4">
-                    While traditional equity investments focus primarily on financial returns, 
-                    grant-giving VCs balance financial sustainability with impact metrics. Their 
-                    research methodologies incorporate both dimensions, with greater emphasis on 
-                    long-term societal benefits, ecosystem strengthening, and innovation diffusion.
+                    Researching VC activities in African markets presents unique methodological 
+                    challenges including limited data availability, non-standardized reporting, 
+                    private transaction details, and rapidly evolving ecosystems.
                   </p>
                   <p className="text-gray-700">
-                    Grant-oriented research often takes a more collaborative approach, involving 
-                    multiple stakeholders and considering broader ecosystem effects beyond 
-                    individual company performance.
+                    My research approach addresses these challenges through multi-source 
+                    triangulation, primary data collection, local ecosystem engagement, 
+                    and continuous database updating to ensure comprehensive and accurate 
+                    representation of the African VC landscape.
                   </p>
                 </div>
               </div>
             </div>
             
-            <h2 className="text-3xl font-bold mb-6 text-center">Documentation & Reporting</h2>
+            <h2 className="text-3xl font-bold mb-6 text-center">Research Documentation & Reporting</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
               <Card>
                 <CardHeader>
                   <FileText className="h-10 w-10 text-africa-blue mb-2" />
-                  <CardTitle>Research Documentation</CardTitle>
+                  <CardTitle>Documentation Standards</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-700 mb-4">
-                    Grant-giving VCs maintain comprehensive documentation on their research methods 
-                    and findings, including:
+                    My research documentation includes:
                   </p>
                   <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                    <li>Due diligence reports with impact-oriented metrics</li>
-                    <li>Stakeholder interview transcripts and findings</li>
-                    <li>Market and needs assessment data</li>
-                    <li>Technical validation documentation</li>
-                    <li>References to academic or field research supporting impact claims</li>
+                    <li>Comprehensive VC firm profiles with standardized information architecture</li>
+                    <li>Investment activity timelines and detailed deal histories</li>
+                    <li>Source attribution and verification notes</li>
+                    <li>Methodological limitations and data confidence assessments</li>
+                    <li>Periodic data validation and update logs</li>
                   </ul>
                 </CardContent>
               </Card>
@@ -353,25 +477,25 @@ const Methodologies = () => {
               <Card>
                 <CardHeader>
                   <TrendingUp className="h-10 w-10 text-africa-blue mb-2" />
-                  <CardTitle>Impact Tracking</CardTitle>
+                  <CardTitle>Trend Analysis</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-700 mb-4">
-                    Post-investment, grant-giving VCs employ ongoing measurement approaches:
+                    My approach to identifying and analyzing investment trends includes:
                   </p>
                   <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                    <li>Regular milestone reporting against impact targets</li>
-                    <li>Longitudinal studies of beneficiary outcomes</li>
-                    <li>Ecosystem influence assessment</li>
-                    <li>Policy and practice change documentation</li>
-                    <li>Knowledge sharing and learning reports</li>
+                    <li>Longitudinal tracking of investment patterns over time</li>
+                    <li>Cross-regional comparative analysis</li>
+                    <li>Sector-specific investment flow tracking</li>
+                    <li>New investor entry and exit pattern documentation</li>
+                    <li>Correlation analysis between investment trends and ecosystem developments</li>
                   </ul>
                 </CardContent>
               </Card>
             </div>
             
             <div className="mb-12">
-              <h3 className="text-2xl font-bold mb-6 text-center">My Research Quality Standards</h3>
+              <h3 className="text-2xl font-bold mb-6 text-center">Research Quality Standards</h3>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <Card className="bg-gray-50">
                   <CardHeader className="pb-2">
@@ -404,7 +528,7 @@ const Methodologies = () => {
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-gray-700">
-                      Comprehensive investigation of grant mechanisms, impact philosophies, and support structures
+                      Comprehensive investigation of investment strategies, portfolio construction, and value-add approaches
                     </p>
                   </CardContent>
                 </Card>
@@ -416,7 +540,7 @@ const Methodologies = () => {
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-gray-700">
-                      Regular updates to reflect changing priorities, new funds, and evolving grant strategies
+                      Regular updates to reflect new investments, fund announcements, and market developments
                     </p>
                   </CardContent>
                 </Card>
