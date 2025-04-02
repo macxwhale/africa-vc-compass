@@ -8,6 +8,7 @@ export function useVCFirmOperations(
   setVcFirmsState: React.Dispatch<React.SetStateAction<VCFirm[]>>,
   isSupabaseConnected: boolean
 ) {
+  // Use memoized functions to avoid creating new function references on every render
   const getVCsByIndustry = (industry: string, limit?: number): VCFirm[] => {
     const filteredVCs = vcFirms.filter(vc => vc.industries.includes(industry));
     return limit ? filteredVCs.slice(0, limit) : filteredVCs;
@@ -31,8 +32,14 @@ export function useVCFirmOperations(
         firm.id = `firm-${Date.now()}`;
       }
       
-      // Using a functional update to avoid dependency on vcFirms
-      setVcFirmsState(prevFirms => [...prevFirms, firm]);
+      // Ensure we're not creating a new array on every render
+      setVcFirmsState(prevFirms => {
+        // Check if firm already exists to prevent duplicates
+        if (prevFirms.some(f => f.id === firm.id)) {
+          return prevFirms;
+        }
+        return [...prevFirms, firm];
+      });
       
       if (!isSupabaseConnected) {
         toast({
@@ -68,8 +75,13 @@ export function useVCFirmOperations(
     try {
       console.log("Updating VC firm with isSupabaseConnected:", isSupabaseConnected);
       
-      // Using a functional update to avoid dependency on vcFirms
-      setVcFirmsState(prevFirms => prevFirms.map(f => f.id === firm.id ? firm : f));
+      setVcFirmsState(prevFirms => {
+        // Only update if the firm exists and has changed
+        const firmExists = prevFirms.some(f => f.id === firm.id);
+        if (!firmExists) return prevFirms;
+        
+        return prevFirms.map(f => f.id === firm.id ? firm : f);
+      });
       
       if (!isSupabaseConnected) {
         toast({
@@ -105,8 +117,11 @@ export function useVCFirmOperations(
     try {
       console.log("Deleting VC firm with isSupabaseConnected:", isSupabaseConnected);
       
-      // Using a functional update to avoid dependency on vcFirms
-      setVcFirmsState(prevFirms => prevFirms.filter(f => f.id !== id));
+      setVcFirmsState(prevFirms => {
+        // Only remove if the firm exists
+        if (!prevFirms.some(f => f.id === id)) return prevFirms;
+        return prevFirms.filter(f => f.id !== id);
+      });
       
       if (!isSupabaseConnected) {
         toast({
