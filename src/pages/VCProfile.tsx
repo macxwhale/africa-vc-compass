@@ -2,23 +2,28 @@
 import { useParams, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { vcFirms } from "@/data/vcData";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ExternalLink, MapPin, Calendar, Mail, Twitter, Linkedin } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useData } from "@/contexts/DataContext";
+import { VCFirm } from "@/data/vcData";
 
 const VCProfile = () => {
   const { id } = useParams<{ id: string }>();
-  
-  const vc = vcFirms.find((firm) => firm.id === id);
+  const { vcFirms } = useData();
+  const [vc, setVc] = useState<VCFirm | undefined>(undefined);
   
   useEffect(() => {
+    // Find the VC firm by ID from context
+    const foundVc = vcFirms.find((firm) => firm.id === id);
+    setVc(foundVc);
+    
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
-  }, []);
+  }, [id, vcFirms]);
   
   if (!vc) {
     return (
