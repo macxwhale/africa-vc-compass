@@ -133,7 +133,7 @@ const VCProfile = () => {
                   
                   <div className="mt-6">
                     <h3 className="font-medium text-gray-700 mb-2">Ticket Size</h3>
-                    <Badge variant="secondary" className="text-base font-medium bg-gray-100">
+                    <Badge variant="secondary" className="text-base font-medium bg-africa-gold text-white hover:bg-africa-blue hover:text-white transition-colors">
                       {vc.ticketSize}
                     </Badge>
                   </div>
