@@ -92,9 +92,21 @@ const StagesPage = () => {
                               <Cell key={`cell-${index}`} fill={entry.color} />
                             ))}
                           </Pie>
-                          <ChartTooltip
-                            formatter={(value: number, name: string) => [`${value} VCs`, name]}
-                          />
+                          <ChartTooltip content={(props) => {
+                            if (!props.active || !props.payload?.length) {
+                              return null;
+                            }
+                            
+                            const { payload, label } = props;
+                            const data = payload[0];
+                            
+                            return (
+                              <div className="bg-white p-2 shadow rounded border">
+                                <p className="font-medium">{data.name}</p>
+                                <p>{`${data.value} VCs`}</p>
+                              </div>
+                            );
+                          }} />
                           <Legend />
                         </PieChart>
                       </ResponsiveContainer>
@@ -130,20 +142,17 @@ const StagesPage = () => {
                             tick={{ fontSize: 12 }}
                           />
                           <YAxis />
-                          <ChartTooltip
-                            content={props => {
-                              if (!props.active || !props.payload?.length) {
-                                return null;
-                              }
-                              return (
-                                <ChartTooltipContent
-                                  className="border-none"
-                                  {...props}
-                                  formatter={(value) => [`${value} VCs`, 'Count']}
-                                />
-                              );
-                            }}
-                          />
+                          <ChartTooltip content={(props) => {
+                            if (!props.active || !props.payload?.length) {
+                              return null;
+                            }
+                            return (
+                              <div className="bg-white p-2 shadow rounded border">
+                                <p className="font-medium">{props.payload[0].name}</p>
+                                <p>{`${props.payload[0].value} VCs`}</p>
+                              </div>
+                            );
+                          }} />
                           <Bar dataKey="value" fill="var(--africa-blue, #1A365D)" name="VCs per Stage" />
                         </BarChart>
                       </ChartContainer>
@@ -218,4 +227,3 @@ const StagesPage = () => {
 };
 
 export default StagesPage;
-
