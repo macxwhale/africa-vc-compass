@@ -18,6 +18,7 @@ import StagesPage from "./pages/StagesPage";
 import SupabaseSetup from "./pages/SupabaseSetup";
 import Methodologies from "./pages/Methodologies";
 import Contact from "./pages/Contact";
+import Privacy from "./pages/Privacy";
 
 // Create a stable QueryClient with caching configuration
 const queryClient = new QueryClient({
@@ -49,6 +50,7 @@ const App = () => {
               <Route path="/stages" element={<StagesPage />} />
               <Route path="/methodologies" element={<Methodologies />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/privacy" element={<Privacy />} />
               <Route path="/supabase-setup" element={<SupabaseSetup />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
