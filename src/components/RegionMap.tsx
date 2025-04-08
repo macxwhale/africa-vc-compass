@@ -6,6 +6,7 @@ import { useData } from "@/contexts/DataContext";
 import { regionCountriesMap } from "@/pages/RegionsPage";
 import { useState } from "react";
 import VCCard from "./VCCard";
+import { MapPin } from "lucide-react";
 
 const RegionMap = () => {
   const { regionNames, vcFirms, getVCsByRegion } = useData();
