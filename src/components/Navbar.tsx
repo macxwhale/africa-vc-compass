@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Search } from "lucide-react";
+import { Home, Search, Radar } from "lucide-react";
 
 const Navbar = () => {
   return (
@@ -38,7 +38,13 @@ const Navbar = () => {
           </Link>
         </div>
         
-        <div className="flex items-center">
+        <div className="flex items-center space-x-2">
+          <Link to="/radar">
+            <Button variant="outline" className="flex items-center gap-1">
+              <Radar className="h-4 w-4" />
+              <span className="hidden sm:inline">Get On Their Radar</span>
+            </Button>
+          </Link>
           <Button variant="ghost" size="icon">
             <Search className="h-5 w-5" />
           </Button>
