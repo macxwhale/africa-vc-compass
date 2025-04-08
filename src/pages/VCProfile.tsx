@@ -74,7 +74,7 @@ const VCProfile = () => {
               </div>
               
               <div className="flex gap-3">
-                <Button asChild variant="outline" className="border-white bg-africa-gold text-white hover:bg-africa-blue">
+                <Button asChild variant="outline" className="border-white bg-africa-gold text-white hover:bg-africa-blue hover:text-white">
                   <a href={vc.website} target="_blank" rel="noopener noreferrer">
                     Website <ExternalLink className="ml-1 h-4 w-4" />
                   </a>
