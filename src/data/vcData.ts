@@ -19,6 +19,11 @@ export interface VCFirm {
     twitter?: string;
     linkedin?: string;
   };
+  contactPerson?: {
+    name: string;
+    email: string;
+    linkedinUrl?: string;
+  };
 }
 
 export interface Person {

@@ -15,7 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Mail, Linkedin, Twitter } from "lucide-react";
+import { Mail, Linkedin, Twitter, User } from "lucide-react";
 
 const Radar = () => {
   const { vcFirms } = useData();
@@ -31,6 +31,10 @@ const Radar = () => {
       window.open(`https://twitter.com/${value}`, "_blank");
     } else if (type === "linkedin") {
       window.open(`https://linkedin.com/company/${value}`, "_blank");
+    } else if (type === "person-email") {
+      window.location.href = `mailto:${value}`;
+    } else if (type === "person-linkedin") {
+      window.open(value, "_blank");
     }
     
     toast.success("Contact information copied!");
@@ -124,6 +128,43 @@ const Radar = () => {
                       )}
                     </div>
                   </div>
+                  
+                  {/* Contact Person Section */}
+                  {selectedFirm.contactPerson && (selectedFirm.contactPerson.name || selectedFirm.contactPerson.email || selectedFirm.contactPerson.linkedinUrl) && (
+                    <div className="mt-6">
+                      <h3 className="text-lg font-semibold mb-3">Contact Person</h3>
+                      <div className="space-y-3">
+                        {selectedFirm.contactPerson.name && (
+                          <div className="flex items-center text-gray-700 px-3 py-2 border rounded-md">
+                            <User className="mr-2 h-4 w-4" />
+                            <span>{selectedFirm.contactPerson.name}</span>
+                          </div>
+                        )}
+                        
+                        {selectedFirm.contactPerson.email && (
+                          <Button 
+                            variant="outline" 
+                            className="w-full justify-start"
+                            onClick={() => handleContactClick("person-email", selectedFirm.contactPerson.email)}
+                          >
+                            <Mail className="mr-2 h-4 w-4" />
+                            {selectedFirm.contactPerson.email}
+                          </Button>
+                        )}
+                        
+                        {selectedFirm.contactPerson.linkedinUrl && (
+                          <Button 
+                            variant="outline" 
+                            className="w-full justify-start"
+                            onClick={() => handleContactClick("person-linkedin", selectedFirm.contactPerson.linkedinUrl)}
+                          >
+                            <Linkedin className="mr-2 h-4 w-4" />
+                            View LinkedIn Profile
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  )}
                   
                   <div className="mt-6">
                     <h3 className="text-lg font-semibold mb-2">About {selectedFirm.name}</h3>

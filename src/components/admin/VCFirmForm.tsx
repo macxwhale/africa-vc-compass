@@ -52,6 +52,11 @@ const defaultFirm: VCFirm = {
     email: "",
     twitter: "",
     linkedin: ""
+  },
+  contactPerson: {
+    name: "",
+    email: "",
+    linkedinUrl: ""
   }
 };
 
@@ -501,6 +506,66 @@ export default function VCFirmForm({
                         <Input 
                           placeholder="LinkedIn handle" 
                           {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+            
+            {/* Contact Person */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium">Contact Person</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="contactPerson.name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="John Doe" 
+                          {...field} 
+                          value={field.value || ""}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="contactPerson.email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="john.doe@example.com" 
+                          {...field} 
+                          value={field.value || ""}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="contactPerson.linkedinUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>LinkedIn URL</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="https://linkedin.com/in/johndoe" 
+                          {...field} 
+                          value={field.value || ""}
                         />
                       </FormControl>
                       <FormMessage />
