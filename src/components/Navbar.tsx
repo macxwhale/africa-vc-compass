@@ -42,7 +42,7 @@ const Navbar = () => {
           <Link to="/radar">
             <Button variant="outline" className="flex items-center gap-1">
               <Radar className="h-4 w-4" />
-              <span className="hidden sm:inline">Get On Their Radar</span>
+              <span className="hidden sm:inline">Shoot Your Shot</span>
             </Button>
           </Link>
           <Button variant="ghost" size="icon">

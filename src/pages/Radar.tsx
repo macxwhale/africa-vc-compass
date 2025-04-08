@@ -43,7 +43,7 @@ const Radar = () => {
       <main className="flex-grow">
         <div className="bg-gray-50 py-12">
           <div className="container mx-auto px-4">
-            <h1 className="text-3xl md:text-4xl font-bold text-africa-blue mb-4">Get On Their Radar</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-africa-blue mb-4">Shoot Your Shot</h1>
             <p className="text-gray-600 mb-8 max-w-2xl">
               Connect with venture capital firms that match your startup's profile. 
               Select a VC firm to view their contact information and get on their radar.
