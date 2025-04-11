@@ -1,4 +1,3 @@
-
 import { VCFirm } from './types';
 
 export const vcFirms: VCFirm[] = [
@@ -29,8 +28,10 @@ export const vcFirms: VCFirm[] = [
       linkedin: "ventures-platform"
     },
     contactPerson: {
-      name: "Investment Team",
-      email: "investments@venturesplatform.com"
+      name: "Sarah Johnson",
+      email: "sarah@venturesplatform.com",
+      phone: "+234 800 123 4567",
+      linkedinUrl: "https://www.linkedin.com/in/sarah-johnson"
     }
   },
   {
