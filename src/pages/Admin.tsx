@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -7,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { Edit, Trash, Plus, Check, X, AlertTriangle, Database, FileCheck } from "lucide-react";
+import { Edit, Trash, Plus, Check, X, AlertTriangle, Database, FileCheck, Search } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useData } from "@/contexts/DataContext";
 import { VCFirm } from "@/data/vcData";
@@ -18,6 +17,7 @@ import PendingVCFirmDetail from "@/components/admin/PendingVCFirmDetail";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { PendingVCFirm } from "@/hooks/useDataOperations";
 import { Badge } from "@/components/ui/badge";
+import { AIResearchForm } from "@/components/admin/AIResearchForm";
 
 interface Item {
   id: string;
@@ -331,7 +331,7 @@ const Admin = () => {
             )}
             
             <Tabs defaultValue="regions" value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-5 mb-8">
+              <TabsList className="grid w-full grid-cols-6 mb-8">
                 <TabsTrigger value="regions">Regions</TabsTrigger>
                 <TabsTrigger value="industries">Industries</TabsTrigger>
                 <TabsTrigger value="stages">Investment Stages</TabsTrigger>
@@ -343,6 +343,10 @@ const Admin = () => {
                       {pendingCount}
                     </Badge>
                   )}
+                </TabsTrigger>
+                <TabsTrigger value="research">
+                  <Search className="h-4 w-4 mr-2" />
+                  AI Research
                 </TabsTrigger>
               </TabsList>
               
@@ -506,6 +510,31 @@ const Admin = () => {
                           setPendingFirmDetailOpen(true);
                         }}
                       />
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="research" className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Search className="h-5 w-5" />
+                      AI Research
+                    </CardTitle>
+                    <CardDescription>Research and automatically add VC firms to the pending queue</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid gap-4">
+                      <div className={isSupabaseConnected ? "bg-green-50 border-l-4 border-green-400 p-4" : "bg-yellow-50 border-l-4 border-yellow-400 p-4"}>
+                        <p className={isSupabaseConnected ? "text-green-700" : "text-yellow-700"}>
+                          {isSupabaseConnected 
+                            ? "AI-researched firms will be added to the pending queue for your review."
+                            : "Supabase not connected. Changes will be lost when you refresh the page."}
+                        </p>
+                      </div>
+                      
+                      <AIResearchForm />
                     </div>
                   </CardContent>
                 </Card>

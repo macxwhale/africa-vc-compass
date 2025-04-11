@@ -426,134 +426,130 @@ export const vcFirmService = {
 
 // CRUD operations for pending VC firms
 export const pendingVCFirmService = {
-  // Create a new pending VC firm
-  createPendingVCFirm: async (firm: PendingVCFirm) => {
-    if (!isSupabaseConfigured) {
-      console.error('Supabase not configured. Cannot create pending VC firm.');
-      return { data: null, error: new Error('Supabase not configured') };
-    }
-
-    console.log('Creating pending VC firm in Supabase:', firm);
-    
+  async getAllPendingVCFirms() {
     try {
-      // Ensure the key partners and portfolio companies are properly formatted
-      const formattedFirm = {
-        ...firm,
-        keyPartners: Array.isArray(firm.keyPartners) ? firm.keyPartners : [],
-        portfolioCompanies: Array.isArray(firm.portfolioCompanies) ? firm.portfolioCompanies : []
-      };
-      
+      console.log("Fetching all pending VC firms...");
       const { data, error } = await supabase
-        .from('pending_vc_firms')
-        .insert(formattedFirm)
-        .select();
-        
-      if (error) {
-        console.error('Error creating pending VC firm:', error);
-        return { data: null, error };
-      }
+        .from("pending_vc_firms")
+        .select("*");
       
-      console.log('Pending VC firm created successfully:', data);
-      return { data, error: null };
-    } catch (error) {
-      console.error('Unexpected error creating pending VC firm:', error);
-      return { 
-        data: null, 
-        error: error instanceof Error ? error : new Error('Unknown error creating pending VC firm') 
-      };
-    }
-  },
-  
-  // Read all pending VC firms
-  getAllPendingVCFirms: async () => {
-    if (!isSupabaseConfigured) {
-      console.error('Supabase not configured. Cannot fetch pending VC firms.');
-      return [] as PendingVCFirm[];
-    }
-    
-    console.log('Fetching all pending VC firms...');
-    
-    try {
-      const { data, error } = await supabase
-        .from('pending_vc_firms')
-        .select('*');
-        
       if (error) {
-        console.error('Error fetching pending VC firms:', error);
+        console.error("Error fetching pending VC firms:", error);
         throw error;
       }
       
-      console.log('Pending VC firms fetched successfully:', data);
-      return data as PendingVCFirm[];
+      return data || [];
     } catch (error) {
-      console.error('Unexpected error fetching pending VC firms:', error);
-      return [] as PendingVCFirm[];
+      console.error("Unexpected error fetching pending VC firms:", error);
+      return [];
     }
   },
   
-  // Update a pending VC firm
-  updatePendingVCFirm: async (firm: PendingVCFirm) => {
-    if (!isSupabaseConfigured) {
-      console.error('Supabase not configured. Cannot update pending VC firm.');
-      return { data: null, error: new Error('Supabase not configured') };
-    }
-    
-    console.log('Updating pending VC firm:', firm);
-    
+  async createPendingVCFirm(firm) {
     try {
-      // Ensure the key partners and portfolio companies are properly formatted
-      const formattedFirm = {
-        ...firm,
-        keyPartners: Array.isArray(firm.keyPartners) ? firm.keyPartners : [],
-        portfolioCompanies: Array.isArray(firm.portfolioCompanies) ? firm.portfolioCompanies : []
-      };
+      console.log("Creating pending VC firm:", firm);
       
+      // Check if the table exists and create it if it doesn't
+      const { error: checkError } = await supabase
+        .from("pending_vc_firms")
+        .select("count")
+        .limit(1)
+        .catch(() => ({ error: { message: "Table does not exist" } }));
+      
+      // If the table doesn't exist, create it
+      if (checkError) {
+        console.log("Creating pending_vc_firms table...");
+        const { error: createError } = await supabase.rpc("create_pending_vc_firms_table");
+        
+        if (createError) {
+          console.error("Error creating pending_vc_firms table:", createError);
+          // Try to create the table manually as a fallback
+          await supabase.rpc("execute_sql", { 
+            sql_query: `
+              CREATE TABLE IF NOT EXISTS pending_vc_firms (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                logo TEXT,
+                description TEXT NOT NULL,
+                website TEXT,
+                headquarters TEXT NOT NULL,
+                "foundedYear" INTEGER,
+                "investmentFocus" TEXT[] DEFAULT '{}',
+                industries TEXT[] DEFAULT '{}',
+                "stagePreference" TEXT[] DEFAULT '{}',
+                "ticketSize" TEXT,
+                "regionsOfInterest" TEXT[] DEFAULT '{}',
+                "portfolioCompanies" TEXT[] DEFAULT '{}',
+                "keyPartners" JSONB DEFAULT '[]',
+                "contactInfo" JSONB DEFAULT '{}',
+                "contactPerson" JSONB,
+                status TEXT NOT NULL,
+                "submittedAt" TIMESTAMP WITH TIME ZONE NOT NULL,
+                "reviewedAt" TIMESTAMP WITH TIME ZONE,
+                "reviewNotes" TEXT
+              );
+            `
+          });
+        }
+      }
+      
+      // Insert the new pending VC firm
       const { data, error } = await supabase
-        .from('pending_vc_firms')
-        .update(formattedFirm)
-        .eq('id', firm.id)
+        .from("pending_vc_firms")
+        .insert([firm])
         .select();
         
       if (error) {
-        console.error('Error updating pending VC firm:', error);
-        return { data: null, error };
+        console.error("Error creating pending VC firm:", error);
+        throw error;
       }
       
-      console.log('Pending VC firm updated successfully:', data);
-      return { data, error: null };
+      return { data, error };
     } catch (error) {
-      console.error('Unexpected error updating pending VC firm:', error);
-      return { 
-        data: null, 
-        error: error instanceof Error ? error : new Error('Unknown error updating pending VC firm') 
-      };
+      console.error("Error in createPendingVCFirm:", error);
+      return { data: null, error };
     }
   },
   
-  // Delete a pending VC firm
-  deletePendingVCFirm: async (id: string) => {
-    if (!isSupabaseConfigured) {
-      console.error('Supabase not configured. Cannot delete pending VC firm.');
-      return false;
-    }
-    
-    console.log('Deleting pending VC firm with ID:', id);
-    
+  async updatePendingVCFirm(firm) {
     try {
-      const { error } = await supabase
-        .from('pending_vc_firms')
-        .delete()
-        .eq('id', id);
+      console.log("Updating pending VC firm:", firm);
+      
+      const { data, error } = await supabase
+        .from("pending_vc_firms")
+        .update(firm)
+        .eq("id", firm.id)
+        .select();
         
       if (error) {
-        console.error('Error deleting pending VC firm:', error);
+        console.error("Error updating pending VC firm:", error);
+        throw error;
+      }
+      
+      return { data, error };
+    } catch (error) {
+      console.error("Error in updatePendingVCFirm:", error);
+      return { data: null, error };
+    }
+  },
+  
+  async deletePendingVCFirm(id) {
+    try {
+      console.log("Deleting pending VC firm:", id);
+      
+      const { error } = await supabase
+        .from("pending_vc_firms")
+        .delete()
+        .eq("id", id);
+        
+      if (error) {
+        console.error("Error deleting pending VC firm:", error);
         return false;
       }
       
-      console.log('Pending VC firm deleted successfully');
       return true;
     } catch (error) {
-      console.error('Unexpected error deleting pending VC firm:', error);
+      console.error("Error in deletePendingVCFirm:", error);
       return false;
     }
   }
