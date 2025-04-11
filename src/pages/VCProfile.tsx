@@ -15,13 +15,15 @@ import {
 import { VCFirm } from "@/data/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, MapPin, Calendar, Mail, Twitter, Linkedin } from "lucide-react";
+import { ExternalLink, MapPin, Calendar, Mail, Twitter, Linkedin, User, Phone, Copy } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/hooks/use-toast";
 
 const VCProfile = () => {
   const { id } = useParams<{ id: string }>();
   const { vcFirms } = useData();
   const [vc, setVc] = useState<VCFirm | undefined>(undefined);
+  const { toast } = useToast();
   
   useEffect(() => {
     // Find the VC firm by ID from context
@@ -31,6 +33,14 @@ const VCProfile = () => {
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
   }, [id, vcFirms]);
+  
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    toast({
+      title: "Copied to clipboard",
+      description: `${label} has been copied to your clipboard.`
+    });
+  };
   
   if (!vc) {
     return (
@@ -196,6 +206,73 @@ const VCProfile = () => {
                   </div>
                   
                   <Separator className="my-6" />
+                  
+                  {/* Contact Person Section - New Section */}
+                  {vc.contactPerson && (
+                    <>
+                      <h2 className="text-xl font-bold mb-4">Contact Person</h2>
+                      <div className="space-y-3 p-4 bg-blue-50 rounded-lg border border-blue-100 mb-6">
+                        <div className="flex items-center space-x-3">
+                          <User className="h-5 w-5 text-africa-blue" />
+                          <span className="font-medium">{vc.contactPerson.name}</span>
+                        </div>
+                        
+                        {vc.contactPerson.email && (
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-3">
+                              <Mail className="h-5 w-5 text-africa-blue" />
+                              <a href={`mailto:${vc.contactPerson.email}`} className="text-africa-blue hover:underline">
+                                {vc.contactPerson.email}
+                              </a>
+                            </div>
+                            <Button 
+                              size="sm" 
+                              variant="ghost"
+                              onClick={() => copyToClipboard(vc.contactPerson.email, 'Email')}
+                              className="h-8 px-2"
+                            >
+                              <Copy className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        )}
+                        
+                        {vc.contactPerson.phone && (
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-3">
+                              <Phone className="h-5 w-5 text-africa-blue" />
+                              <span>{vc.contactPerson.phone}</span>
+                            </div>
+                            <Button 
+                              size="sm" 
+                              variant="ghost"
+                              onClick={() => copyToClipboard(vc.contactPerson.phone, 'Phone')}
+                              className="h-8 px-2"
+                            >
+                              <Copy className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        )}
+                        
+                        {vc.contactPerson.linkedinUrl && (
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-3">
+                              <Linkedin className="h-5 w-5 text-africa-blue" />
+                              <span>LinkedIn Profile</span>
+                            </div>
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => window.open(vc.contactPerson.linkedinUrl, '_blank')}
+                              className="h-8"
+                            >
+                              Visit
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                      <Separator className="mb-6" />
+                    </>
+                  )}
                   
                   <h2 className="text-xl font-bold mb-4">Contact Information</h2>
                   
