@@ -1,7 +1,8 @@
 
 import { useState, useEffect, useRef } from "react";
-import { VCFirm } from "@/data/types";
+import { VCFirm } from "@/data/vcData";
 import { supabase, isSupabaseConfigured, testDatabaseConnection } from "@/services/supabaseService";
+import { toast } from "@/hooks/use-toast";
 import { Item } from "@/contexts/DataContext";
 import { 
   createTablesIfNeeded, 
@@ -43,9 +44,18 @@ export function useDatabaseInitialization(defaultData: DefaultData) {
             if (!isConnected) {
               console.error("Failed to connect to Supabase");
               setIsSupabaseConnected(false);
+              toast({
+                title: "Database Connection Failed",
+                description: "Could not connect to Supabase database. Running in local-only mode.",
+                variant: "destructive",
+              });
             } else {
               console.log("Successfully connected to Supabase!");
               setIsSupabaseConnected(true);
+              toast({
+                title: "Database Connected",
+                description: "Successfully connected to Supabase database.",
+              });
               
               // Create tables if they don't exist
               await createTablesIfNeeded();
@@ -66,6 +76,11 @@ export function useDatabaseInitialization(defaultData: DefaultData) {
           } catch (error) {
             console.error("Error checking Supabase connection:", error);
             setIsSupabaseConnected(false);
+            toast({
+              title: "Database Error",
+              description: "An error occurred while connecting to the database.",
+              variant: "destructive",
+            });
           }
         } else {
           console.warn("Supabase credentials are missing or invalid. Check your environment variables.");
@@ -74,6 +89,11 @@ export function useDatabaseInitialization(defaultData: DefaultData) {
       } catch (error) {
         console.error('Error initializing database:', error);
         setIsSupabaseConnected(false);
+        toast({
+          title: "Database Error",
+          description: "Failed to initialize database. Using local data only.",
+          variant: "destructive",
+        });
       } finally {
         setIsLoading(false);
       }

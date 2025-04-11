@@ -1,6 +1,7 @@
 import { supabase, isSupabaseConfigured, executeSQL, testDatabaseConnection, createAllTables, regionService, industryService, stageService, vcFirmService } from "@/services/supabaseService";
 import { Item } from "@/contexts/DataContext";
-import { VCFirm } from "@/data/types";
+import { VCFirm } from "@/data/vcData";
+import { toast } from "@/hooks/use-toast";
 
 // Function to check if tables exist and create them if they don't
 export const createTablesIfNeeded = async () => {
@@ -230,22 +231,20 @@ export const updateRegionItems = async (items: Item[], isSupabaseConnected: bool
   
   try {
     console.log("Updating regions in database:", items);
-    // First, delete all existing regions to ensure we have a clean slate
-    const { error: deleteError } = await supabase
-      .from('regions')
-      .delete()
-      .not('id', 'is', null);
-    
-    if (deleteError) {
-      console.error('Error deleting existing regions:', deleteError);
-      return items;
-    }
-
-    // Now insert all regions as a fresh batch
     await regionService.updateAllRegions(items);
+    
+    toast({
+      title: "Success",
+      description: "Regions updated successfully and saved to database",
+    });
     return items;
   } catch (error) {
     console.error('Error saving regions to database:', error);
+    toast({
+      title: "Error",
+      description: `Failed to save regions to database: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      variant: "destructive",
+    });
     return items;
   }
 };
@@ -259,22 +258,20 @@ export const updateIndustryItems = async (items: Item[], isSupabaseConnected: bo
   
   try {
     console.log("Updating industries in database:", items);
-    // First, delete all existing industries
-    const { error: deleteError } = await supabase
-      .from('industries')
-      .delete()
-      .not('id', 'is', null);
-    
-    if (deleteError) {
-      console.error('Error deleting existing industries:', deleteError);
-      return items;
-    }
-
-    // Now insert all industries
     await industryService.updateAllIndustries(items);
+    
+    toast({
+      title: "Success",
+      description: "Industries updated successfully and saved to database",
+    });
     return items;
   } catch (error) {
     console.error('Error saving industries to database:', error);
+    toast({
+      title: "Error",
+      description: `Failed to save industries to database: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      variant: "destructive",
+    });
     return items;
   }
 };
@@ -288,22 +285,20 @@ export const updateStageItems = async (items: Item[], isSupabaseConnected: boole
   
   try {
     console.log("Updating stages in database:", items);
-    // First, delete all existing stages
-    const { error: deleteError } = await supabase
-      .from('stages')
-      .delete()
-      .not('id', 'is', null);
-    
-    if (deleteError) {
-      console.error('Error deleting existing stages:', deleteError);
-      return items;
-    }
-
-    // Now insert all stages
     await stageService.updateAllStages(items);
+    
+    toast({
+      title: "Success",
+      description: "Investment stages updated successfully and saved to database",
+    });
     return items;
   } catch (error) {
     console.error('Error saving stages to database:', error);
+    toast({
+      title: "Error",
+      description: `Failed to save stages to database: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      variant: "destructive",
+    });
     return items;
   }
 };

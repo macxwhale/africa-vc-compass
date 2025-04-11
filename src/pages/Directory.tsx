@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FilterBar, { FilterState } from "@/components/FilterBar";
 import VCCard from "@/components/VCCard";
-import { type VCFirm } from "@/data/types";
+import { type VCFirm } from "@/data/vcData";
 import { useData } from "@/contexts/DataContext";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { VCFirm } from "@/data/types";
+import { VCFirm } from "@/data/vcData";
 import { Button } from "@/components/ui/button";
 import {
   Form,

@@ -1,17 +1,11 @@
 
 import { createContext, useContext } from "react";
-import { VCFirm } from "@/data/types";
+import { VCFirm } from "@/data/vcData";
+import { PendingVCFirm } from "@/hooks/useDataOperations";
 
 export interface Item {
   id: string;
   name: string;
-}
-
-export interface PendingVCFirm extends VCFirm {
-  status: 'pending' | 'approved' | 'rejected';
-  submittedAt: string;
-  reviewedAt?: string;
-  reviewNotes?: string;
 }
 
 interface DataContextType {

@@ -1,6 +1,7 @@
+
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { VCFirm } from '@/data/types';
-import { PendingVCFirm } from '@/contexts/DataContext';
+import { VCFirm } from '@/data/vcData';
+import { PendingVCFirm } from '@/hooks/useDataOperations';
 
 // Singleton pattern to ensure only one instance of the SupabaseClient
 let supabaseClient: SupabaseClient | null = null;
@@ -56,66 +57,6 @@ export const testDatabaseConnection = async (): Promise<boolean> => {
   }
 };
 
-// Enhanced function to ensure all required columns exist in tables
-export const ensureDatabaseSchema = async (): Promise<boolean> => {
-  if (!isSupabaseConfigured()) {
-    console.warn('Supabase is not configured. Cannot check or update tables.');
-    return false;
-  }
-  
-  try {
-    const client = initializeSupabase();
-    console.log("Checking and ensuring database schema is up to date...");
-    
-    // First ensure tables exist
-    await createAllTables();
-    
-    // Check if contactPerson column exists in vc_firms
-    const { data: vcFirmsColumns } = await client.rpc('execute_sql', { 
-      sql_query: `
-        SELECT column_name FROM information_schema.columns 
-        WHERE table_name = 'vc_firms' AND column_name = 'contactPerson';
-      `
-    });
-    
-    // Add contactPerson column to vc_firms if it doesn't exist
-    if (!vcFirmsColumns || vcFirmsColumns.length === 0) {
-      console.log('Adding contactPerson column to vc_firms table');
-      await client.rpc('execute_sql', { 
-        sql_query: `
-          ALTER TABLE vc_firms ADD COLUMN IF NOT EXISTS "contactPerson" JSONB;
-        `
-      });
-    }
-    
-    // Check if contactPerson column exists in pending_vc_firms
-    const { data: pendingColumns } = await client.rpc('execute_sql', { 
-      sql_query: `
-        SELECT column_name FROM information_schema.columns 
-        WHERE table_name = 'pending_vc_firms' AND column_name = 'contactPerson';
-      `
-    });
-    
-    // Add contactPerson column to pending_vc_firms if it doesn't exist
-    if (!pendingColumns || pendingColumns.length === 0) {
-      console.log('Adding contactPerson column to pending_vc_firms table');
-      await client.rpc('execute_sql', { 
-        sql_query: `
-          ALTER TABLE pending_vc_firms ADD COLUMN IF NOT EXISTS "contactPerson" JSONB;
-        `
-      });
-    }
-    
-    return true;
-  } catch (error) {
-    console.error('Failed to ensure database schema:', error);
-    return false;
-  }
-};
-
-// Alias for backward compatibility
-export const ensureContactPersonColumn = ensureDatabaseSchema;
-
 // Create tables if they don't exist
 export const createAllTables = async (): Promise<boolean> => {
   if (!isSupabaseConfigured()) {
@@ -156,7 +97,7 @@ export const createAllTables = async (): Promise<boolean> => {
       `
     });
     
-    // Create vc_firms table with contactPerson column
+    // Create vc_firms table
     await client.rpc('execute_sql', { 
       sql_query: `
         CREATE TABLE IF NOT EXISTS vc_firms (
@@ -175,14 +116,13 @@ export const createAllTables = async (): Promise<boolean> => {
           portfolioCompanies JSONB,
           keyPartners JSONB,
           contactInfo JSONB,
-          contactPerson JSONB,
           created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
           updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
         );
       `
     });
     
-    // Create pending_vc_firms table with contactPerson column
+    // Create pending_vc_firms table
     await client.rpc('execute_sql', { 
       sql_query: `
         CREATE TABLE IF NOT EXISTS pending_vc_firms (
@@ -201,7 +141,6 @@ export const createAllTables = async (): Promise<boolean> => {
           portfolioCompanies JSONB,
           keyPartners JSONB,
           contactInfo JSONB,
-          contactPerson JSONB,
           status TEXT,
           submittedAt TIMESTAMP WITH TIME ZONE,
           reviewedAt TIMESTAMP WITH TIME ZONE,
@@ -210,15 +149,7 @@ export const createAllTables = async (): Promise<boolean> => {
       `
     });
     
-    try {
-      // Ensure the contactPerson column exists in existing tables
-      await ensureContactPersonColumn();
-      
-      return true;
-    } catch (error) {
-      console.error('Failed to create tables:', error);
-      return false;
-    }
+    return true;
   } catch (error) {
     console.error('Failed to create tables:', error);
     return false;
@@ -245,30 +176,6 @@ export const executeSQL = async (query: string): Promise<any> => {
   } catch (error) {
     console.error('Failed to execute SQL:', error);
     throw error;
-  }
-};
-
-// Run database fix script
-export const fixDatabaseSchema = async (): Promise<boolean> => {
-  if (!isSupabaseConfigured()) {
-    console.warn('Supabase is not configured. Cannot fix database schema.');
-    return false;
-  }
-  
-  try {
-    console.log("Running database schema fix script...");
-    
-    // Ensure all tables exist first
-    await createAllTables();
-    
-    // Then ensure all columns exist
-    await ensureDatabaseSchema();
-    
-    console.log("Database schema fix completed successfully");
-    return true;
-  } catch (error) {
-    console.error('Failed to fix database schema:', error);
-    return false;
   }
 };
 
@@ -455,18 +362,9 @@ export const vcFirmService = {
     const client = initializeSupabase();
   
     try {
-      // Ensure contact person column exists before creating
-      await ensureDatabaseSchema();
-      
-      // Ensure contactPerson is properly formatted for storage
-      const firmToCreate = JSON.parse(JSON.stringify(firm));
-      
-      console.log("Creating VC firm with contact person:", 
-        firmToCreate.contactPerson ? JSON.stringify(firmToCreate.contactPerson) : "No contact person");
-  
       const { data, error } = await client
         .from('vc_firms')
-        .upsert(firmToCreate)
+        .upsert(firm)
         .select()
         .single();
   
@@ -491,18 +389,9 @@ export const vcFirmService = {
     const client = initializeSupabase();
   
     try {
-      // Ensure contactPerson column exists before updating
-      await ensureDatabaseSchema();
-      
-      // Ensure contactPerson is properly formatted for storage
-      const firmToUpdate = JSON.parse(JSON.stringify(firm));
-      
-      console.log("Updating VC firm with contact person data:", 
-        firmToUpdate.contactPerson ? JSON.stringify(firmToUpdate.contactPerson, null, 2) : "No contact person data");
-  
       const { data, error } = await client
         .from('vc_firms')
-        .update(firmToUpdate)
+        .update(firm)
         .eq('id', firm.id)
         .select()
         .single();
@@ -557,19 +446,6 @@ export const pendingVCFirmService = {
     const client = initializeSupabase();
   
     try {
-      // First check if table exists
-      try {
-        const { error: checkError } = await client.from('pending_vc_firms').select('count').limit(1);
-        if (checkError && checkError.code === '42P01') {
-          console.log("pending_vc_firms table doesn't exist yet, creating it now");
-          await createAllTables();
-          return []; // Return empty array for first load
-        }
-      } catch (checkError) {
-        console.error("Error checking if pending_vc_firms exists:", checkError);
-      }
-      
-      // Now try to get the data
       const { data, error } = await client
         .from('pending_vc_firms')
         .select('*')
@@ -596,36 +472,15 @@ export const pendingVCFirmService = {
     const client = initializeSupabase();
   
     try {
-      // First ensure table exists and has required columns
-      try {
-        const { error: checkError } = await client.from('pending_vc_firms').select('count').limit(1);
-        if (checkError && checkError.code === '42P01') {
-          console.log("pending_vc_firms table doesn't exist yet, creating it now");
-          await createAllTables();
-        } else {
-          // Ensure contactPerson column exists
-          await ensureDatabaseSchema();
-        }
-      } catch (checkError) {
-        console.error("Error checking if pending_vc_firms exists:", checkError);
-        await createAllTables();
-      }
-      
       const firmWithDefaults = {
         ...firm,
         status: firm.status || 'pending',
         submittedAt: firm.submittedAt || new Date().toISOString()
       };
       
-      // Ensure contactPerson is properly formatted for storage
-      const firmToCreate = JSON.parse(JSON.stringify(firmWithDefaults));
-      
-      console.log("Creating pending VC firm with contact person:", 
-        firmToCreate.contactPerson ? JSON.stringify(firmToCreate.contactPerson) : "No contact person");
-      
       const { data, error } = await client
         .from('pending_vc_firms')
-        .insert([firmToCreate])
+        .insert([firmWithDefaults])
         .select()
         .single();
   
@@ -650,18 +505,9 @@ export const pendingVCFirmService = {
     const client = initializeSupabase();
   
     try {
-      // Ensure contactPerson column exists
-      await ensureDatabaseSchema();
-      
-      // Ensure contactPerson is properly formatted for storage
-      const firmToUpdate = JSON.parse(JSON.stringify(firm));
-      
-      console.log("Updating pending VC firm with contact person:", 
-        firmToUpdate.contactPerson ? JSON.stringify(firmToUpdate.contactPerson) : "No contact person");
-      
       const { data, error } = await client
         .from('pending_vc_firms')
-        .update(firmToUpdate)
+        .update(firm)
         .eq('id', firm.id)
         .select()
         .single();
@@ -683,8 +529,6 @@ export const pendingVCFirmService = {
 export const supabaseService = {
   isSupabaseConfigured,
   initializeSupabase,
-  ensureContactPersonColumn,
-  fixDatabaseSchema,
   storeRegions: regionService.updateAllRegions,
   getRegions: regionService.getAllRegions,
   storeIndustries: industryService.updateAllIndustries,

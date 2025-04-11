@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { vcFirms } from "@/data";
+import { vcFirms } from "@/data/vcData";
 import VCCard from "./VCCard";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";

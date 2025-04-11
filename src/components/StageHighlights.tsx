@@ -1,7 +1,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { stages } from "@/data";
+import { stages } from "@/data/vcData";
 import { Link } from "react-router-dom";
 import { useData } from "@/contexts/DataContext";
 import { useState } from "react";

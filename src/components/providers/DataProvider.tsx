@@ -1,6 +1,7 @@
+
 import { ReactNode, useMemo, useEffect, useState } from "react";
 import { DataContext } from "@/contexts/DataContext";
-import { industries, stages, regions, vcFirms as defaultVcFirms } from "@/data";
+import { industries as initialIndustries, stages as initialStages, regions as initialRegions, vcFirms as initialVcFirms } from "@/data/vcData";
 import { useDatabaseInitialization } from "@/hooks/useDatabaseInitialization";
 import { useDataOperations } from "@/hooks/useDataOperations";
 import { Item } from "@/contexts/DataContext";
@@ -9,26 +10,25 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   // Only show loading state once
   const [showLoading, setShowLoading] = useState(true);
   
-  // Create default data objects - fix the initialization order
+  // Create default data objects
   const defaultRegions = useMemo(() => 
-    regions.map((name, index) => ({ id: `region-${index}`, name })), []);
+    initialRegions.map((name, index) => ({ id: `region-${index}`, name })), []);
   
   const defaultIndustries = useMemo(() => 
-    industries.map((name, index) => ({ id: `industry-${index}`, name })), []);
+    initialIndustries.map((name, index) => ({ id: `industry-${index}`, name })), []);
   
   const defaultStages = useMemo(() => 
-    stages.map((name, index) => ({ id: `stage-${index}`, name })), []);
+    initialStages.map((name, index) => ({ id: `stage-${index}`, name })), []);
   
-  // Rename the variable to avoid the reference before initialization error
-  const initialVcFirms = useMemo(() => defaultVcFirms, []);
+  const defaultVcFirms = useMemo(() => initialVcFirms, []);
 
   // Create initial state for the data operations
   const initialData = useMemo(() => ({
     regionItems: defaultRegions,
     industryItems: defaultIndustries,
     stageItems: defaultStages,
-    vcFirms: initialVcFirms
-  }), [defaultRegions, defaultIndustries, defaultStages, initialVcFirms]);
+    vcFirms: defaultVcFirms
+  }), [defaultRegions, defaultIndustries, defaultStages, defaultVcFirms]);
 
   // Initialize database and connection
   const { isLoading, isSupabaseConnected } = useDatabaseInitialization(
@@ -42,13 +42,13 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
   // Initialize data operations with the isSupabaseConnected flag
   const {
-    vcFirms: operationVcFirms,
+    vcFirms,
     regionItems,
     industryItems,
     stageItems,
     pendingVCFirms,
     setVcFirms,
-    setRegionItems, 
+    setRegionItems,
     setIndustryItems,
     setStageItems,
     regionNames,
@@ -82,7 +82,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         regionItems, 
         industryItems, 
         stageItems,
-        vcFirms: operationVcFirms,
+        vcFirms,
         pendingVCFirms,
         setRegionItems, 
         setIndustryItems, 
