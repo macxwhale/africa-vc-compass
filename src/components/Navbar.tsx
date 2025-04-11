@@ -39,12 +39,12 @@ const Navbar = () => {
         </div>
         
         <div className="flex items-center">
-          <Link to="/radar">
-            <Button variant="outline" className="flex items-center gap-1">
+          <Button asChild variant="outline" className="flex items-center gap-1">
+            <Link to="/radar">
               <Radar className="h-4 w-4" />
               <span className="hidden sm:inline">Shoot Your Shot</span>
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
       </div>
     </nav>
