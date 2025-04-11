@@ -18,7 +18,7 @@ import VCFirmForm from "@/components/admin/VCFirmForm";
 import VCFirmsList from "@/components/admin/VCFirmsList";
 import PendingVCFirmsList from "@/components/admin/PendingVCFirmsList";
 import PendingVCFirmDetail from "@/components/admin/PendingVCFirmDetail";
-import AIResearchForm from "@/components/admin/AIResearchForm";
+import { AIResearchForm } from "@/components/admin/AIResearchForm";
 import AdminLogin from "@/components/admin/AdminLogin";
 
 interface Item {
