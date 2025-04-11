@@ -164,6 +164,7 @@ export function useDataOperations(
   const updateVCFirm = async (firm: VCFirm) => {
     try {
       console.log("Updating VC firm with isSupabaseConnected:", isSupabaseConnected);
+      console.log("Full VC firm data being updated:", JSON.stringify(firm, null, 2));
       
       setVcFirmsState(prevFirms => prevFirms.map(f => f.id === firm.id ? firm : f));
       
@@ -171,8 +172,16 @@ export function useDataOperations(
         return;
       }
 
-      console.log("Attempting to update VC firm in Supabase:", firm);
-      const result = await vcFirmService.updateVCFirm(firm);
+      const firmToUpdate = JSON.parse(JSON.stringify(firm)) as VCFirm;
+      
+      if (firmToUpdate.contactPerson) {
+        console.log("Contact person data being sent:", firmToUpdate.contactPerson);
+      } else {
+        console.log("No contact person data in the firm object");
+      }
+      
+      console.log("Attempting to update VC firm in Supabase:", firmToUpdate);
+      const result = await vcFirmService.updateVCFirm(firmToUpdate);
       
       if (result.error) {
         throw result.error;
@@ -181,6 +190,11 @@ export function useDataOperations(
       console.log("VC firm successfully updated in database:", result.data);
     } catch (error) {
       console.error("Error updating VC firm:", error);
+      toast({
+        title: "Error updating VC firm",
+        description: `${error instanceof Error ? error.message : 'Unknown error'}`,
+        variant: "destructive",
+      });
     }
   };
 
@@ -269,7 +283,8 @@ export function useDataOperations(
         regionsOfInterest: pendingFirm.regionsOfInterest,
         portfolioCompanies: pendingFirm.portfolioCompanies,
         keyPartners: pendingFirm.keyPartners,
-        contactInfo: pendingFirm.contactInfo
+        contactInfo: pendingFirm.contactInfo,
+        contactPerson: pendingFirm.contactPerson
       };
       
       setVcFirmsState(prev => [...prev, approvedFirm]);
