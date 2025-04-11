@@ -92,7 +92,8 @@ const RegionsPage = () => {
               <div className="md:col-span-2">
                 <Card>
                   <CardContent className="p-6">
-                    <div className="aspect-[4/3] bg-white rounded-lg relative overflow-hidden" style={{ maxHeight: "350px" }}>
+                    {/* Increased height by 50% from 350px to 525px */}
+                    <div className="aspect-[4/3] bg-white rounded-lg relative overflow-hidden" style={{ maxHeight: "525px" }}>
                       {/* Updated Africa map */}
                       <img 
                         src="/lovable-uploads/8d6bec59-583d-4c72-9072-4a270e686f55.png" 
