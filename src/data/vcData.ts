@@ -1,4 +1,3 @@
-
 export interface Person {
   name: string;
   image?: string;
@@ -695,36 +694,4 @@ export const vcFirms: VCFirm[] = [
       linkedin: "unconventional-capital"
     }
   }
-];
-
-export const industries = [
-  "Fintech", 
-  "Healthtech", 
-  "Edtech", 
-  "Agritech",
-  "Logistics",
-  "E-commerce",
-  "Cleantech",
-  "Insurtech",
-  "Enterprise Software",
-  "Mobility",
-  "Financial Inclusion",
-  "Proptech"
-];
-
-export const stages = [
-  "Pre-seed",
-  "Seed",
-  "Series A",
-  "Series B",
-  "Growth",
-  "Late Stage"
-];
-
-export const regions = [
-  "East Africa",
-  "West Africa", 
-  "North Africa", 
-  "Southern Africa", 
-  "Pan-African"
 ];
