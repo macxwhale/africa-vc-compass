@@ -51,8 +51,9 @@ const RegionMap = () => {
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="col-span-1 md:col-span-2">
-              <div className="relative w-full h-[350px] bg-white rounded-lg overflow-hidden">
-                {/* New Africa map image */}
+              {/* Increased height container for the map */}
+              <div className="relative w-full h-[450px] bg-white rounded-lg overflow-hidden">
+                {/* Map image with improved sizing */}
                 <img 
                   src="/lovable-uploads/8d6bec59-583d-4c72-9072-4a270e686f55.png" 
                   alt="Map of Africa"
