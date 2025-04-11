@@ -13,6 +13,37 @@ const Radar = () => {
   const [selectedFirm, setSelectedFirm] = useState<VCFirm | null>(null);
   const { toast } = useToast();
 
+  // Mock contact person data for testing
+  const addContactPersonToFirm = (firm: VCFirm | null): VCFirm | null => {
+    if (!firm) return null;
+    
+    // Add mock contact person data to specific firms for testing
+    if (firm.id === "3") {
+      return {
+        ...firm,
+        contactPerson: {
+          name: "Maurizio Caio",
+          email: "mcaio@tlcomcapital.com",
+          linkedinUrl: "https://linkedin.com/in/maurizio-caio",
+          phone: "+254 123 456 789"
+        }
+      };
+    }
+    
+    if (firm.id === "4") {
+      return {
+        ...firm,
+        contactPerson: {
+          name: "Kola Aina",
+          email: "kola@venturesplatform.com",
+          linkedinUrl: "https://linkedin.com/in/kola-aina",
+        }
+      };
+    }
+    
+    return firm;
+  };
+
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     toast({
@@ -23,10 +54,15 @@ const Radar = () => {
 
   const handleSelectFirm = (firm: VCFirm | null) => {
     console.log("Selected firm:", firm);
-    if (firm && firm.contactPerson) {
-      console.log("Contact person data:", firm.contactPerson);
+    
+    // Add contact person data to the firm
+    const firmWithContact = addContactPersonToFirm(firm);
+    
+    if (firmWithContact && firmWithContact.contactPerson) {
+      console.log("Contact person data:", firmWithContact.contactPerson);
     }
-    setSelectedFirm(firm);
+    
+    setSelectedFirm(firmWithContact);
   };
 
   return (

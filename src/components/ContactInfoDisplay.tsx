@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Mail, Linkedin, Twitter, Globe, User, Copy } from "lucide-react";
@@ -33,7 +32,7 @@ const ContactInfoDisplay = ({ selectedFirm, onCopyToClipboard }: ContactInfoDisp
   }
 
   // Debug log for contact person data
-  console.log("Contact Person:", selectedFirm.contactPerson);
+  console.log("Contact Person:", selectedFirm.contactPerson || "No contact person data");
 
   return (
     <Card>

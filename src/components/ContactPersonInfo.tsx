@@ -14,7 +14,10 @@ interface ContactPersonInfoProps {
 }
 
 const ContactPersonInfo = ({ contactPerson, onCopyToClipboard }: ContactPersonInfoProps) => {
-  if (!contactPerson) return null;
+  if (!contactPerson || !contactPerson.name) {
+    console.log("ContactPersonInfo: No valid contact person data provided");
+    return null;
+  }
 
   // Debug log to verify the contact person data
   console.log("Rendering ContactPersonInfo with data:", contactPerson);
