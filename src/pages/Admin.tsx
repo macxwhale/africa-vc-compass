@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -6,11 +7,19 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { Edit, Trash, Plus, Check, X, AlertTriangle, Database, FileCheck, Search } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useData } from "@/contexts/DataContext";
 import { VCFirm } from "@/data/types";
+import { PendingVCFirm } from "@/contexts/DataContext";
 import VCFirmForm from "@/components/admin/VCFirmForm";
+import VCFirmsList from "@/components/admin/VCFirmsList";
+import PendingVCFirmsList from "@/components/admin/PendingVCFirmsList";
+import PendingVCFirmDetail from "@/components/admin/PendingVCFirmDetail";
+import AIResearchForm from "@/components/admin/AIResearchForm";
+import AdminLogin from "@/components/admin/AdminLogin";
 
 interface Item {
   id: string;

@@ -1,5 +1,7 @@
-import { createClient } from '@supabase/supabase-js';
+
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { VCFirm } from '@/data/types';
+import { PendingVCFirm } from '@/contexts/DataContext';
 
 // Singleton pattern to ensure only one instance of the SupabaseClient
 let supabaseClient: SupabaseClient | null = null;

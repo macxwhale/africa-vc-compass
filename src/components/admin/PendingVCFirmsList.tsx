@@ -10,7 +10,7 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { CheckCircle, XCircle, Eye } from "lucide-react";
-import { PendingVCFirm } from "@/hooks/useDataOperations";
+import { PendingVCFirm } from "@/contexts/DataContext";
 import { format } from "date-fns";
 import { 
   Dialog,

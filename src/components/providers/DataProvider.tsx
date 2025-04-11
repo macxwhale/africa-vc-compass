@@ -1,7 +1,6 @@
-
 import { ReactNode, useMemo, useEffect, useState } from "react";
 import { DataContext } from "@/contexts/DataContext";
-import { industries, stages, regions, vcFirms } from "@/data";
+import { industries, stages, regions, vcFirms as defaultVcFirms } from "@/data";
 import { useDatabaseInitialization } from "@/hooks/useDatabaseInitialization";
 import { useDataOperations } from "@/hooks/useDataOperations";
 import { Item } from "@/contexts/DataContext";
@@ -20,15 +19,16 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const defaultStages = useMemo(() => 
     stages.map((name, index) => ({ id: `stage-${index}`, name })), []);
   
-  const defaultVcFirms = useMemo(() => vcFirms, []);
+  // Rename the variable to avoid the reference before initialization error
+  const initialVcFirms = useMemo(() => defaultVcFirms, []);
 
   // Create initial state for the data operations
   const initialData = useMemo(() => ({
     regionItems: defaultRegions,
     industryItems: defaultIndustries,
     stageItems: defaultStages,
-    vcFirms: defaultVcFirms
-  }), [defaultRegions, defaultIndustries, defaultStages, defaultVcFirms]);
+    vcFirms: initialVcFirms
+  }), [defaultRegions, defaultIndustries, defaultStages, initialVcFirms]);
 
   // Initialize database and connection
   const { isLoading, isSupabaseConnected } = useDatabaseInitialization(
