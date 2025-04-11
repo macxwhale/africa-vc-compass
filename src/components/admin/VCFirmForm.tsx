@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { 
@@ -33,8 +32,7 @@ interface VCFirmFormProps {
   onSave: (firm: VCFirm) => void;
 }
 
-const defaultFirm: VCFirm = {
-  id: "",
+const defaultFirmData: Omit<VCFirm, "id"> = {
   name: "",
   logo: "https://placehold.co/100x100/1A365D/FFFFFF?text=VC",
   description: "",
@@ -73,11 +71,15 @@ export default function VCFirmForm({
   const [newCompany, setNewCompany] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const defaultFirm: VCFirm = {
+    ...defaultFirmData,
+    id: ""
+  };
+
   const form = useForm<VCFirm>({
     defaultValues: defaultFirm
   });
 
-  // Reset form when editing a different firm
   useEffect(() => {
     if (editingFirm) {
       form.reset(editingFirm);
@@ -130,23 +132,28 @@ export default function VCFirmForm({
     try {
       setIsSubmitting(true);
       
-      // Generate random ID if new firm
-      const firmId = editingFirm?.id || `firm-${Date.now()}`;
+      let finalFirm: VCFirm;
       
-      // Combine form data with partners and portfolio companies
-      const finalFirm: VCFirm = {
-        ...data,
-        id: firmId,
-        keyPartners: partners,
-        portfolioCompanies: portfolioCompanies
-      };
+      if (editingFirm) {
+        finalFirm = {
+          ...data,
+          id: editingFirm.id,
+          keyPartners: partners,
+          portfolioCompanies: portfolioCompanies
+        };
+      } else {
+        finalFirm = {
+          ...data,
+          id: "",
+          keyPartners: partners,
+          portfolioCompanies: portfolioCompanies
+        };
+      }
       
       console.log("Submitting VC firm:", finalFirm);
       
-      // Call the onSave callback 
       await onSave(finalFirm);
       
-      // Close the dialog after successful save
       onOpenChange(false);
       
       toast({
@@ -180,7 +187,6 @@ export default function VCFirmForm({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Basic Information */}
               <FormField
                 control={form.control}
                 name="name"
@@ -303,7 +309,6 @@ export default function VCFirmForm({
               )}
             />
             
-            {/* Multi-select sections */}
             <div className="space-y-4">
               <h3 className="text-sm font-medium">Industries</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
@@ -388,7 +393,6 @@ export default function VCFirmForm({
               </div>
             </div>
             
-            {/* Portfolio Companies */}
             <div className="space-y-4">
               <h3 className="text-sm font-medium">Portfolio Companies</h3>
               <div className="flex items-end space-x-2">
@@ -419,7 +423,6 @@ export default function VCFirmForm({
               </div>
             </div>
             
-            {/* Key Partners */}
             <div className="space-y-4">
               <h3 className="text-sm font-medium">Key Partners</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -458,7 +461,6 @@ export default function VCFirmForm({
               </div>
             </div>
             
-            {/* Contact Info */}
             <div className="space-y-4">
               <h3 className="text-sm font-medium">Contact Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -515,7 +517,6 @@ export default function VCFirmForm({
               </div>
             </div>
             
-            {/* Contact Person */}
             <div className="space-y-4">
               <h3 className="text-sm font-medium">Contact Person</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

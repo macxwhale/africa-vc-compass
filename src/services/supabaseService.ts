@@ -1,4 +1,3 @@
-
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { VCFirm } from '@/data/vcData';
 import { PendingVCFirm } from '@/hooks/useDataOperations';
@@ -353,7 +352,7 @@ export const vcFirmService = {
     }
   },
   
-  createVCFirm: async (firm: VCFirm) => {
+  createVCFirm: async (firm: Omit<VCFirm, "id">) => {
     if (!isSupabaseConfigured()) {
       console.warn('Supabase is not configured. VC Firm will not be stored.');
       return { data: null, error: new Error('Supabase not configured') };
@@ -362,9 +361,11 @@ export const vcFirmService = {
     const client = initializeSupabase();
   
     try {
+      const { id, ...firmWithoutId } = firm as VCFirm;
+      
       const { data, error } = await client
         .from('vc_firms')
-        .upsert(firm)
+        .insert(firmWithoutId)
         .select()
         .single();
   
@@ -373,7 +374,7 @@ export const vcFirmService = {
         return { data: null, error };
       }
       
-      return { data, error: null };
+      return { data: data as VCFirm, error: null };
     } catch (error) {
       console.error('Failed to store VC Firm:', error);
       return { data: null, error: error instanceof Error ? error : new Error('Unknown error') };
@@ -463,7 +464,7 @@ export const pendingVCFirmService = {
     }
   },
   
-  createPendingVCFirm: async (firm: Omit<PendingVCFirm, "status" | "submittedAt"> & { status?: string, submittedAt?: string }) => {
+  createPendingVCFirm: async (firm: Omit<PendingVCFirm, "id" | "status" | "submittedAt"> & { status?: string, submittedAt?: string }) => {
     if (!isSupabaseConfigured()) {
       console.warn('Supabase is not configured. Pending VC Firm will not be submitted.');
       return { data: null, error: new Error('Supabase not configured') };
@@ -478,9 +479,11 @@ export const pendingVCFirmService = {
         submittedAt: firm.submittedAt || new Date().toISOString()
       };
       
+      const { id, ...firmWithoutId } = firmWithDefaults as PendingVCFirm;
+      
       const { data, error } = await client
         .from('pending_vc_firms')
-        .insert([firmWithDefaults])
+        .insert([firmWithoutId])
         .select()
         .single();
   

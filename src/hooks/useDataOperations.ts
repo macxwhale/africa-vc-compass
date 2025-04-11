@@ -173,32 +173,36 @@ export function useDataOperations(
     setVcFirmsState(firms);
   };
 
-  const addVCFirm = async (firm: VCFirm) => {
+  const addVCFirm = async (firm: Omit<VCFirm, "id">) => {
     try {
       console.log("Adding VC firm with isSupabaseConnected:", isSupabaseConnected);
       
-      if (!firm.id) {
-        firm.id = `firm-${Date.now()}`;
-      }
+      // Remove id field so database can auto-generate it
+      const { id, ...firmWithoutId } = firm as VCFirm;
       
-      if (firm.contactPerson) {
-        firm.contactPerson = {
-          name: firm.contactPerson.name || "",
-          email: firm.contactPerson.email || "",
-          linkedinUrl: firm.contactPerson.linkedinUrl || "",
+      if (firmWithoutId.contactPerson) {
+        firmWithoutId.contactPerson = {
+          name: firmWithoutId.contactPerson.name || "",
+          email: firmWithoutId.contactPerson.email || "",
+          linkedinUrl: firmWithoutId.contactPerson.linkedinUrl || "",
         };
         
-        if (!firm.contactPerson.name && !firm.contactPerson.email && 
-            !firm.contactPerson.linkedinUrl) {
-          firm.contactPerson = undefined;
+        if (!firmWithoutId.contactPerson.name && !firmWithoutId.contactPerson.email && 
+            !firmWithoutId.contactPerson.linkedinUrl) {
+          firmWithoutId.contactPerson = undefined;
         }
       }
       
-      console.log("Adding VC firm with contactPerson:", firm.contactPerson);
-      
-      setVcFirmsState(prevFirms => [...prevFirms, firm]);
+      console.log("Adding VC firm with contactPerson:", firmWithoutId.contactPerson);
       
       if (!isSupabaseConnected) {
+        // For local-only operation, generate a temporary ID
+        const tempFirm = {
+          ...firmWithoutId,
+          id: `temp-${Date.now()}`
+        };
+        setVcFirmsState(prevFirms => [...prevFirms, tempFirm]);
+        
         toast({
           title: "Success",
           description: "VC firm added successfully (local only)",
@@ -206,12 +210,15 @@ export function useDataOperations(
         return;
       }
 
-      console.log("Attempting to save VC firm to Supabase:", firm);
-      const result = await vcFirmService.createVCFirm(firm);
+      console.log("Attempting to save VC firm to Supabase:", firmWithoutId);
+      const result = await vcFirmService.createVCFirm(firmWithoutId);
       
       if (result.error) {
         throw result.error;
       }
+      
+      // Add the firm with the database-generated ID to the state
+      setVcFirmsState(prevFirms => [...prevFirms, result.data]);
       
       console.log("VC firm successfully saved to database:", result.data);
       toast({
@@ -319,16 +326,30 @@ export function useDataOperations(
     try {
       console.log("Submitting VC firm with isSupabaseConnected:", isSupabaseConnected);
       
-      const newFirm: PendingVCFirm = {
-        ...firm,
-        id: `pending-${Date.now()}`,
-        status: 'pending',
-        submittedAt: new Date().toISOString(),
-      };
-      
-      setPendingVCFirms(prev => [...prev, newFirm]);
+      if (firm.contactPerson) {
+        firm.contactPerson = {
+          name: firm.contactPerson.name || "",
+          email: firm.contactPerson.email || "",
+          linkedinUrl: firm.contactPerson.linkedinUrl || "",
+        };
+        
+        if (!firm.contactPerson.name && !firm.contactPerson.email && 
+            !firm.contactPerson.linkedinUrl) {
+          firm.contactPerson = undefined;
+        }
+      }
       
       if (!isSupabaseConnected) {
+        // For local-only operation, generate a temporary ID
+        const tempPendingFirm: PendingVCFirm = {
+          ...firm,
+          id: `pending-${Date.now()}`,
+          status: 'pending',
+          submittedAt: new Date().toISOString(),
+        };
+        
+        setPendingVCFirms(prev => [...prev, tempPendingFirm]);
+        
         toast({
           title: "Success",
           description: "VC firm submitted for review (local only)",
@@ -336,12 +357,15 @@ export function useDataOperations(
         return;
       }
 
-      console.log("Attempting to save pending VC firm to Supabase:", newFirm);
-      const result = await pendingVCFirmService.createPendingVCFirm(newFirm);
+      console.log("Attempting to save pending VC firm to Supabase:", firm);
+      const result = await pendingVCFirmService.createPendingVCFirm(firm);
       
       if (result.error) {
         throw result.error;
       }
+      
+      // Add the firm with the database-generated ID to the state
+      setPendingVCFirms(prev => [...prev, result.data]);
       
       console.log("Pending VC firm successfully saved to database:", result.data);
       toast({
@@ -362,38 +386,28 @@ export function useDataOperations(
     try {
       console.log("Approving VC firm with isSupabaseConnected:", isSupabaseConnected);
       
-      const approvedFirm: VCFirm = {
-        id: `firm-${Date.now()}`,
-        name: pendingFirm.name,
-        logo: pendingFirm.logo,
-        description: pendingFirm.description,
-        website: pendingFirm.website,
-        headquarters: pendingFirm.headquarters,
-        foundedYear: pendingFirm.foundedYear,
-        investmentFocus: pendingFirm.investmentFocus,
-        industries: pendingFirm.industries,
-        stagePreference: pendingFirm.stagePreference,
-        ticketSize: pendingFirm.ticketSize,
-        regionsOfInterest: pendingFirm.regionsOfInterest,
-        portfolioCompanies: pendingFirm.portfolioCompanies,
-        keyPartners: pendingFirm.keyPartners,
-        contactInfo: pendingFirm.contactInfo,
-        contactPerson: pendingFirm.contactPerson
-      };
-      
-      setVcFirmsState(prev => [...prev, approvedFirm]);
-      
-      const updatedPendingFirm = {
-        ...pendingFirm,
-        status: 'approved' as const,
-        reviewedAt: new Date().toISOString()
-      };
-      
-      setPendingVCFirms(prev => 
-        prev.map(firm => firm.id === pendingFirm.id ? updatedPendingFirm : firm)
-      );
+      // Extract all fields except those specific to pending status
+      const { id, status, submittedAt, reviewedAt, reviewNotes, ...approvedFirmData } = pendingFirm;
       
       if (!isSupabaseConnected) {
+        // For local-only operation, generate a temporary ID
+        const tempApprovedFirm: VCFirm = {
+          ...approvedFirmData,
+          id: `approved-${Date.now()}`
+        };
+        
+        setVcFirmsState(prev => [...prev, tempApprovedFirm]);
+        
+        const updatedPendingFirm = {
+          ...pendingFirm,
+          status: 'approved' as const,
+          reviewedAt: new Date().toISOString()
+        };
+        
+        setPendingVCFirms(prev => 
+          prev.map(firm => firm.id === pendingFirm.id ? updatedPendingFirm : firm)
+        );
+        
         toast({
           title: "Success",
           description: "VC firm approved (local only)",
@@ -401,15 +415,31 @@ export function useDataOperations(
         return;
       }
       
-      const approveResult = await vcFirmService.createVCFirm(approvedFirm);
+      // Let the database handle creating a new ID for the approved firm
+      const approveResult = await vcFirmService.createVCFirm(approvedFirmData);
       if (approveResult.error) {
         throw approveResult.error;
       }
+      
+      // Update the UI with the newly created firm (with database-generated ID)
+      setVcFirmsState(prev => [...prev, approveResult.data]);
+      
+      // Mark the pending firm as approved
+      const updatedPendingFirm = {
+        ...pendingFirm,
+        status: 'approved' as const,
+        reviewedAt: new Date().toISOString()
+      };
       
       const updateResult = await pendingVCFirmService.updatePendingVCFirm(updatedPendingFirm);
       if (updateResult.error) {
         throw updateResult.error;
       }
+      
+      // Update the pending firms list
+      setPendingVCFirms(prev => 
+        prev.map(firm => firm.id === pendingFirm.id ? updateResult.data : firm)
+      );
       
       console.log("VC firm approved and saved to database");
       toast({

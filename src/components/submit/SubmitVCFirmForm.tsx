@@ -82,7 +82,7 @@ export function SubmitVCFirmForm() {
       // Only include contactPerson if at least one field is filled
       const hasContactPersonInfo = values.contactName || values.contactPersonEmail || values.contactPersonLinkedin;
       
-      // Create VC Firm object from form values
+      // Create VC Firm object from form values - omitting id to let database generate it
       const vcFirm: Omit<VCFirm, "id"> = {
         name: values.name,
         logo: values.logo || "/placeholder.svg",
