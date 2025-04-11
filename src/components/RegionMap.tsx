@@ -134,24 +134,43 @@ const RegionMap = () => {
             
             <div>
               <h3 className="text-lg font-medium mb-3">VC Distribution</h3>
-              <div className="space-y-4">
+              <div className="space-y-1">
                 {regionsWithCounts.map((region) => (
                   <div 
                     key={region.name}
-                    className={`flex items-center justify-between p-3 ${selectedRegion === region.name ? 'bg-gray-100' : 'hover:bg-gray-50'} rounded-md transition-colors cursor-pointer`}
+                    className={`flex flex-col p-2 ${selectedRegion === region.name ? 'bg-gray-100' : 'hover:bg-gray-50'} rounded-md transition-colors cursor-pointer`}
                     onClick={() => setSelectedRegion(selectedRegion === region.name ? null : region.name)}
-                    title={regionCountriesMap[region.name as keyof typeof regionCountriesMap]?.join(", ") || region.name}
                   >
-                    <div className="flex items-center">
-                      <div className={`w-3 h-3 rounded-full ${region.color} mr-2`}></div>
-                      <span>{region.name}</span>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <div className={`w-3 h-3 rounded-full ${region.color} mr-2`}></div>
+                        <span className="font-medium">{region.name}</span>
+                      </div>
+                      <Badge variant="outline">
+                        {region.count} VCs
+                      </Badge>
                     </div>
-                    <Badge variant="outline">
-                      {region.count} VCs
-                    </Badge>
+                    
+                    {/* Show countries list in smaller text */}
+                    <div className="text-xs text-gray-500 mt-1 pl-5">
+                      {regionCountriesMap[region.name as keyof typeof regionCountriesMap]?.slice(0, 3).join(", ")}
+                      {regionCountriesMap[region.name as keyof typeof regionCountriesMap]?.length > 3 && 
+                        <span> +{regionCountriesMap[region.name as keyof typeof regionCountriesMap]?.length - 3} more</span>
+                      }
+                    </div>
                   </div>
                 ))}
               </div>
+              
+              {/* Show all countries for selected region */}
+              {selectedRegion && (
+                <div className="mt-4 p-2 bg-gray-50 rounded-md">
+                  <h4 className="text-sm font-medium mb-1">Countries in {selectedRegion}:</h4>
+                  <p className="text-xs text-gray-600">
+                    {regionCountriesMap[selectedRegion as keyof typeof regionCountriesMap]?.join(", ")}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
@@ -178,3 +197,4 @@ const RegionMap = () => {
 };
 
 export default RegionMap;
+
