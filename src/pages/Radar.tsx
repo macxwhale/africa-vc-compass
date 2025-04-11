@@ -46,6 +46,7 @@ const Radar = () => {
                 <Select onValueChange={(value) => {
                   const firm = vcFirms.find(f => f.id === value);
                   setSelectedFirm(firm || null);
+                  console.log("Selected firm:", firm); // Add debugging
                 }}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a VC firm" />
@@ -95,7 +96,7 @@ const Radar = () => {
                   <div className="space-y-4">
                     <h3 className="font-medium text-lg">General Contact</h3>
 
-                    {selectedFirm.contactInfo?.email && (
+                    {selectedFirm.contactInfo && selectedFirm.contactInfo.email && (
                       <div className="flex items-center justify-between rounded-lg border p-3">
                         <div className="flex items-center space-x-3">
                           <Mail className="h-5 w-5 text-gray-500" />
@@ -136,7 +137,7 @@ const Radar = () => {
                       </div>
                     )}
 
-                    {selectedFirm.contactInfo?.twitter && (
+                    {selectedFirm.contactInfo && selectedFirm.contactInfo.twitter && (
                       <div className="flex items-center justify-between rounded-lg border p-3">
                         <div className="flex items-center space-x-3">
                           <Twitter className="h-5 w-5 text-gray-500" />
@@ -152,7 +153,7 @@ const Radar = () => {
                       </div>
                     )}
 
-                    {selectedFirm.contactInfo?.linkedin && (
+                    {selectedFirm.contactInfo && selectedFirm.contactInfo.linkedin && (
                       <div className="flex items-center justify-between rounded-lg border p-3">
                         <div className="flex items-center space-x-3">
                           <Linkedin className="h-5 w-5 text-gray-500" />
@@ -169,7 +170,7 @@ const Radar = () => {
                     )}
                   </div>
 
-                  {/* Contact Person */}
+                  {/* Contact Person - Added null check for contactPerson */}
                   {selectedFirm.contactPerson && (
                     <div className="space-y-4 pt-4 border-t">
                       <h3 className="font-medium text-lg">Contact Person</h3>
@@ -209,6 +210,23 @@ const Radar = () => {
                             onClick={() => window.open(selectedFirm.contactPerson.linkedinUrl, '_blank')}
                           >
                             Visit
+                          </Button>
+                        </div>
+                      )}
+
+                      {/* Add phone display if available */}
+                      {selectedFirm.contactPerson.phone && (
+                        <div className="flex items-center justify-between rounded-lg border p-3">
+                          <div className="flex items-center space-x-3">
+                            <Phone className="h-5 w-5 text-gray-500" />
+                            <span>{selectedFirm.contactPerson.phone}</span>
+                          </div>
+                          <Button 
+                            size="sm" 
+                            variant="ghost"
+                            onClick={() => copyToClipboard(selectedFirm.contactPerson.phone, 'Phone Number')}
+                          >
+                            <Copy className="h-4 w-4" />
                           </Button>
                         </div>
                       )}
