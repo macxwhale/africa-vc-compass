@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useData } from "@/contexts/DataContext";
-import { VCFirm } from "@/data/vcData";
+import { VCFirm } from "@/data/types";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import VCFirmSelector from "@/components/VCFirmSelector";

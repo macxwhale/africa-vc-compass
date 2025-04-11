@@ -1,7 +1,6 @@
-
 import { ReactNode, useMemo, useEffect, useState } from "react";
 import { DataContext } from "@/contexts/DataContext";
-import { industries as initialIndustries, stages as initialStages, regions as initialRegions, vcFirms as initialVcFirms } from "@/data/vcData";
+import { industries, stages, regions, vcFirms } from "@/data";
 import { useDatabaseInitialization } from "@/hooks/useDatabaseInitialization";
 import { useDataOperations } from "@/hooks/useDataOperations";
 import { Item } from "@/contexts/DataContext";
@@ -12,15 +11,15 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   
   // Create default data objects
   const defaultRegions = useMemo(() => 
-    initialRegions.map((name, index) => ({ id: `region-${index}`, name })), []);
+    regions.map((name, index) => ({ id: `region-${index}`, name })), []);
   
   const defaultIndustries = useMemo(() => 
-    initialIndustries.map((name, index) => ({ id: `industry-${index}`, name })), []);
+    industries.map((name, index) => ({ id: `industry-${index}`, name })), []);
   
   const defaultStages = useMemo(() => 
-    initialStages.map((name, index) => ({ id: `stage-${index}`, name })), []);
+    stages.map((name, index) => ({ id: `stage-${index}`, name })), []);
   
-  const defaultVcFirms = useMemo(() => initialVcFirms, []);
+  const defaultVcFirms = useMemo(() => vcFirms, []);
 
   // Create initial state for the data operations
   const initialData = useMemo(() => ({
@@ -48,7 +47,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     stageItems,
     pendingVCFirms,
     setVcFirms,
-    setRegionItems,
+    setRegionItems, 
     setIndustryItems,
     setStageItems,
     regionNames,

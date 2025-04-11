@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
-import { type VCFirm } from "@/data/vcData";
+import { VCFirm } from "@/data/types";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface VCCardProps {

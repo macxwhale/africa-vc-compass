@@ -1,7 +1,8 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Mail, Linkedin, Twitter, Globe, User, Copy } from "lucide-react";
-import { VCFirm } from "@/data/vcData";
+import { VCFirm } from "@/data/types";
 import ContactPersonInfo from "./ContactPersonInfo";
 
 interface ContactInfoDisplayProps {

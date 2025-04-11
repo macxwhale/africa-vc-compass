@@ -2,7 +2,7 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { VCFirm } from "@/data/vcData";
+import { VCFirm } from "@/data/types";
 import { Link } from "react-router-dom";
 
 interface VCFirmSelectorProps {

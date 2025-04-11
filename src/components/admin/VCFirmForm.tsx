@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { 
@@ -24,7 +23,7 @@ import { toast } from "@/hooks/use-toast";
 import { Check, X } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useData } from "@/contexts/DataContext";
-import { VCFirm, Person } from "@/data/vcData";
+import { VCFirm, Person } from "@/data/types";
 
 interface VCFirmFormProps {
   open: boolean;
@@ -77,7 +76,6 @@ export default function VCFirmForm({
     defaultValues: defaultFirm
   });
 
-  // Reset form when editing a different firm
   useEffect(() => {
     if (editingFirm) {
       form.reset(editingFirm);
@@ -130,10 +128,8 @@ export default function VCFirmForm({
     try {
       setIsSubmitting(true);
       
-      // Generate random ID if new firm
       const firmId = editingFirm?.id || `firm-${Date.now()}`;
       
-      // Combine form data with partners and portfolio companies
       const finalFirm: VCFirm = {
         ...data,
         id: firmId,
@@ -143,10 +139,8 @@ export default function VCFirmForm({
       
       console.log("Submitting VC firm:", finalFirm);
       
-      // Call the onSave callback 
       await onSave(finalFirm);
       
-      // Close the dialog after successful save
       onOpenChange(false);
       
       toast({
@@ -180,7 +174,6 @@ export default function VCFirmForm({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Basic Information */}
               <FormField
                 control={form.control}
                 name="name"
@@ -303,7 +296,6 @@ export default function VCFirmForm({
               )}
             />
             
-            {/* Multi-select sections */}
             <div className="space-y-4">
               <h3 className="text-sm font-medium">Industries</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
@@ -388,7 +380,6 @@ export default function VCFirmForm({
               </div>
             </div>
             
-            {/* Portfolio Companies */}
             <div className="space-y-4">
               <h3 className="text-sm font-medium">Portfolio Companies</h3>
               <div className="flex items-end space-x-2">
@@ -419,7 +410,6 @@ export default function VCFirmForm({
               </div>
             </div>
             
-            {/* Key Partners */}
             <div className="space-y-4">
               <h3 className="text-sm font-medium">Key Partners</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -458,7 +448,6 @@ export default function VCFirmForm({
               </div>
             </div>
             
-            {/* Contact Info */}
             <div className="space-y-4">
               <h3 className="text-sm font-medium">Contact Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -515,7 +504,6 @@ export default function VCFirmForm({
               </div>
             </div>
             
-            {/* Contact Person */}
             <div className="space-y-4">
               <h3 className="text-sm font-medium">Contact Person</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

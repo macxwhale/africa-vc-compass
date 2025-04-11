@@ -1,5 +1,6 @@
+
 import { useState, useEffect, useRef } from "react";
-import { VCFirm } from "@/data/vcData";
+import { VCFirm } from "@/data/types";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/services/supabaseService";
 import { vcFirmService, regionService, industryService, stageService, pendingVCFirmService } from "@/services/supabaseService";
