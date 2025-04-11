@@ -1,3 +1,4 @@
+
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { VCFirm } from '@/data/vcData';
 import { PendingVCFirm } from '@/hooks/useDataOperations';
@@ -450,47 +451,50 @@ export const pendingVCFirmService = {
       console.log("Creating pending VC firm:", firm);
       
       // Check if the table exists and create it if it doesn't
-      const { error: checkError } = await supabase
-        .from("pending_vc_firms")
-        .select("count")
-        .limit(1)
-        .catch(() => ({ error: { message: "Table does not exist" } }));
-      
-      // If the table doesn't exist, create it
-      if (checkError) {
-        console.log("Creating pending_vc_firms table...");
-        const { error: createError } = await supabase.rpc("create_pending_vc_firms_table");
+      try {
+        const { error: checkError } = await supabase
+          .from("pending_vc_firms")
+          .select("count")
+          .limit(1);
         
-        if (createError) {
-          console.error("Error creating pending_vc_firms table:", createError);
-          // Try to create the table manually as a fallback
-          await supabase.rpc("execute_sql", { 
-            sql_query: `
-              CREATE TABLE IF NOT EXISTS pending_vc_firms (
-                id TEXT PRIMARY KEY,
-                name TEXT NOT NULL,
-                logo TEXT,
-                description TEXT NOT NULL,
-                website TEXT,
-                headquarters TEXT NOT NULL,
-                "foundedYear" INTEGER,
-                "investmentFocus" TEXT[] DEFAULT '{}',
-                industries TEXT[] DEFAULT '{}',
-                "stagePreference" TEXT[] DEFAULT '{}',
-                "ticketSize" TEXT,
-                "regionsOfInterest" TEXT[] DEFAULT '{}',
-                "portfolioCompanies" TEXT[] DEFAULT '{}',
-                "keyPartners" JSONB DEFAULT '[]',
-                "contactInfo" JSONB DEFAULT '{}',
-                "contactPerson" JSONB,
-                status TEXT NOT NULL,
-                "submittedAt" TIMESTAMP WITH TIME ZONE NOT NULL,
-                "reviewedAt" TIMESTAMP WITH TIME ZONE,
-                "reviewNotes" TEXT
-              );
-            `
-          });
+        // If the table doesn't exist, create it
+        if (checkError) {
+          console.log("Creating pending_vc_firms table...");
+          const { error: createError } = await supabase.rpc("create_pending_vc_firms_table");
+          
+          if (createError) {
+            console.error("Error creating pending_vc_firms table:", createError);
+            // Try to create the table manually as a fallback
+            await supabase.rpc("execute_sql", { 
+              sql_query: `
+                CREATE TABLE IF NOT EXISTS pending_vc_firms (
+                  id TEXT PRIMARY KEY,
+                  name TEXT NOT NULL,
+                  logo TEXT,
+                  description TEXT NOT NULL,
+                  website TEXT,
+                  headquarters TEXT NOT NULL,
+                  "foundedYear" INTEGER,
+                  "investmentFocus" TEXT[] DEFAULT '{}',
+                  industries TEXT[] DEFAULT '{}',
+                  "stagePreference" TEXT[] DEFAULT '{}',
+                  "ticketSize" TEXT,
+                  "regionsOfInterest" TEXT[] DEFAULT '{}',
+                  "portfolioCompanies" TEXT[] DEFAULT '{}',
+                  "keyPartners" JSONB DEFAULT '[]',
+                  "contactInfo" JSONB DEFAULT '{}',
+                  "contactPerson" JSONB,
+                  status TEXT NOT NULL,
+                  "submittedAt" TIMESTAMP WITH TIME ZONE NOT NULL,
+                  "reviewedAt" TIMESTAMP WITH TIME ZONE,
+                  "reviewNotes" TEXT
+                );
+              `
+            });
+          }
         }
+      } catch (checkTableError) {
+        console.error("Error checking if pending_vc_firms table exists:", checkTableError);
       }
       
       // Insert the new pending VC firm
