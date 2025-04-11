@@ -56,6 +56,59 @@ export const testDatabaseConnection = async (): Promise<boolean> => {
   }
 };
 
+// Ensure contactPerson column exists in tables
+export const ensureContactPersonColumn = async (): Promise<boolean> => {
+  if (!isSupabaseConfigured()) {
+    console.warn('Supabase is not configured. Cannot check or update tables.');
+    return false;
+  }
+  
+  try {
+    const client = initializeSupabase();
+    
+    // Check if contactPerson column exists in vc_firms
+    const { data: vcFirmsColumns } = await client.rpc('execute_sql', { 
+      sql_query: `
+        SELECT column_name FROM information_schema.columns 
+        WHERE table_name = 'vc_firms' AND column_name = 'contactPerson';
+      `
+    });
+    
+    // Add contactPerson column to vc_firms if it doesn't exist
+    if (!vcFirmsColumns || vcFirmsColumns.length === 0) {
+      console.log('Adding contactPerson column to vc_firms table');
+      await client.rpc('execute_sql', { 
+        sql_query: `
+          ALTER TABLE vc_firms ADD COLUMN IF NOT EXISTS "contactPerson" JSONB;
+        `
+      });
+    }
+    
+    // Check if contactPerson column exists in pending_vc_firms
+    const { data: pendingColumns } = await client.rpc('execute_sql', { 
+      sql_query: `
+        SELECT column_name FROM information_schema.columns 
+        WHERE table_name = 'pending_vc_firms' AND column_name = 'contactPerson';
+      `
+    });
+    
+    // Add contactPerson column to pending_vc_firms if it doesn't exist
+    if (!pendingColumns || pendingColumns.length === 0) {
+      console.log('Adding contactPerson column to pending_vc_firms table');
+      await client.rpc('execute_sql', { 
+        sql_query: `
+          ALTER TABLE pending_vc_firms ADD COLUMN IF NOT EXISTS "contactPerson" JSONB;
+        `
+      });
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Failed to ensure contactPerson column exists:', error);
+    return false;
+  }
+};
+
 // Create tables if they don't exist
 export const createAllTables = async (): Promise<boolean> => {
   if (!isSupabaseConfigured()) {
@@ -150,7 +203,15 @@ export const createAllTables = async (): Promise<boolean> => {
       `
     });
     
-    return true;
+    try {
+      // Ensure the contactPerson column exists in existing tables
+      await ensureContactPersonColumn();
+      
+      return true;
+    } catch (error) {
+      console.error('Failed to create tables:', error);
+      return false;
+    }
   } catch (error) {
     console.error('Failed to create tables:', error);
     return false;
@@ -363,6 +424,9 @@ export const vcFirmService = {
     const client = initializeSupabase();
   
     try {
+      // Ensure contactPerson column exists
+      await ensureContactPersonColumn();
+      
       // Ensure contactPerson is properly formatted for storage
       const firmToCreate = JSON.parse(JSON.stringify(firm));
       
@@ -396,6 +460,9 @@ export const vcFirmService = {
     const client = initializeSupabase();
   
     try {
+      // Ensure contactPerson column exists
+      await ensureContactPersonColumn();
+      
       // Ensure contactPerson is properly formatted for storage
       const firmToUpdate = JSON.parse(JSON.stringify(firm));
       
@@ -504,6 +571,9 @@ export const pendingVCFirmService = {
         if (checkError && checkError.code === '42P01') {
           console.log("pending_vc_firms table doesn't exist yet, creating it now");
           await createAllTables();
+        } else {
+          // Ensure contactPerson column exists
+          await ensureContactPersonColumn();
         }
       } catch (checkError) {
         console.error("Error checking if pending_vc_firms exists:", checkError);
@@ -549,6 +619,9 @@ export const pendingVCFirmService = {
     const client = initializeSupabase();
   
     try {
+      // Ensure contactPerson column exists
+      await ensureContactPersonColumn();
+      
       // Ensure contactPerson is properly formatted for storage
       const firmToUpdate = JSON.parse(JSON.stringify(firm));
       
@@ -773,4 +846,5 @@ export const supabaseService = {
       throw error;
     }
   },
+  ensureContactPersonColumn,
 };
