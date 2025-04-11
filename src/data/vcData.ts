@@ -1,101 +1,123 @@
+export interface ContactPerson {
+  name: string;
+  email: string;
+  linkedinUrl?: string;
+  phone?: string;
+}
+
 export interface VCFirm {
   id: string;
   name: string;
-  logo: string;
-  description: string;
-  website: string;
-  headquarters: string;
-  foundedYear: number;
-  investmentFocus: string[];
+  logo?: string;
+  description?: string;
+  website?: string;
+  headquarters?: string;
+  foundedYear?: number;
+  investmentFocus?: string[];
   industries: string[];
   stagePreference: string[];
-  ticketSize: string;
+  ticketSize?: string;
   regionsOfInterest: string[];
-  portfolioCompanies: string[];
-  keyPartners: Person[];
-  contactInfo: {
-    email: string;
+  portfolioCompanies?: string[];
+  keyPartners?: {
+    name: string;
+    image?: string;
+    title?: string;
+  }[];
+  contactInfo?: {
+    email?: string;
+    phone?: string;
     twitter?: string;
     linkedin?: string;
   };
-  contactPerson?: {
-    name: string;
-    email: string;
-    linkedinUrl?: string;
-    phone?: string;
-  };
+  contactPerson?: ContactPerson;
 }
 
-export interface Person {
-  name: string;
-  title: string;
-  image?: string;
-}
+export const industries = [
+  "Fintech", 
+  "Healthtech", 
+  "Edtech", 
+  "Agritech",
+  "Logistics",
+  "E-commerce",
+  "Cleantech",
+  "Insurtech",
+  "Enterprise Software",
+  "Mobility",
+  "Financial Inclusion",
+  "Proptech"
+];
 
-// Sample Data
+export const stages = [
+  "Pre-seed",
+  "Seed",
+  "Series A",
+  "Series B",
+  "Growth",
+  "Late Stage"
+];
+
+export const regions = [
+  "East Africa",
+  "West Africa", 
+  "North Africa", 
+  "Southern Africa", 
+  "Pan-African"
+];
+
 export const vcFirms: VCFirm[] = [
   {
     id: "1",
-    name: "Savannah Fund",
-    logo: "https://placehold.co/100x100/1A365D/FFFFFF?text=SF",
-    description: "Savannah Fund is a seed capital fund specializing in $25,000-$500,000 investments in early-stage high-growth technology startups in Sub-Saharan Africa.",
-    website: "https://savannah.vc",
-    headquarters: "Nairobi, Kenya",
-    foundedYear: 2012,
-    investmentFocus: ["Early Stage", "Seed", "Series A"],
+    name: "Future Africa",
+    logo: "https://placehold.co/100x100/3B82F6/FFFFFF?text=FA",
+    description: "Future Africa is a venture capital firm investing in mission-driven founders who are turning Africa's biggest challenges into opportunities.",
+    website: "https://future.africa",
+    headquarters: "Lagos, Nigeria",
+    foundedYear: 2017,
+    investmentFocus: ["Pre-seed", "Seed"],
     industries: ["Fintech", "Healthtech", "Edtech", "Agritech"],
-    stagePreference: ["Seed", "Pre-Series A"],
-    ticketSize: "$100K-$500K",
-    regionsOfInterest: ["East Africa", "West Africa"],
-    portfolioCompanies: ["Company A", "Company B", "Company C"],
+    stagePreference: ["Pre-seed", "Seed"],
+    ticketSize: "$50K-$500K",
+    regionsOfInterest: ["West Africa", "Pan-African"],
+    portfolioCompanies: ["54gene", "Bamboo", "Stears"],
     keyPartners: [
       {
-        name: "Mbwana Alliy",
-        title: "Managing Partner",
-        image: "https://placehold.co/100x100/1A365D/FFFFFF?text=MA"
+        name: "Iyin Aboyeji",
+        image: "https://placehold.co/100x100/3B82F6/FFFFFF?text=IA",
+        title: "General Partner"
       }
     ],
     contactInfo: {
-      email: "info@thevccompass",
-      twitter: "savannah_vc",
-      linkedin: "savannah-fund"
-    },
-    contactPerson: {
-      name: "Mbwana Alliy",
-      email: "mbwana@savannah.vc",
-      linkedinUrl: "https://linkedin.com/in/mbwana",
-      phone: "+254 700 000 000"
+      email: "invest@future.africa",
+      twitter: "FutureAfrica",
+      linkedin: "future-africa"
     }
   },
   {
     id: "2",
-    name: "Novastar Ventures",
-    logo: "https://placehold.co/100x100/276749/FFFFFF?text=NV",
-    description: "Novastar Ventures is a venture catalyst firm that invests in early and growth-stage businesses with the potential for transformative social and environmental impact.",
-    website: "https://novastarventures.com",
-    headquarters: "Nairobi, Kenya & Lagos, Nigeria",
-    foundedYear: 2014,
-    investmentFocus: ["Early Stage", "Series A", "Series B"],
-    industries: ["Essential Services", "Food & Agriculture", "Financial Services", "Education", "Healthcare"],
-    stagePreference: ["Seed", "Series A"],
-    ticketSize: "$1M-$8M",
-    regionsOfInterest: ["East Africa", "West Africa"],
-    portfolioCompanies: ["Company X", "Company Y", "Company Z"],
+    name: "Partech Africa",
+    logo: "https://placehold.co/100x100/10B981/FFFFFF?text=PA",
+    description: "Partech Africa is a venture capital fund dedicated to tech startups in Africa.",
+    website: "https://partechpartners.com",
+    headquarters: "Dakar, Senegal",
+    foundedYear: 2018,
+    investmentFocus: ["Series A", "Series B"],
+    industries: ["Fintech", "Healthtech", "Mobility", "Enterprise Solutions"],
+    stagePreference: ["Series A", "Series B"],
+    ticketSize: "$1M-$15M",
+    regionsOfInterest: ["West Africa", "East Africa", "North Africa", "Pan-African"],
+    portfolioCompanies: ["Wave", "TradeDepot", "Yoco"],
     keyPartners: [
       {
-        name: "Steve Beck",
-        title: "Co-Founder & Managing Partner",
-        image: "https://placehold.co/100x100/276749/FFFFFF?text=SB"
+        name: "Tidjane Dème",
+        image: "https://placehold.co/100x100/10B981/FFFFFF?text=TD",
+        title: "General Partner"
       }
     ],
     contactInfo: {
-      email: "info@thevccompass",
-      linkedin: "novastar-ventures"
-    },
-    contactPerson: {
-      name: "Steve Beck",
-      email: "steve@novastarventures.com",
-      linkedinUrl: "https://linkedin.com/in/stevebeck"
+      email: "africa@partechpartners.com",
+      twitter: "PartechPartners",
+      linkedin: "partech"
     }
   },
   {
@@ -115,72 +137,56 @@ export const vcFirms: VCFirm[] = [
     keyPartners: [
       {
         name: "Maurizio Caio",
-        title: "Founder & Managing Partner",
-        image: "https://placehold.co/100x100/D69E2E/FFFFFF?text=MC"
+        image: "https://placehold.co/100x100/D69E2E/FFFFFF?text=MC",
+        title: "Founder & Managing Partner"
       }
     ],
     contactInfo: {
-      email: "info@thevccompass",
+      email: "info@tlcomcapital.com",
       twitter: "TLcomCapital",
       linkedin: "tlcom-capital"
+    },
+    contactPerson: {
+      name: "Maurizio Caio",
+      email: "mcaio@tlcomcapital.com",
+      linkedinUrl: "https://linkedin.com/in/maurizio-caio",
+      phone: "+254 123 456 789"
     }
   },
   {
     id: "4",
     name: "Ventures Platform",
-    logo: "https://placehold.co/100x100/2C5282/FFFFFF?text=VP",
-    description: "Ventures Platform is an early-stage fund for African tech startups, providing smart capital, networks, and support.",
+    logo: "https://placehold.co/100x100/8B5CF6/FFFFFF?text=VP",
+    description: "Ventures Platform is an early-stage fund for African innovators solving some of the continent's most difficult problems.",
     website: "https://venturesplatform.com",
-    headquarters: "Lagos, Nigeria",
+    headquarters: "Lagos, Nigeria & Abuja, Nigeria",
     foundedYear: 2016,
     investmentFocus: ["Pre-seed", "Seed"],
-    industries: ["Fintech", "Agritech", "Healthtech", "Edtech", "Enterprise Software"],
+    industries: ["Fintech", "Healthtech", "Edtech", "Agriculture", "Energy"],
     stagePreference: ["Pre-seed", "Seed"],
-    ticketSize: "$50K-$250K",
+    ticketSize: "$25K-$250K",
     regionsOfInterest: ["West Africa", "Pan-African"],
-    portfolioCompanies: ["Paystack", "MDaaS Global", "Reliance Health"],
+    portfolioCompanies: ["Paystack", "Piggyvest", "Reliance HMO"],
     keyPartners: [
       {
         name: "Kola Aina",
-        title: "Founding Partner",
-        image: "https://placehold.co/100x100/2C5282/FFFFFF?text=KA"
+        image: "https://placehold.co/100x100/8B5CF6/FFFFFF?text=KA",
+        title: "Founding Partner"
       }
     ],
     contactInfo: {
-      email: "info@thevccompass",
-      twitter: "VPlatformHub",
+      email: "invest@venturesplatform.com",
+      twitter: "VPlatformHQ",
       linkedin: "ventures-platform"
+    },
+    contactPerson: {
+      name: "Kola Aina",
+      email: "kola@venturesplatform.com",
+      linkedinUrl: "https://linkedin.com/in/kola-aina"
     }
   },
   {
     id: "5",
-    name: "Future Africa",
-    logo: "https://placehold.co/100x100/38A169/FFFFFF?text=FA",
-    description: "Future Africa is a venture capital firm investing in mission-driven founders building Africa's future.",
-    website: "https://future.africa",
-    headquarters: "Lagos, Nigeria",
-    foundedYear: 2019,
-    investmentFocus: ["Pre-seed", "Seed"],
-    industries: ["Fintech", "Healthtech", "Edtech", "Energy", "Logistics"],
-    stagePreference: ["Pre-seed", "Seed"],
-    ticketSize: "$50K-$250K",
-    regionsOfInterest: ["Pan-African"],
-    portfolioCompanies: ["54gene", "Bamboo", "Eden Life"],
-    keyPartners: [
-      {
-        name: "Iyin Aboyeji",
-        title: "Founder & General Partner",
-        image: "https://placehold.co/100x100/38A169/FFFFFF?text=IA"
-      }
-    ],
-    contactInfo: {
-      email: "info@thevccompass",
-      twitter: "FutureAfrica_",
-      linkedin: "future-africa"
-    }
-  },
-  {
-    id: "6",
     name: "Antler East Africa",
     logo: "https://placehold.co/100x100/4C51BF/FFFFFF?text=AEA",
     description: "Antler is a global early-stage venture capital firm that invests in exceptional founders building the defining companies of tomorrow.",
@@ -207,34 +213,7 @@ export const vcFirms: VCFirm[] = [
     }
   },
   {
-    id: "7",
-    name: "Partech Africa",
-    logo: "https://placehold.co/100x100/667EEA/FFFFFF?text=PA",
-    description: "Partech Africa is the African arm of Partech, a global investment platform for tech and digital companies, focusing on Series A and B investments.",
-    website: "https://partechpartners.com/",
-    headquarters: "Nairobi, Kenya & Dakar, Senegal",
-    foundedYear: 2015,
-    investmentFocus: ["Series A", "Series B", "Growth"],
-    industries: ["Fintech", "Insurtech", "Enterprise Software", "Mobility", "E-commerce"],
-    stagePreference: ["Series A", "Series B"],
-    ticketSize: "$1M-$15M",
-    regionsOfInterest: ["East Africa", "West Africa", "Pan-African"],
-    portfolioCompanies: ["TradeDepot", "Yoco", "Wave", "Terrapay", "Tugende"],
-    keyPartners: [
-      {
-        name: "Tidjane Deme",
-        title: "General Partner",
-        image: "https://placehold.co/100x100/667EEA/FFFFFF?text=TD"
-      }
-    ],
-    contactInfo: {
-      email: "info@thevccompass",
-      twitter: "PartechPartners",
-      linkedin: "partech-partners"
-    }
-  },
-  {
-    id: "8",
+    id: "6",
     name: "Equator VC",
     logo: "https://placehold.co/100x100/4299E1/FFFFFF?text=EQ",
     description: "Equator VC invests in early-stage startups that leverage technology to solve critical challenges across East Africa.",
@@ -261,7 +240,7 @@ export const vcFirms: VCFirm[] = [
     }
   },
   {
-    id: "9",
+    id: "7",
     name: "4Di Capital",
     logo: "https://placehold.co/100x100/2C5282/FFFFFF?text=4Di",
     description: "4Di Capital is an independent venture capital firm based in South Africa's Western Cape, with a focus on investing in early-stage technology ventures.",
@@ -288,7 +267,7 @@ export const vcFirms: VCFirm[] = [
     }
   },
   {
-    id: "10",
+    id: "8",
     name: "Atlantica Ventures",
     logo: "https://placehold.co/100x100/2B6CB0/FFFFFF?text=AV",
     description: "Atlantica Ventures is a seed fund focused on tech-enabled businesses across Sub-Saharan Africa, partnering with founders building sustainable growth companies.",
@@ -314,7 +293,7 @@ export const vcFirms: VCFirm[] = [
     }
   },
   {
-    id: "11",
+    id: "9",
     name: "Microtraction",
     logo: "https://placehold.co/100x100/38A169/FFFFFF?text=MT",
     description: "Microtraction is an early-stage venture capital firm that invests in remarkable African tech entrepreneurs solving important problems.",
@@ -341,7 +320,7 @@ export const vcFirms: VCFirm[] = [
     }
   },
   {
-    id: "12",
+    id: "10",
     name: "Ingressive Capital",
     logo: "https://placehold.co/100x100/276749/FFFFFF?text=IC",
     description: "Ingressive Capital is a $10 million VC fund targeting early-stage startups across Sub-Saharan Africa's B2B and technology markets.",
@@ -368,7 +347,7 @@ export const vcFirms: VCFirm[] = [
     }
   },
   {
-    id: "13",
+    id: "11",
     name: "GreenTec Capital Partners",
     logo: "https://placehold.co/100x100/48BB78/FFFFFF?text=GC",
     description: "GreenTec Capital Partners is a long-term investor that joins forces with entrepreneurs to grow sustainable businesses throughout Africa.",
@@ -395,7 +374,7 @@ export const vcFirms: VCFirm[] = [
     }
   },
   {
-    id: "14",
+    id: "12",
     name: "Kepple Africa Ventures",
     logo: "https://placehold.co/100x100/68D391/FFFFFF?text=KA",
     description: "Kepple Africa Ventures is a seed investment fund focused on providing early-stage funding to tech startups with scalable business models across Africa.",
@@ -422,7 +401,7 @@ export const vcFirms: VCFirm[] = [
     }
   },
   {
-    id: "15",
+    id: "13",
     name: "Lateral Capital",
     logo: "https://placehold.co/100x100/9AE6B4/FFFFFF?text=LC",
     description: "Lateral Capital is an Africa-focused venture fund dedicated to providing growth capital to early-stage businesses that deliver practical products and services.",
@@ -448,7 +427,7 @@ export const vcFirms: VCFirm[] = [
     }
   },
   {
-    id: "16",
+    id: "14",
     name: "Algebra Ventures",
     logo: "https://placehold.co/100x100/F56565/FFFFFF?text=AV",
     description: "Algebra Ventures is a leading venture capital firm in Egypt focusing on Series A investments in high-growth tech startups.",
@@ -475,7 +454,7 @@ export const vcFirms: VCFirm[] = [
     }
   },
   {
-    id: "17",
+    id: "15",
     name: "Sawari Ventures",
     logo: "https://placehold.co/100x100/FC8181/FFFFFF?text=SV",
     description: "Sawari Ventures is a leading venture capital firm investing in technology companies throughout the Middle East and North Africa.",
@@ -501,7 +480,7 @@ export const vcFirms: VCFirm[] = [
     }
   },
   {
-    id: "18",
+    id: "16",
     name: "Flat6Labs",
     logo: "https://placehold.co/100x100/FEB2B2/FFFFFF?text=F6L",
     description: "Flat6Labs is a regional early-stage venture capital firm that manages seed funds in North Africa, offering funding and mentorship to innovative startups.",
@@ -528,7 +507,7 @@ export const vcFirms: VCFirm[] = [
     }
   },
   {
-    id: "19",
+    id: "17",
     name: "Disruptech",
     logo: "https://placehold.co/100x100/FED7D7/FFFFFF?text=DT",
     description: "Disruptech is an Egypt-focused fintech fund supporting early-stage startups that are transforming the financial landscape in Egypt and the region.",
@@ -554,7 +533,7 @@ export const vcFirms: VCFirm[] = [
     }
   },
   {
-    id: "20",
+    id: "18",
     name: "Outlierz Ventures",
     logo: "https://placehold.co/100x100/F687B3/FFFFFF?text=OV",
     description: "Outlierz Ventures is a Morocco-based VC fund focused on early-stage investments in tech-enabled companies across Francophone Africa.",
@@ -581,7 +560,7 @@ export const vcFirms: VCFirm[] = [
     }
   },
   {
-    id: "21",
+    id: "19",
     name: "Knife Capital",
     logo: "https://placehold.co/100x100/ED8936/FFFFFF?text=KC",
     description: "Knife Capital is a venture capital firm that focuses on innovation-driven ventures with proven traction, helping them become sustainable and successful African businesses.",
@@ -608,7 +587,7 @@ export const vcFirms: VCFirm[] = [
     }
   },
   {
-    id: "22",
+    id: "20",
     name: "Naspers Foundry",
     logo: "https://placehold.co/100x100/F6AD55/FFFFFF?text=NF",
     description: "Naspers Foundry is a South African-focused, early-stage business investment vehicle that aims to fund local technology entrepreneurs and startups.",
@@ -634,7 +613,7 @@ export const vcFirms: VCFirm[] = [
     }
   },
   {
-    id: "23",
+    id: "21",
     name: "Kalon Venture Partners",
     logo: "https://placehold.co/100x100/FBD38D/FFFFFF?text=KV",
     description: "Kalon Venture Partners is a venture capital fund investing in disruptive digital technologies solving African problems with global relevance.",
@@ -661,7 +640,7 @@ export const vcFirms: VCFirm[] = [
     }
   },
   {
-    id: "24",
+    id: "22",
     name: "Chandaria Capital",
     logo: "https://placehold.co/100x100/4FD1C5/FFFFFF?text=CC",
     description: "Chandaria Capital is the investment arm of Chandaria Industries, focusing on early-stage technology startups across East Africa.",
@@ -688,7 +667,7 @@ export const vcFirms: VCFirm[] = [
     }
   },
   {
-    id: "25",
+    id: "23",
     name: "Unconventional Capital",
     logo: "https://placehold.co/100x100/2DD4BF/FFFFFF?text=UC",
     description: "Unconventional Capital provides accessible capital to early-stage entrepreneurs in East Africa through a data-driven, automated approach.",
@@ -715,7 +694,6 @@ export const vcFirms: VCFirm[] = [
   }
 ];
 
-// Add some utility exports for common filters
 export const industries = [
   "Fintech", 
   "Healthtech", 
