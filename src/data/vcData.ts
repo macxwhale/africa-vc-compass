@@ -1,4 +1,3 @@
-
 export interface VCFirm {
   id: string;
   name: string;
@@ -23,6 +22,7 @@ export interface VCFirm {
     name: string;
     email: string;
     linkedinUrl?: string;
+    phone?: string;
   };
 }
 

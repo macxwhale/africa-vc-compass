@@ -214,7 +214,7 @@ const Radar = () => {
                         </div>
                       )}
 
-                      {/* Add phone display if available */}
+                      {/* Add phone display if available - with proper optional chaining */}
                       {selectedFirm.contactPerson.phone && (
                         <div className="flex items-center justify-between rounded-lg border p-3">
                           <div className="flex items-center space-x-3">
