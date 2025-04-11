@@ -1,7 +1,6 @@
 
 import { Button } from "@/components/ui/button";
 import { User, Mail, Linkedin, Phone, Copy } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 
 interface ContactPersonInfoProps {
   contactPerson: {
@@ -16,6 +15,7 @@ interface ContactPersonInfoProps {
 const ContactPersonInfo = ({ contactPerson, onCopyToClipboard }: ContactPersonInfoProps) => {
   console.log("ContactPersonInfo rendering with:", contactPerson);
   
+  // Only return null if contactPerson is completely undefined or missing name
   if (!contactPerson || !contactPerson.name) {
     return null;
   }

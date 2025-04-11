@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -59,6 +60,9 @@ const VCProfile = () => {
       </div>
     );
   }
+
+  // Ensure contactPerson exists with at least a name
+  const hasContactPerson = vc.contactPerson && vc.contactPerson.name;
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -208,11 +212,11 @@ const VCProfile = () => {
                   <Separator className="my-6" />
                   
                   {/* Contact Person Section - Using ContactPersonInfo component */}
-                  {vc.contactPerson && (
+                  {hasContactPerson && (
                     <>
                       <h2 className="text-xl font-bold mb-4">Contact Person</h2>
                       <ContactPersonInfo 
-                        contactPerson={vc.contactPerson}
+                        contactPerson={vc.contactPerson!}
                         onCopyToClipboard={copyToClipboard}
                       />
                       <Separator className="my-6" />
