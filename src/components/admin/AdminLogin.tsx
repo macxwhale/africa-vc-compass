@@ -22,7 +22,7 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
     
     // Simple timeout to simulate API call
     setTimeout(() => {
-      if (username === "admin" && password === "admin123") {
+      if (username === "info@thevccompass" && password === "Sunset123") {
         toast({
           title: "Login successful",
           description: "Welcome to the admin dashboard",
