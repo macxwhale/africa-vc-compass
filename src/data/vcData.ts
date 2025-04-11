@@ -1,4 +1,3 @@
-
 export interface VCFirm {
   id: string;
   name: string;
@@ -56,7 +55,7 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "info@savannah.vc",
+      email: "info@thevccompass",
       twitter: "savannah_vc",
       linkedin: "savannah-fund"
     }
@@ -83,7 +82,7 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "info@novastarventures.com",
+      email: "info@thevccompass",
       linkedin: "novastar-ventures"
     }
   },
@@ -109,7 +108,7 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "info@tlcomcapital.com",
+      email: "info@thevccompass",
       twitter: "TLcomCapital",
       linkedin: "tlcom-capital"
     }
@@ -136,7 +135,7 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "info@venturesplatform.com",
+      email: "info@thevccompass",
       twitter: "VPlatformHub",
       linkedin: "ventures-platform"
     }
@@ -163,7 +162,7 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "info@future.africa",
+      email: "info@thevccompass",
       twitter: "FutureAfrica_",
       linkedin: "future-africa"
     }
@@ -190,7 +189,7 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "eastafrica@antler.co",
+      email: "info@thevccompass",
       twitter: "antlereastafrica",
       linkedin: "antler-east-africa"
     }
@@ -217,7 +216,7 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "africa@partechpartners.com",
+      email: "info@thevccompass",
       twitter: "PartechPartners",
       linkedin: "partech-partners"
     }
@@ -244,7 +243,7 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "info@equator.vc",
+      email: "info@thevccompass",
       twitter: "equatorvc",
       linkedin: "equator-vc"
     }
@@ -271,7 +270,7 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "info@4dicapital.com",
+      email: "info@thevccompass",
       twitter: "4dicapital",
       linkedin: "4di-capital"
     }
@@ -298,7 +297,7 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "info@atlantica.vc",
+      email: "info@thevccompass",
       linkedin: "atlantica-ventures"
     }
   },
@@ -324,7 +323,7 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "hello@microtraction.com",
+      email: "info@thevccompass",
       twitter: "microtraction",
       linkedin: "microtraction"
     }
@@ -351,7 +350,7 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "info@ingressivecapital.com",
+      email: "info@thevccompass",
       twitter: "ingressivecap",
       linkedin: "ingressive-capital"
     }
@@ -378,7 +377,7 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "info@greentec-capital.com",
+      email: "info@thevccompass",
       twitter: "GreentecCapital",
       linkedin: "greentec-capital-partners"
     }
@@ -405,7 +404,7 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "info@africa.kepple.vc",
+      email: "info@thevccompass",
       twitter: "KeppleAfrica",
       linkedin: "kepple-africa-ventures"
     }
@@ -432,7 +431,7 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "info@lateral.capital",
+      email: "info@thevccompass",
       linkedin: "lateral-capital"
     }
   },
@@ -458,7 +457,7 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "info@algebraventures.com",
+      email: "info@thevccompass",
       twitter: "algebraventures",
       linkedin: "algebra-ventures"
     }
@@ -485,7 +484,7 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "info@sawariventures.com",
+      email: "info@thevccompass",
       linkedin: "sawari-ventures"
     }
   },
@@ -511,7 +510,7 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "info@flat6labs.com",
+      email: "info@thevccompass",
       twitter: "Flat6Labs",
       linkedin: "flat6labs"
     }
@@ -538,7 +537,7 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "info@disruptech.vc",
+      email: "info@thevccompass",
       linkedin: "disruptech"
     }
   },
@@ -564,7 +563,7 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "hello@outlierz.co",
+      email: "info@thevccompass",
       twitter: "OutlierzV",
       linkedin: "outlierz-ventures"
     }
@@ -591,7 +590,7 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "info@knifecap.com",
+      email: "info@thevccompass",
       twitter: "KnifeCap",
       linkedin: "knife-capital"
     }
@@ -618,7 +617,7 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "foundry@naspers.com",
+      email: "info@thevccompass",
       linkedin: "naspers"
     }
   },
@@ -644,13 +643,11 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "info@kalonvp.com",
+      email: "info@thevccompass",
       twitter: "KalonVP",
       linkedin: "kalon-venture-partners"
     }
   },
-  
-  // Additional East Africa VCs
   {
     id: "24",
     name: "Chandaria Capital",
@@ -673,7 +670,7 @@ export const vcFirms: VCFirm[] = [
       }
     ],
     contactInfo: {
-      email: "info@chandariacapital.com",
+      email: "info@thevccompass",
       twitter: "chandariafund",
       linkedin: "chandaria-capital"
     }
@@ -694,31 +691,4 @@ export const vcFirms: VCFirm[] = [
     portfolioCompanies: ["Numida", "Kibanda TopUp", "M-Shule", "Teheca"],
     keyPartners: [
       {
-        name: "Franziska Reh",
-        title: "Founder & CEO",
-        image: "https://placehold.co/100x100/2DD4BF/FFFFFF?text=FR"
-      }
-    ],
-    contactInfo: {
-      email: "info@unconventional.capital",
-      twitter: "unconventional_c",
-      linkedin: "unconventional-capital"
-    }
-  }
-];
-
-export const industries = [
-  "Fintech", "Healthtech", "Edtech", "Agritech", "Logistics", 
-  "E-commerce", "Energy", "Enterprise Software", "Media & Entertainment",
-  "Essential Services", "Food & Agriculture", "Financial Services",
-  "Insurtech", "Proptech", "Clean Energy", "Mobility", "SaaS",
-  "Financial Inclusion", "Retail Tech", "SME Solutions", "Cleantech"
-];
-
-export const stages = [
-  "Pre-seed", "Seed", "Early Stage", "Series A", "Series B", "Growth"
-];
-
-export const regions = [
-  "East Africa", "West Africa", "North Africa", "Southern Africa", "Central Africa", "Pan-African"
-];
+        name

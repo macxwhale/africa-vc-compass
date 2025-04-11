@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -99,12 +98,12 @@ const Radar = () => {
                       <div className="flex items-center justify-between rounded-lg border p-3">
                         <div className="flex items-center space-x-3">
                           <Mail className="h-5 w-5 text-gray-500" />
-                          <span>{selectedFirm.contactInfo.email}</span>
+                          <span>info@thevccompass</span>
                         </div>
                         <Button 
                           size="sm" 
                           variant="ghost"
-                          onClick={() => copyToClipboard(selectedFirm.contactInfo.email, 'Email')}
+                          onClick={() => copyToClipboard("info@thevccompass", 'Email')}
                         >
                           <Copy className="h-4 w-4" />
                         </Button>
@@ -185,12 +184,12 @@ const Radar = () => {
                         <div className="flex items-center justify-between rounded-lg border p-3">
                           <div className="flex items-center space-x-3">
                             <Mail className="h-5 w-5 text-gray-500" />
-                            <span>{selectedFirm.contactPerson.email}</span>
+                            <span>info@thevccompass</span>
                           </div>
                           <Button 
                             size="sm" 
                             variant="ghost"
-                            onClick={() => copyToClipboard(selectedFirm.contactPerson.email, 'Email')}
+                            onClick={() => copyToClipboard("info@thevccompass", 'Email')}
                           >
                             <Copy className="h-4 w-4" />
                           </Button>

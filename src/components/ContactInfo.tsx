@@ -23,8 +23,8 @@ const ContactInfo = () => {
           <Mail className="h-5 w-5 text-africa-gold mt-0.5 mr-3" />
           <div>
             <h4 className="font-medium">Email</h4>
-            <a href="mailto:info@africavccompass.com" className="text-gray-600 hover:text-africa-blue transition-colors">
-              info@africavccompass.com
+            <a href="mailto:info@thevccompass" className="text-gray-600 hover:text-africa-blue transition-colors">
+              info@thevccompass
             </a>
           </div>
         </div>

@@ -96,13 +96,13 @@ export function SubmitVCFirmForm() {
         portfolioCompanies: [], // Not in the simple form
         keyPartners: [], // Not in the simple form
         contactInfo: {
-          email: values.contactEmail || "",
+          email: values.contactEmail || "info@thevccompass",
           twitter: values.contactTwitter || undefined,
           linkedin: values.contactLinkedin || undefined,
         },
         contactPerson: (values.contactName || values.contactPersonEmail || values.contactPersonLinkedin) ? {
           name: values.contactName || "",
-          email: values.contactPersonEmail || "",
+          email: values.contactPersonEmail || "info@thevccompass",
           linkedinUrl: values.contactPersonLinkedin || undefined,
         } : undefined
       };
