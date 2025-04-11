@@ -24,6 +24,7 @@ const Radar = () => {
   const handleSelectFirm = (firm: VCFirm | null) => {
     console.log("Selected firm:", firm);
     
+    // Log contact person data for debugging
     if (firm && firm.contactPerson) {
       console.log("Contact person data:", firm.contactPerson);
     }
