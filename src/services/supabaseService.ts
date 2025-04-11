@@ -56,66 +56,8 @@ export const testDatabaseConnection = async (): Promise<boolean> => {
   }
 };
 
-// Comprehensive database schema fix function
-export const fixDatabaseSchema = async (): Promise<boolean> => {
-  if (!isSupabaseConfigured()) {
-    console.warn('Supabase is not configured. Cannot fix database schema.');
-    return false;
-  }
-  
-  try {
-    const client = initializeSupabase();
-    console.log("Running database schema fix script...");
-    
-    // Fix vc_firms table schema
-    await client.rpc('execute_sql', { 
-      sql_query: `
-        ALTER TABLE IF EXISTS vc_firms 
-        ADD COLUMN IF NOT EXISTS "contactPerson" JSONB;
-      `
-    });
-    
-    // Fix pending_vc_firms table schema
-    await client.rpc('execute_sql', { 
-      sql_query: `
-        ALTER TABLE IF EXISTS pending_vc_firms 
-        ADD COLUMN IF NOT EXISTS "contactPerson" JSONB;
-      `
-    });
-    
-    console.log("Database schema fix completed successfully.");
-    return true;
-  } catch (error) {
-    console.error('Failed to fix database schema:', error);
-    return false;
-  }
-};
-
-// Ensure all required database schemas are correct
+// Enhanced function to ensure all required columns exist in tables
 export const ensureDatabaseSchema = async (): Promise<boolean> => {
-  if (!isSupabaseConfigured()) {
-    console.warn('Supabase is not configured. Cannot ensure database schema.');
-    return false;
-  }
-  
-  try {
-    // First check connection
-    const isConnected = await testDatabaseConnection();
-    if (!isConnected) {
-      console.error("Cannot ensure database schema - connection failed");
-      return false;
-    }
-    
-    // Run schema fixes
-    return await fixDatabaseSchema();
-  } catch (error) {
-    console.error('Error ensuring database schema:', error);
-    return false;
-  }
-};
-
-// Ensure contactPerson column exists in tables
-export const ensureContactPersonColumn = async (): Promise<boolean> => {
   if (!isSupabaseConfigured()) {
     console.warn('Supabase is not configured. Cannot check or update tables.');
     return false;
@@ -123,6 +65,10 @@ export const ensureContactPersonColumn = async (): Promise<boolean> => {
   
   try {
     const client = initializeSupabase();
+    console.log("Checking and ensuring database schema is up to date...");
+    
+    // First ensure tables exist
+    await createAllTables();
     
     // Check if contactPerson column exists in vc_firms
     const { data: vcFirmsColumns } = await client.rpc('execute_sql', { 
@@ -162,10 +108,13 @@ export const ensureContactPersonColumn = async (): Promise<boolean> => {
     
     return true;
   } catch (error) {
-    console.error('Failed to ensure contactPerson column exists:', error);
+    console.error('Failed to ensure database schema:', error);
     return false;
   }
 };
+
+// Alias for backward compatibility
+export const ensureContactPersonColumn = ensureDatabaseSchema;
 
 // Create tables if they don't exist
 export const createAllTables = async (): Promise<boolean> => {
@@ -296,6 +245,30 @@ export const executeSQL = async (query: string): Promise<any> => {
   } catch (error) {
     console.error('Failed to execute SQL:', error);
     throw error;
+  }
+};
+
+// Run database fix script
+export const fixDatabaseSchema = async (): Promise<boolean> => {
+  if (!isSupabaseConfigured()) {
+    console.warn('Supabase is not configured. Cannot fix database schema.');
+    return false;
+  }
+  
+  try {
+    console.log("Running database schema fix script...");
+    
+    // Ensure all tables exist first
+    await createAllTables();
+    
+    // Then ensure all columns exist
+    await ensureDatabaseSchema();
+    
+    console.log("Database schema fix completed successfully");
+    return true;
+  } catch (error) {
+    console.error('Failed to fix database schema:', error);
+    return false;
   }
 };
 
@@ -482,8 +455,8 @@ export const vcFirmService = {
     const client = initializeSupabase();
   
     try {
-      // Ensure contactPerson column exists
-      await ensureContactPersonColumn();
+      // Ensure contact person column exists before creating
+      await ensureDatabaseSchema();
       
       // Ensure contactPerson is properly formatted for storage
       const firmToCreate = JSON.parse(JSON.stringify(firm));
@@ -518,14 +491,14 @@ export const vcFirmService = {
     const client = initializeSupabase();
   
     try {
-      // Ensure contactPerson column exists
-      await ensureContactPersonColumn();
+      // Ensure contactPerson column exists before updating
+      await ensureDatabaseSchema();
       
       // Ensure contactPerson is properly formatted for storage
       const firmToUpdate = JSON.parse(JSON.stringify(firm));
       
-      console.log("Updating VC firm with contact person:", 
-        firmToUpdate.contactPerson ? JSON.stringify(firmToUpdate.contactPerson) : "No contact person");
+      console.log("Updating VC firm with contact person data:", 
+        firmToUpdate.contactPerson ? JSON.stringify(firmToUpdate.contactPerson, null, 2) : "No contact person data");
   
       const { data, error } = await client
         .from('vc_firms')
@@ -623,7 +596,7 @@ export const pendingVCFirmService = {
     const client = initializeSupabase();
   
     try {
-      // First ensure table exists
+      // First ensure table exists and has required columns
       try {
         const { error: checkError } = await client.from('pending_vc_firms').select('count').limit(1);
         if (checkError && checkError.code === '42P01') {
@@ -631,7 +604,7 @@ export const pendingVCFirmService = {
           await createAllTables();
         } else {
           // Ensure contactPerson column exists
-          await ensureContactPersonColumn();
+          await ensureDatabaseSchema();
         }
       } catch (checkError) {
         console.error("Error checking if pending_vc_firms exists:", checkError);
@@ -678,7 +651,7 @@ export const pendingVCFirmService = {
   
     try {
       // Ensure contactPerson column exists
-      await ensureContactPersonColumn();
+      await ensureDatabaseSchema();
       
       // Ensure contactPerson is properly formatted for storage
       const firmToUpdate = JSON.parse(JSON.stringify(firm));
@@ -710,6 +683,8 @@ export const pendingVCFirmService = {
 export const supabaseService = {
   isSupabaseConfigured,
   initializeSupabase,
+  ensureContactPersonColumn,
+  fixDatabaseSchema,
   storeRegions: regionService.updateAllRegions,
   getRegions: regionService.getAllRegions,
   storeIndustries: industryService.updateAllIndustries,
@@ -904,7 +879,4 @@ export const supabaseService = {
       throw error;
     }
   },
-  ensureContactPersonColumn,
-  fixDatabaseSchema,
-  ensureDatabaseSchema,
 };
