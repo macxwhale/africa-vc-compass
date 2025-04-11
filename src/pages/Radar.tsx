@@ -1,205 +1,107 @@
 
-import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { useData } from "@/contexts/DataContext";
-import { 
-  Select, 
-  SelectContent, 
-  SelectGroup, 
-  SelectItem, 
-  SelectLabel, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { toast } from "sonner";
-import { Mail, Linkedin, Twitter, User } from "lucide-react";
+import { SubmitVCFirmForm } from "@/components/submit/SubmitVCFirmForm";
 
 const Radar = () => {
-  const { vcFirms } = useData();
-  const [selectedVc, setSelectedVc] = useState("");
-
-  // Find the selected VC firm
-  const selectedFirm = vcFirms.find(vc => vc.id === selectedVc);
-
-  const handleContactClick = (type: string, value: string) => {
-    if (type === "email") {
-      window.location.href = `mailto:${value}`;
-    } else if (type === "twitter") {
-      window.open(`https://twitter.com/${value}`, "_blank");
-    } else if (type === "linkedin") {
-      window.open(`https://linkedin.com/company/${value}`, "_blank");
-    } else if (type === "person-email") {
-      window.location.href = `mailto:${value}`;
-    } else if (type === "person-linkedin") {
-      window.open(value, "_blank");
-    }
-    
-    toast.success("Contact information copied!");
-  };
-
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex flex-col min-h-screen">
       <Navbar />
       
       <main className="flex-grow">
-        <div className="bg-gray-50 py-12">
+        {/* Hero Section */}
+        <section className="bg-africa-blue-light py-16 md:py-24">
           <div className="container mx-auto px-4">
-            <h1 className="text-3xl md:text-4xl font-bold text-africa-blue mb-4">Shoot Your Shot</h1>
-            <p className="text-gray-600 mb-8 max-w-2xl">
-              Connect with venture capital firms that match your startup's profile. 
-              Select a VC firm to view their contact information and get on their radar.
-            </p>
-            
-            <div className="max-w-md mb-8">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Select a VC Firm
-              </label>
-              <Select value={selectedVc} onValueChange={setSelectedVc}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Choose a VC firm" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>VC Firms</SelectLabel>
-                    {vcFirms.map((vc) => (
-                      <SelectItem key={vc.id} value={vc.id}>
-                        {vc.name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+            <div className="max-w-3xl mx-auto text-center">
+              <h1 className="text-3xl md:text-5xl font-bold mb-6 text-africa-blue">Submit Your VC Firm</h1>
+              <p className="text-lg md:text-xl mb-8 text-gray-700">
+                Help build Africa's most comprehensive VC directory. Submit your firm for review and join our growing network.
+              </p>
+              <SubmitVCFirmForm />
             </div>
-            
-            {selectedFirm && (
-              <Card className="mb-8">
-                <CardContent className="pt-6">
-                  <div className="flex items-center gap-4 mb-4">
-                    {selectedFirm.logo && (
-                      <img 
-                        src={selectedFirm.logo} 
-                        alt={`${selectedFirm.name} logo`}
-                        className="h-16 w-16 rounded-md object-cover"
-                      />
-                    )}
-                    <div>
-                      <h2 className="text-xl font-bold">{selectedFirm.name}</h2>
-                      <p className="text-gray-500">{selectedFirm.headquarters}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-6">
-                    <h3 className="text-lg font-semibold mb-3">Contact Information</h3>
-                    <div className="space-y-3">
-                      {selectedFirm.contactInfo.email && (
-                        <Button 
-                          variant="outline" 
-                          className="w-full justify-start"
-                          onClick={() => handleContactClick("email", selectedFirm.contactInfo.email)}
-                        >
-                          <Mail className="mr-2 h-4 w-4" />
-                          {selectedFirm.contactInfo.email}
-                        </Button>
-                      )}
-                      
-                      {selectedFirm.contactInfo.linkedin && (
-                        <Button 
-                          variant="outline" 
-                          className="w-full justify-start"
-                          onClick={() => handleContactClick("linkedin", selectedFirm.contactInfo.linkedin)}
-                        >
-                          <Linkedin className="mr-2 h-4 w-4" />
-                          {selectedFirm.contactInfo.linkedin}
-                        </Button>
-                      )}
-                      
-                      {selectedFirm.contactInfo.twitter && (
-                        <Button 
-                          variant="outline" 
-                          className="w-full justify-start"
-                          onClick={() => handleContactClick("twitter", selectedFirm.contactInfo.twitter)}
-                        >
-                          <Twitter className="mr-2 h-4 w-4" />
-                          @{selectedFirm.contactInfo.twitter}
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                  
-                  {/* Contact Person Section */}
-                  {selectedFirm.contactPerson && (selectedFirm.contactPerson.name || selectedFirm.contactPerson.email || selectedFirm.contactPerson.linkedinUrl) && (
-                    <div className="mt-6">
-                      <h3 className="text-lg font-semibold mb-3">Contact Person</h3>
-                      <div className="space-y-3">
-                        {selectedFirm.contactPerson.name && (
-                          <div className="flex items-center text-gray-700 px-3 py-2 border rounded-md">
-                            <User className="mr-2 h-4 w-4" />
-                            <span>{selectedFirm.contactPerson.name}</span>
-                          </div>
-                        )}
-                        
-                        {selectedFirm.contactPerson.email && (
-                          <Button 
-                            variant="outline" 
-                            className="w-full justify-start"
-                            onClick={() => handleContactClick("person-email", selectedFirm.contactPerson.email)}
-                          >
-                            <Mail className="mr-2 h-4 w-4" />
-                            {selectedFirm.contactPerson.email}
-                          </Button>
-                        )}
-                        
-                        {selectedFirm.contactPerson.linkedinUrl && (
-                          <Button 
-                            variant="outline" 
-                            className="w-full justify-start"
-                            onClick={() => handleContactClick("person-linkedin", selectedFirm.contactPerson.linkedinUrl)}
-                          >
-                            <Linkedin className="mr-2 h-4 w-4" />
-                            View LinkedIn Profile
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                  
-                  <div className="mt-6">
-                    <h3 className="text-lg font-semibold mb-2">About {selectedFirm.name}</h3>
-                    <p className="text-gray-600">{selectedFirm.description}</p>
-                    
-                    <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <h4 className="font-medium text-gray-700">Investment Focus</h4>
-                        <p className="text-sm text-gray-600">{selectedFirm.investmentFocus.join(", ")}</p>
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-gray-700">Industries</h4>
-                        <p className="text-sm text-gray-600">{selectedFirm.industries.join(", ")}</p>
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-gray-700">Stage Preference</h4>
-                        <p className="text-sm text-gray-600">{selectedFirm.stagePreference.join(", ")}</p>
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-gray-700">Ticket Size</h4>
-                        <p className="text-sm text-gray-600">{selectedFirm.ticketSize}</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-            
-            {!selectedVc && (
-              <div className="bg-white rounded-lg border border-gray-200 p-6 text-center">
-                <p className="text-gray-500">Select a VC firm to view their contact information</p>
-              </div>
-            )}
           </div>
-        </div>
+        </section>
+        
+        {/* Process Section */}
+        <section className="py-16">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-center mb-12 text-africa-blue">
+              Our Review Process
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="bg-white p-6 rounded-lg shadow-md text-center">
+                <div className="w-12 h-12 bg-africa-blue-light rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-africa-blue text-xl font-bold">1</span>
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-africa-blue">Submit</h3>
+                <p className="text-gray-600">
+                  Fill out our simple form with details about your VC firm, including focus areas, investment stages, and contact information.
+                </p>
+              </div>
+              
+              <div className="bg-white p-6 rounded-lg shadow-md text-center">
+                <div className="w-12 h-12 bg-africa-blue-light rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-africa-blue text-xl font-bold">2</span>
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-africa-blue">Review</h3>
+                <p className="text-gray-600">
+                  Our team will verify your submission to ensure accuracy and completeness of information.
+                </p>
+              </div>
+              
+              <div className="bg-white p-6 rounded-lg shadow-md text-center">
+                <div className="w-12 h-12 bg-africa-blue-light rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-africa-blue text-xl font-bold">3</span>
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-africa-blue">Publish</h3>
+                <p className="text-gray-600">
+                  Once approved, your VC firm will be listed in our directory, increasing visibility to founders and the ecosystem.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        {/* FAQ Section */}
+        <section className="bg-gray-50 py-16">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-center mb-12 text-africa-blue">
+              Frequently Asked Questions
+            </h2>
+            
+            <div className="max-w-3xl mx-auto grid gap-6">
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-lg font-bold mb-2 text-africa-blue">How long does the review process take?</h3>
+                <p className="text-gray-600">
+                  We aim to review all submissions within 3-5 business days. You will be notified via email when your submission has been approved.
+                </p>
+              </div>
+              
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-lg font-bold mb-2 text-africa-blue">Is there a cost to be listed?</h3>
+                <p className="text-gray-600">
+                  No, listing your VC firm in our directory is completely free. We believe in building an inclusive and comprehensive resource for the African startup ecosystem.
+                </p>
+              </div>
+              
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-lg font-bold mb-2 text-africa-blue">Can I update my listing after it's published?</h3>
+                <p className="text-gray-600">
+                  Yes, you can request updates to your listing by contacting our team. Regular updates help ensure the information remains accurate and relevant.
+                </p>
+              </div>
+              
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-lg font-bold mb-2 text-africa-blue">What information is required for submission?</h3>
+                <p className="text-gray-600">
+                  Required fields include your firm's name, headquarters location, a brief description, investment focus areas, and regions of interest. The more complete your submission, the better.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
       
       <Footer />

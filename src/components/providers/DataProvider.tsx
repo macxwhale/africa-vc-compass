@@ -46,6 +46,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     regionItems,
     industryItems,
     stageItems,
+    pendingVCFirms,
     setVcFirms,
     setRegionItems,
     setIndustryItems,
@@ -57,7 +58,10 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     getVCsByRegion,
     addVCFirm,
     updateVCFirm,
-    deleteVCFirm
+    deleteVCFirm,
+    submitVCFirm,
+    approveVCFirm,
+    rejectVCFirm
   } = useDataOperations(initialData, isSupabaseConnected);
 
   // Hide loading state after first load
@@ -79,6 +83,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         industryItems, 
         stageItems,
         vcFirms,
+        pendingVCFirms,
         setRegionItems, 
         setIndustryItems, 
         setStageItems,
@@ -91,7 +96,10 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         isSupabaseConnected,
         addVCFirm,
         updateVCFirm,
-        deleteVCFirm
+        deleteVCFirm,
+        submitVCFirm,
+        approveVCFirm,
+        rejectVCFirm
       }}
     >
       {showLoading && isLoading ? <div>Loading data...</div> : children}

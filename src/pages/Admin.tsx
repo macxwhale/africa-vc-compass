@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -6,13 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { Edit, Trash, Plus, Check, X, AlertTriangle, Database } from "lucide-react";
+import { Edit, Trash, Plus, Check, X, AlertTriangle, Database, FileCheck } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useData } from "@/contexts/DataContext";
 import { VCFirm } from "@/data/vcData";
 import VCFirmForm from "@/components/admin/VCFirmForm";
 import VCFirmsList from "@/components/admin/VCFirmsList";
+import PendingVCFirmsList from "@/components/admin/PendingVCFirmsList";
+import PendingVCFirmDetail from "@/components/admin/PendingVCFirmDetail";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { PendingVCFirm } from "@/hooks/useDataOperations";
+import { Badge } from "@/components/ui/badge";
 
 interface Item {
   id: string;
@@ -27,13 +32,16 @@ const Admin = () => {
     industryItems, 
     stageItems,
     vcFirms,
+    pendingVCFirms,
     setRegionItems, 
     setIndustryItems, 
     setStageItems,
     isSupabaseConnected,
     addVCFirm,
     updateVCFirm,
-    deleteVCFirm
+    deleteVCFirm,
+    approveVCFirm,
+    rejectVCFirm
   } = useData();
   
   const [newRegion, setNewRegion] = useState("");
@@ -45,6 +53,23 @@ const Admin = () => {
 
   const [firmFormOpen, setFirmFormOpen] = useState(false);
   const [editingFirm, setEditingFirm] = useState<VCFirm | null>(null);
+  
+  const [viewingPendingFirm, setViewingPendingFirm] = useState<PendingVCFirm | null>(null);
+  const [pendingFirmDetailOpen, setPendingFirmDetailOpen] = useState(false);
+  
+  // Count pending firms for badge
+  const pendingCount = pendingVCFirms.filter(firm => firm.status === 'pending').length;
+
+  // Automatically switch to pending tab if there are pending firms and none are being viewed
+  useEffect(() => {
+    if (pendingCount > 0 && !viewingPendingFirm && activeTab !== 'pending') {
+      // Only show a notification if we're not already on the pending tab
+      toast({
+        title: "Pending VC Firms",
+        description: `You have ${pendingCount} VC firm${pendingCount > 1 ? 's' : ''} pending review`,
+      });
+    }
+  }, [pendingCount, viewingPendingFirm, activeTab]);
 
   const handleAddRegion = () => {
     if (newRegion.trim() === "") {
@@ -190,6 +215,27 @@ const Admin = () => {
     }
   };
 
+  const handleViewPendingFirm = (firm: PendingVCFirm) => {
+    setViewingPendingFirm(firm);
+    setPendingFirmDetailOpen(true);
+  };
+
+  const handleApprovePendingFirm = async (firm: PendingVCFirm) => {
+    try {
+      await approveVCFirm(firm);
+    } catch (error) {
+      console.error('Error approving firm:', error);
+    }
+  };
+
+  const handleRejectPendingFirm = async (firm: PendingVCFirm, notes?: string) => {
+    try {
+      await rejectVCFirm(firm, notes);
+    } catch (error) {
+      console.error('Error rejecting firm:', error);
+    }
+  };
+
   const renderItem = (item: Item, type: "region" | "industry" | "stage") => (
     <div key={item.id} className="p-4 border rounded-md flex justify-between items-center">
       {editingId === item.id ? (
@@ -285,11 +331,19 @@ const Admin = () => {
             )}
             
             <Tabs defaultValue="regions" value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-4 mb-8">
+              <TabsList className="grid w-full grid-cols-5 mb-8">
                 <TabsTrigger value="regions">Regions</TabsTrigger>
                 <TabsTrigger value="industries">Industries</TabsTrigger>
                 <TabsTrigger value="stages">Investment Stages</TabsTrigger>
                 <TabsTrigger value="vcfirms">VC Firms</TabsTrigger>
+                <TabsTrigger value="pending" className="relative">
+                  Pending Firms
+                  {pendingCount > 0 && (
+                    <Badge className="ml-2 h-5 w-5 p-0 flex items-center justify-center">
+                      {pendingCount}
+                    </Badge>
+                  )}
+                </TabsTrigger>
               </TabsList>
               
               <TabsContent value="regions" className="space-y-6">
@@ -423,6 +477,39 @@ const Admin = () => {
                   </CardContent>
                 </Card>
               </TabsContent>
+              
+              <TabsContent value="pending" className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileCheck className="h-5 w-5" />
+                      Pending Submissions
+                    </CardTitle>
+                    <CardDescription>Review and approve/reject VC firm submissions</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid gap-4">
+                      <div className={isSupabaseConnected ? "bg-green-50 border-l-4 border-green-400 p-4" : "bg-yellow-50 border-l-4 border-yellow-400 p-4"}>
+                        <p className={isSupabaseConnected ? "text-green-700" : "text-yellow-700"}>
+                          {isSupabaseConnected 
+                            ? "Approved firms will be added to the public directory."
+                            : "Supabase not connected. Changes will be lost when you refresh the page."}
+                        </p>
+                      </div>
+                      
+                      <PendingVCFirmsList
+                        firms={pendingVCFirms}
+                        onView={handleViewPendingFirm}
+                        onApprove={handleApprovePendingFirm}
+                        onReject={(firm) => {
+                          setViewingPendingFirm(firm);
+                          setPendingFirmDetailOpen(true);
+                        }}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
             </Tabs>
           </div>
         </div>
@@ -435,6 +522,14 @@ const Admin = () => {
         onOpenChange={setFirmFormOpen}
         editingFirm={editingFirm}
         onSave={handleSaveFirm}
+      />
+      
+      <PendingVCFirmDetail
+        firm={viewingPendingFirm}
+        open={pendingFirmDetailOpen}
+        onOpenChange={setPendingFirmDetailOpen}
+        onApprove={handleApprovePendingFirm}
+        onReject={handleRejectPendingFirm}
       />
     </div>
   );

@@ -1,44 +1,49 @@
 
 import { createContext, useContext } from "react";
 import { VCFirm } from "@/data/vcData";
+import { PendingVCFirm } from "@/hooks/useDataOperations";
 
-// Type definitions
-interface Item {
+export interface Item {
   id: string;
   name: string;
 }
 
 interface DataContextType {
+  vcFirms: VCFirm[];
   regionItems: Item[];
   industryItems: Item[];
   stageItems: Item[];
-  vcFirms: VCFirm[];
-  setRegionItems: (items: Item[]) => void;
-  setIndustryItems: (items: Item[]) => void;
-  setStageItems: (items: Item[]) => void;
-  setVcFirms: (firms: VCFirm[]) => void;
+  pendingVCFirms: PendingVCFirm[];
+  
   regionNames: string[];
   industryNames: string[];
   stageNames: string[];
+  
+  setVcFirms: (firms: VCFirm[]) => Promise<void>;
+  setRegionItems: (items: Item[]) => Promise<void>;
+  setIndustryItems: (items: Item[]) => Promise<void>;
+  setStageItems: (items: Item[]) => Promise<void>;
+  
   getVCsByIndustry: (industry: string, limit?: number) => VCFirm[];
   getVCsByRegion: (region: string, limit?: number) => VCFirm[];
-  isSupabaseConnected: boolean;
+  
   addVCFirm: (firm: VCFirm) => Promise<void>;
   updateVCFirm: (firm: VCFirm) => Promise<void>;
   deleteVCFirm: (id: string) => Promise<void>;
+  
+  submitVCFirm: (firm: Omit<VCFirm, "id">) => Promise<void>;
+  approveVCFirm: (firm: PendingVCFirm) => Promise<void>;
+  rejectVCFirm: (firm: PendingVCFirm, notes?: string) => Promise<void>;
+  
+  isSupabaseConnected: boolean;
 }
 
-// Create the context with undefined as initial value
-const DataContext = createContext<DataContextType | undefined>(undefined);
+export const DataContext = createContext<DataContextType>({} as DataContextType);
 
-// Hook for using the data context
 export const useData = () => {
   const context = useContext(DataContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useData must be used within a DataProvider");
   }
   return context;
 };
-
-export type { DataContextType, Item };
-export { DataContext };

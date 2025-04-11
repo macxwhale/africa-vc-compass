@@ -2,9 +2,16 @@ import { useState, useEffect, useRef } from "react";
 import { VCFirm } from "@/data/vcData";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/services/supabaseService";
-import { vcFirmService, regionService, industryService, stageService } from "@/services/supabaseService";
+import { vcFirmService, regionService, industryService, stageService, pendingVCFirmService } from "@/services/supabaseService";
 import { Item } from "@/contexts/DataContext";
 import { updateRegionItems, updateIndustryItems, updateStageItems } from "@/utils/databaseUtils";
+
+export interface PendingVCFirm extends VCFirm {
+  status: 'pending' | 'approved' | 'rejected';
+  submittedAt: string;
+  reviewedAt?: string;
+  reviewNotes?: string;
+}
 
 export function useDataOperations(
   initialData: {
@@ -19,6 +26,7 @@ export function useDataOperations(
   const [regionItems, setRegionItemsState] = useState<Item[]>(initialData.regionItems);
   const [industryItems, setIndustryItemsState] = useState<Item[]>(initialData.industryItems);
   const [stageItems, setStageItemsState] = useState<Item[]>(initialData.stageItems);
+  const [pendingVCFirms, setPendingVCFirms] = useState<PendingVCFirm[]>([]);
   
   const dataLoadedRef = useRef(false);
 
@@ -51,6 +59,12 @@ export function useDataOperations(
           if (dbVCFirms && dbVCFirms.length > 0) {
             console.log("Loaded VC firms from database:", dbVCFirms);
             setVcFirmsState(dbVCFirms as VCFirm[]);
+          }
+          
+          const dbPendingVCFirms = await pendingVCFirmService.getAllPendingVCFirms();
+          if (dbPendingVCFirms && dbPendingVCFirms.length > 0) {
+            console.log("Loaded pending VC firms from database:", dbPendingVCFirms);
+            setPendingVCFirms(dbPendingVCFirms);
           }
           
           toast({
@@ -271,11 +285,165 @@ export function useDataOperations(
     }
   };
 
+  const submitVCFirm = async (firm: Omit<VCFirm, "id">) => {
+    try {
+      console.log("Submitting VC firm with isSupabaseConnected:", isSupabaseConnected);
+      
+      const newFirm: PendingVCFirm = {
+        ...firm,
+        id: `pending-${Date.now()}`,
+        status: 'pending',
+        submittedAt: new Date().toISOString(),
+      };
+      
+      setPendingVCFirms(prev => [...prev, newFirm]);
+      
+      if (!isSupabaseConnected) {
+        toast({
+          title: "Success",
+          description: "VC firm submitted for review (local only)",
+        });
+        return;
+      }
+
+      console.log("Attempting to save pending VC firm to Supabase:", newFirm);
+      const result = await pendingVCFirmService.createPendingVCFirm(newFirm);
+      
+      if (result.error) {
+        throw result.error;
+      }
+      
+      console.log("Pending VC firm successfully saved to database:", result.data);
+      toast({
+        title: "Success",
+        description: "VC firm submitted for review and saved to database",
+      });
+    } catch (error) {
+      console.error("Error submitting VC firm:", error);
+      toast({
+        title: "Error",
+        description: `Failed to submit VC firm: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const approveVCFirm = async (pendingFirm: PendingVCFirm) => {
+    try {
+      console.log("Approving VC firm with isSupabaseConnected:", isSupabaseConnected);
+      
+      const approvedFirm: VCFirm = {
+        id: `firm-${Date.now()}`,
+        name: pendingFirm.name,
+        logo: pendingFirm.logo,
+        description: pendingFirm.description,
+        website: pendingFirm.website,
+        headquarters: pendingFirm.headquarters,
+        foundedYear: pendingFirm.foundedYear,
+        investmentFocus: pendingFirm.investmentFocus,
+        industries: pendingFirm.industries,
+        stagePreference: pendingFirm.stagePreference,
+        ticketSize: pendingFirm.ticketSize,
+        regionsOfInterest: pendingFirm.regionsOfInterest,
+        portfolioCompanies: pendingFirm.portfolioCompanies,
+        keyPartners: pendingFirm.keyPartners,
+        contactInfo: pendingFirm.contactInfo
+      };
+      
+      setVcFirmsState(prev => [...prev, approvedFirm]);
+      
+      const updatedPendingFirm = {
+        ...pendingFirm,
+        status: 'approved' as const,
+        reviewedAt: new Date().toISOString()
+      };
+      
+      setPendingVCFirms(prev => 
+        prev.map(firm => firm.id === pendingFirm.id ? updatedPendingFirm : firm)
+      );
+      
+      if (!isSupabaseConnected) {
+        toast({
+          title: "Success",
+          description: "VC firm approved (local only)",
+        });
+        return;
+      }
+      
+      const approveResult = await vcFirmService.createVCFirm(approvedFirm);
+      if (approveResult.error) {
+        throw approveResult.error;
+      }
+      
+      const updateResult = await pendingVCFirmService.updatePendingVCFirm(updatedPendingFirm);
+      if (updateResult.error) {
+        throw updateResult.error;
+      }
+      
+      console.log("VC firm approved and saved to database");
+      toast({
+        title: "Success",
+        description: "VC firm approved and added to directory",
+      });
+    } catch (error) {
+      console.error("Error approving VC firm:", error);
+      toast({
+        title: "Error",
+        description: `Failed to approve VC firm: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        variant: "destructive",
+      });
+    }
+  };
+  
+  const rejectVCFirm = async (pendingFirm: PendingVCFirm, notes?: string) => {
+    try {
+      console.log("Rejecting VC firm with isSupabaseConnected:", isSupabaseConnected);
+      
+      const updatedPendingFirm = {
+        ...pendingFirm,
+        status: 'rejected' as const,
+        reviewedAt: new Date().toISOString(),
+        reviewNotes: notes
+      };
+      
+      setPendingVCFirms(prev => 
+        prev.map(firm => firm.id === pendingFirm.id ? updatedPendingFirm : firm)
+      );
+      
+      if (!isSupabaseConnected) {
+        toast({
+          title: "Success",
+          description: "VC firm rejected (local only)",
+        });
+        return;
+      }
+      
+      const updateResult = await pendingVCFirmService.updatePendingVCFirm(updatedPendingFirm);
+      if (updateResult.error) {
+        throw updateResult.error;
+      }
+      
+      console.log("VC firm rejected and updated in database");
+      toast({
+        title: "Success",
+        description: "VC firm submission rejected",
+      });
+    } catch (error) {
+      console.error("Error rejecting VC firm:", error);
+      toast({
+        title: "Error",
+        description: `Failed to reject VC firm: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        variant: "destructive",
+      });
+    }
+  };
+
   return {
     vcFirms,
     regionItems,
     industryItems,
     stageItems,
+    pendingVCFirms,
     
     regionNames,
     industryNames,
@@ -291,6 +459,10 @@ export function useDataOperations(
     
     addVCFirm,
     updateVCFirm,
-    deleteVCFirm
+    deleteVCFirm,
+    
+    submitVCFirm,
+    approveVCFirm,
+    rejectVCFirm
   };
 }

@@ -1,5 +1,6 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { VCFirm } from '@/data/vcData';
+import { PendingVCFirm } from '@/hooks/useDataOperations';
 
 // Initialize Supabase client
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -185,6 +186,28 @@ export const createAllTables = async () => {
         "portfolioCompanies" TEXT[],
         "keyPartners" JSONB,
         "contactInfo" JSONB
+      );
+      
+      CREATE TABLE IF NOT EXISTS pending_vc_firms (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        logo TEXT,
+        description TEXT,
+        website TEXT,
+        headquarters TEXT,
+        "foundedYear" INTEGER,
+        "investmentFocus" TEXT[],
+        industries TEXT[],
+        "stagePreference" TEXT[],
+        "ticketSize" TEXT,
+        "regionsOfInterest" TEXT[],
+        "portfolioCompanies" TEXT[],
+        "keyPartners" JSONB,
+        "contactInfo" JSONB,
+        status TEXT NOT NULL,
+        "submittedAt" TEXT NOT NULL,
+        "reviewedAt" TEXT,
+        "reviewNotes" TEXT
       );
     `;
     
@@ -396,6 +419,141 @@ export const vcFirmService = {
       return true;
     } catch (error) {
       console.error('Unexpected error deleting VC firm:', error);
+      return false;
+    }
+  }
+};
+
+// CRUD operations for pending VC firms
+export const pendingVCFirmService = {
+  // Create a new pending VC firm
+  createPendingVCFirm: async (firm: PendingVCFirm) => {
+    if (!isSupabaseConfigured) {
+      console.error('Supabase not configured. Cannot create pending VC firm.');
+      return { data: null, error: new Error('Supabase not configured') };
+    }
+
+    console.log('Creating pending VC firm in Supabase:', firm);
+    
+    try {
+      // Ensure the key partners and portfolio companies are properly formatted
+      const formattedFirm = {
+        ...firm,
+        keyPartners: Array.isArray(firm.keyPartners) ? firm.keyPartners : [],
+        portfolioCompanies: Array.isArray(firm.portfolioCompanies) ? firm.portfolioCompanies : []
+      };
+      
+      const { data, error } = await supabase
+        .from('pending_vc_firms')
+        .insert(formattedFirm)
+        .select();
+        
+      if (error) {
+        console.error('Error creating pending VC firm:', error);
+        return { data: null, error };
+      }
+      
+      console.log('Pending VC firm created successfully:', data);
+      return { data, error: null };
+    } catch (error) {
+      console.error('Unexpected error creating pending VC firm:', error);
+      return { 
+        data: null, 
+        error: error instanceof Error ? error : new Error('Unknown error creating pending VC firm') 
+      };
+    }
+  },
+  
+  // Read all pending VC firms
+  getAllPendingVCFirms: async () => {
+    if (!isSupabaseConfigured) {
+      console.error('Supabase not configured. Cannot fetch pending VC firms.');
+      return [] as PendingVCFirm[];
+    }
+    
+    console.log('Fetching all pending VC firms...');
+    
+    try {
+      const { data, error } = await supabase
+        .from('pending_vc_firms')
+        .select('*');
+        
+      if (error) {
+        console.error('Error fetching pending VC firms:', error);
+        throw error;
+      }
+      
+      console.log('Pending VC firms fetched successfully:', data);
+      return data as PendingVCFirm[];
+    } catch (error) {
+      console.error('Unexpected error fetching pending VC firms:', error);
+      return [] as PendingVCFirm[];
+    }
+  },
+  
+  // Update a pending VC firm
+  updatePendingVCFirm: async (firm: PendingVCFirm) => {
+    if (!isSupabaseConfigured) {
+      console.error('Supabase not configured. Cannot update pending VC firm.');
+      return { data: null, error: new Error('Supabase not configured') };
+    }
+    
+    console.log('Updating pending VC firm:', firm);
+    
+    try {
+      // Ensure the key partners and portfolio companies are properly formatted
+      const formattedFirm = {
+        ...firm,
+        keyPartners: Array.isArray(firm.keyPartners) ? firm.keyPartners : [],
+        portfolioCompanies: Array.isArray(firm.portfolioCompanies) ? firm.portfolioCompanies : []
+      };
+      
+      const { data, error } = await supabase
+        .from('pending_vc_firms')
+        .update(formattedFirm)
+        .eq('id', firm.id)
+        .select();
+        
+      if (error) {
+        console.error('Error updating pending VC firm:', error);
+        return { data: null, error };
+      }
+      
+      console.log('Pending VC firm updated successfully:', data);
+      return { data, error: null };
+    } catch (error) {
+      console.error('Unexpected error updating pending VC firm:', error);
+      return { 
+        data: null, 
+        error: error instanceof Error ? error : new Error('Unknown error updating pending VC firm') 
+      };
+    }
+  },
+  
+  // Delete a pending VC firm
+  deletePendingVCFirm: async (id: string) => {
+    if (!isSupabaseConfigured) {
+      console.error('Supabase not configured. Cannot delete pending VC firm.');
+      return false;
+    }
+    
+    console.log('Deleting pending VC firm with ID:', id);
+    
+    try {
+      const { error } = await supabase
+        .from('pending_vc_firms')
+        .delete()
+        .eq('id', id);
+        
+      if (error) {
+        console.error('Error deleting pending VC firm:', error);
+        return false;
+      }
+      
+      console.log('Pending VC firm deleted successfully');
+      return true;
+    } catch (error) {
+      console.error('Unexpected error deleting pending VC firm:', error);
       return false;
     }
   }
