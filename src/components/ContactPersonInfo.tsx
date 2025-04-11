@@ -16,6 +16,9 @@ interface ContactPersonInfoProps {
 const ContactPersonInfo = ({ contactPerson, onCopyToClipboard }: ContactPersonInfoProps) => {
   if (!contactPerson) return null;
 
+  // Debug log to verify the contact person data
+  console.log("Rendering ContactPersonInfo with data:", contactPerson);
+
   return (
     <div className="space-y-4 p-4 bg-primary/5 rounded-lg border border-primary/20">
       <div className="flex items-center justify-between">

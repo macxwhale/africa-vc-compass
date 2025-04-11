@@ -15,8 +15,16 @@ interface VCFirmSelectorProps {
 const VCFirmSelector = ({ vcFirms, selectedFirm, onSelectFirm }: VCFirmSelectorProps) => {
   const handleSelectFirm = (value: string) => {
     const firm = vcFirms.find(f => f.id === value);
+    console.log("Selected firm in selector:", firm);
+    
+    // Log contact person information if available
+    if (firm && firm.contactPerson) {
+      console.log("Contact person from selector:", firm.contactPerson);
+    } else {
+      console.log("No contact person data available for this firm");
+    }
+    
     onSelectFirm(firm || null);
-    console.log("Selected firm:", firm); // Keep debugging
   };
 
   return (

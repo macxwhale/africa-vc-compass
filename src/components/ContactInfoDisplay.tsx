@@ -32,6 +32,7 @@ const ContactInfoDisplay = ({ selectedFirm, onCopyToClipboard }: ContactInfoDisp
     );
   }
 
+  // Debug log for contact person data
   console.log("Contact Person:", selectedFirm.contactPerson);
 
   return (

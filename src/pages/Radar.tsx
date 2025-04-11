@@ -23,6 +23,9 @@ const Radar = () => {
 
   const handleSelectFirm = (firm: VCFirm | null) => {
     console.log("Selected firm:", firm);
+    if (firm && firm.contactPerson) {
+      console.log("Contact person data:", firm.contactPerson);
+    }
     setSelectedFirm(firm);
   };
 
