@@ -1,4 +1,3 @@
-
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { VCFirm } from '@/data/types';
 import { PendingVCFirm } from '@/contexts/DataContext';
@@ -97,7 +96,7 @@ export const createAllTables = async (): Promise<boolean> => {
       `
     });
     
-    // Create vc_firms table
+    // Create vc_firms table with contactPerson column
     await client.rpc('execute_sql', { 
       sql_query: `
         CREATE TABLE IF NOT EXISTS vc_firms (
@@ -116,13 +115,14 @@ export const createAllTables = async (): Promise<boolean> => {
           portfolioCompanies JSONB,
           keyPartners JSONB,
           contactInfo JSONB,
+          contactPerson JSONB,
           created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
           updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
         );
       `
     });
     
-    // Create pending_vc_firms table
+    // Create pending_vc_firms table with contactPerson column
     await client.rpc('execute_sql', { 
       sql_query: `
         CREATE TABLE IF NOT EXISTS pending_vc_firms (
@@ -141,6 +141,7 @@ export const createAllTables = async (): Promise<boolean> => {
           portfolioCompanies JSONB,
           keyPartners JSONB,
           contactInfo JSONB,
+          contactPerson JSONB,
           status TEXT,
           submittedAt TIMESTAMP WITH TIME ZONE,
           reviewedAt TIMESTAMP WITH TIME ZONE,
@@ -362,9 +363,15 @@ export const vcFirmService = {
     const client = initializeSupabase();
   
     try {
+      // Ensure contactPerson is properly formatted for storage
+      const firmToCreate = JSON.parse(JSON.stringify(firm));
+      
+      console.log("Creating VC firm with contact person:", 
+        firmToCreate.contactPerson ? JSON.stringify(firmToCreate.contactPerson) : "No contact person");
+  
       const { data, error } = await client
         .from('vc_firms')
-        .upsert(firm)
+        .upsert(firmToCreate)
         .select()
         .single();
   
@@ -389,9 +396,15 @@ export const vcFirmService = {
     const client = initializeSupabase();
   
     try {
+      // Ensure contactPerson is properly formatted for storage
+      const firmToUpdate = JSON.parse(JSON.stringify(firm));
+      
+      console.log("Updating VC firm with contact person:", 
+        firmToUpdate.contactPerson ? JSON.stringify(firmToUpdate.contactPerson) : "No contact person");
+  
       const { data, error } = await client
         .from('vc_firms')
-        .update(firm)
+        .update(firmToUpdate)
         .eq('id', firm.id)
         .select()
         .single();
@@ -446,6 +459,19 @@ export const pendingVCFirmService = {
     const client = initializeSupabase();
   
     try {
+      // First check if table exists
+      try {
+        const { error: checkError } = await client.from('pending_vc_firms').select('count').limit(1);
+        if (checkError && checkError.code === '42P01') {
+          console.log("pending_vc_firms table doesn't exist yet, creating it now");
+          await createAllTables();
+          return []; // Return empty array for first load
+        }
+      } catch (checkError) {
+        console.error("Error checking if pending_vc_firms exists:", checkError);
+      }
+      
+      // Now try to get the data
       const { data, error } = await client
         .from('pending_vc_firms')
         .select('*')
@@ -472,15 +498,33 @@ export const pendingVCFirmService = {
     const client = initializeSupabase();
   
     try {
+      // First ensure table exists
+      try {
+        const { error: checkError } = await client.from('pending_vc_firms').select('count').limit(1);
+        if (checkError && checkError.code === '42P01') {
+          console.log("pending_vc_firms table doesn't exist yet, creating it now");
+          await createAllTables();
+        }
+      } catch (checkError) {
+        console.error("Error checking if pending_vc_firms exists:", checkError);
+        await createAllTables();
+      }
+      
       const firmWithDefaults = {
         ...firm,
         status: firm.status || 'pending',
         submittedAt: firm.submittedAt || new Date().toISOString()
       };
       
+      // Ensure contactPerson is properly formatted for storage
+      const firmToCreate = JSON.parse(JSON.stringify(firmWithDefaults));
+      
+      console.log("Creating pending VC firm with contact person:", 
+        firmToCreate.contactPerson ? JSON.stringify(firmToCreate.contactPerson) : "No contact person");
+      
       const { data, error } = await client
         .from('pending_vc_firms')
-        .insert([firmWithDefaults])
+        .insert([firmToCreate])
         .select()
         .single();
   
@@ -505,9 +549,15 @@ export const pendingVCFirmService = {
     const client = initializeSupabase();
   
     try {
+      // Ensure contactPerson is properly formatted for storage
+      const firmToUpdate = JSON.parse(JSON.stringify(firm));
+      
+      console.log("Updating pending VC firm with contact person:", 
+        firmToUpdate.contactPerson ? JSON.stringify(firmToUpdate.contactPerson) : "No contact person");
+      
       const { data, error } = await client
         .from('pending_vc_firms')
-        .update(firm)
+        .update(firmToUpdate)
         .eq('id', firm.id)
         .select()
         .single();

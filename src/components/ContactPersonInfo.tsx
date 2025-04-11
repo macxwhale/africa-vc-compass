@@ -13,10 +13,12 @@ interface ContactPersonInfoProps {
 }
 
 const ContactPersonInfo = ({ contactPerson, onCopyToClipboard }: ContactPersonInfoProps) => {
-  console.log("ContactPersonInfo rendering with:", contactPerson);
+  // Log to confirm what data is received by the component
+  console.log("ContactPersonInfo rendering with:", JSON.stringify(contactPerson, null, 2));
   
   // Only return null if contactPerson is completely undefined or missing name
   if (!contactPerson || !contactPerson.name) {
+    console.log("ContactPerson is missing or has no name, not rendering");
     return null;
   }
 

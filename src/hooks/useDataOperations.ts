@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { VCFirm } from "@/data/types";
 import { toast } from "@/hooks/use-toast";
@@ -142,14 +143,21 @@ export function useDataOperations(
         firm.id = `firm-${Date.now()}`;
       }
       
-      setVcFirmsState(prevFirms => [...prevFirms, firm]);
+      // Create a deep copy before modifying or saving
+      const firmToSave = JSON.parse(JSON.stringify(firm));
+      
+      if (firmToSave.contactPerson) {
+        console.log("Contact person being added:", JSON.stringify(firmToSave.contactPerson));
+      }
+      
+      setVcFirmsState(prevFirms => [...prevFirms, firmToSave]);
       
       if (!isSupabaseConnected) {
         return;
       }
 
-      console.log("Attempting to save VC firm to Supabase:", firm);
-      const result = await vcFirmService.createVCFirm(firm);
+      console.log("Attempting to save VC firm to Supabase:", firmToSave);
+      const result = await vcFirmService.createVCFirm(firmToSave);
       
       if (result.error) {
         throw result.error;
@@ -158,6 +166,11 @@ export function useDataOperations(
       console.log("VC firm successfully saved to database:", result.data);
     } catch (error) {
       console.error("Error adding VC firm:", error);
+      toast({
+        title: "Error adding VC firm",
+        description: `${error instanceof Error ? error.message : 'Unknown error'}`,
+        variant: "destructive",
+      });
     }
   };
 
@@ -166,16 +179,20 @@ export function useDataOperations(
       console.log("Updating VC firm with isSupabaseConnected:", isSupabaseConnected);
       console.log("Full VC firm data being updated:", JSON.stringify(firm, null, 2));
       
-      setVcFirmsState(prevFirms => prevFirms.map(f => f.id === firm.id ? firm : f));
+      // Create a deep copy for state update
+      const updatedFirm = JSON.parse(JSON.stringify(firm)) as VCFirm;
+      
+      setVcFirmsState(prevFirms => prevFirms.map(f => f.id === firm.id ? updatedFirm : f));
       
       if (!isSupabaseConnected) {
         return;
       }
 
+      // Create another deep copy specifically for Supabase update
       const firmToUpdate = JSON.parse(JSON.stringify(firm)) as VCFirm;
       
       if (firmToUpdate.contactPerson) {
-        console.log("Contact person data being sent:", firmToUpdate.contactPerson);
+        console.log("Contact person data being sent:", JSON.stringify(firmToUpdate.contactPerson, null, 2));
       } else {
         console.log("No contact person data in the firm object");
       }
@@ -187,7 +204,16 @@ export function useDataOperations(
         throw result.error;
       }
       
-      console.log("VC firm successfully updated in database:", result.data);
+      // Check if contact person data came back correctly from the database
+      if (result.data) {
+        console.log("VC firm successfully updated in database:", result.data);
+        if (result.data.contactPerson) {
+          console.log("Contact person data returned from database:", 
+            JSON.stringify(result.data.contactPerson, null, 2));
+        } else {
+          console.log("No contact person data in the database response");
+        }
+      }
     } catch (error) {
       console.error("Error updating VC firm:", error);
       toast({
@@ -232,6 +258,11 @@ export function useDataOperations(
         submittedAt: new Date().toISOString(),
       };
       
+      // Make sure contact person is included
+      if (newFirm.contactPerson) {
+        console.log("Contact person being submitted:", JSON.stringify(newFirm.contactPerson));
+      }
+      
       setPendingVCFirms(prev => [...prev, newFirm]);
       
       if (!isSupabaseConnected) {
@@ -242,8 +273,11 @@ export function useDataOperations(
         return;
       }
 
-      console.log("Attempting to save pending VC firm to Supabase:", newFirm);
-      const result = await pendingVCFirmService.createPendingVCFirm(newFirm);
+      // Create a deep copy specifically for Supabase
+      const firmToSave = JSON.parse(JSON.stringify(newFirm));
+      
+      console.log("Attempting to save pending VC firm to Supabase:", firmToSave);
+      const result = await pendingVCFirmService.createPendingVCFirm(firmToSave);
       
       if (result.error) {
         throw result.error;
