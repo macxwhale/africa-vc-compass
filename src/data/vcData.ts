@@ -1,3 +1,4 @@
+
 export interface VCFirm {
   id: string;
   name: string;
@@ -691,4 +692,47 @@ export const vcFirms: VCFirm[] = [
     portfolioCompanies: ["Numida", "Kibanda TopUp", "M-Shule", "Teheca"],
     keyPartners: [
       {
-        name
+        name: "David Harlley",
+        title: "Co-Founder",
+        image: "https://placehold.co/100x100/2DD4BF/FFFFFF?text=DH"
+      }
+    ],
+    contactInfo: {
+      email: "info@thevccompass",
+      linkedin: "unconventional-capital"
+    }
+  }
+];
+
+// Add some utility exports for common filters
+export const industries = [
+  "Fintech", 
+  "Healthtech", 
+  "Edtech", 
+  "Agritech",
+  "Logistics",
+  "E-commerce",
+  "Cleantech",
+  "Insurtech",
+  "Enterprise Software",
+  "Mobility",
+  "Financial Inclusion",
+  "Proptech"
+];
+
+export const stages = [
+  "Pre-seed",
+  "Seed",
+  "Series A",
+  "Series B",
+  "Growth",
+  "Late Stage"
+];
+
+export const regions = [
+  "East Africa",
+  "West Africa", 
+  "North Africa", 
+  "Southern Africa", 
+  "Pan-African"
+];
