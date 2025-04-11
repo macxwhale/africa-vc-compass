@@ -67,17 +67,8 @@ export function useDataOperations(
             setPendingVCFirms(dbPendingVCFirms);
           }
           
-          toast({
-            title: "Data Loaded",
-            description: "Data successfully loaded from Supabase",
-          });
         } catch (error) {
           console.error("Error loading data from Supabase:", error);
-          toast({
-            title: "Data Load Error",
-            description: "Error loading data from Supabase. Using local data.",
-            variant: "destructive",
-          });
         }
       }
     };
