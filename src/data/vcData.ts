@@ -1,3 +1,10 @@
+
+export interface Person {
+  name: string;
+  image?: string;
+  title?: string;
+}
+
 export interface ContactPerson {
   name: string;
   email: string;
@@ -19,11 +26,7 @@ export interface VCFirm {
   ticketSize?: string;
   regionsOfInterest: string[];
   portfolioCompanies?: string[];
-  keyPartners?: {
-    name: string;
-    image?: string;
-    title?: string;
-  }[];
+  keyPartners?: Person[];
   contactInfo?: {
     email?: string;
     phone?: string;
