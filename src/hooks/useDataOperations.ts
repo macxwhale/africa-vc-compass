@@ -181,6 +181,22 @@ export function useDataOperations(
         firm.id = `firm-${Date.now()}`;
       }
       
+      if (firm.contactPerson) {
+        firm.contactPerson = {
+          name: firm.contactPerson.name || "",
+          email: firm.contactPerson.email || "",
+          linkedinUrl: firm.contactPerson.linkedinUrl || "",
+          title: firm.contactPerson.title || "",
+        };
+        
+        if (!firm.contactPerson.name && !firm.contactPerson.email && 
+            !firm.contactPerson.linkedinUrl && !firm.contactPerson.title) {
+          firm.contactPerson = undefined;
+        }
+      }
+      
+      console.log("Adding VC firm with contactPerson:", firm.contactPerson);
+      
       setVcFirmsState(prevFirms => [...prevFirms, firm]);
       
       if (!isSupabaseConnected) {
@@ -216,6 +232,22 @@ export function useDataOperations(
   const updateVCFirm = async (firm: VCFirm) => {
     try {
       console.log("Updating VC firm with isSupabaseConnected:", isSupabaseConnected);
+      
+      if (firm.contactPerson) {
+        firm.contactPerson = {
+          name: firm.contactPerson.name || "",
+          email: firm.contactPerson.email || "",
+          linkedinUrl: firm.contactPerson.linkedinUrl || "",
+          title: firm.contactPerson.title || "",
+        };
+        
+        if (!firm.contactPerson.name && !firm.contactPerson.email && 
+            !firm.contactPerson.linkedinUrl && !firm.contactPerson.title) {
+          firm.contactPerson = undefined;
+        }
+      }
+      
+      console.log("Updating VC firm with contactPerson:", firm.contactPerson);
       
       setVcFirmsState(prevFirms => prevFirms.map(f => f.id === firm.id ? firm : f));
       
@@ -347,7 +379,8 @@ export function useDataOperations(
         regionsOfInterest: pendingFirm.regionsOfInterest,
         portfolioCompanies: pendingFirm.portfolioCompanies,
         keyPartners: pendingFirm.keyPartners,
-        contactInfo: pendingFirm.contactInfo
+        contactInfo: pendingFirm.contactInfo,
+        contactPerson: pendingFirm.contactPerson
       };
       
       setVcFirmsState(prev => [...prev, approvedFirm]);

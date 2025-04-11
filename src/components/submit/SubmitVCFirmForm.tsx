@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -80,6 +79,9 @@ export function SubmitVCFirmForm() {
     try {
       setIsSubmitting(true);
       
+      // Only include contactPerson if at least one field is filled
+      const hasContactPersonInfo = values.contactName || values.contactPersonEmail || values.contactPersonLinkedin;
+      
       // Create VC Firm object from form values
       const vcFirm: Omit<VCFirm, "id"> = {
         name: values.name,
@@ -100,12 +102,14 @@ export function SubmitVCFirmForm() {
           twitter: values.contactTwitter || undefined,
           linkedin: values.contactLinkedin || undefined,
         },
-        contactPerson: (values.contactName || values.contactPersonEmail || values.contactPersonLinkedin) ? {
+        contactPerson: hasContactPersonInfo ? {
           name: values.contactName || "",
           email: values.contactPersonEmail || "",
           linkedinUrl: values.contactPersonLinkedin || undefined,
         } : undefined
       };
+      
+      console.log("Submitting VC firm with contactPerson:", vcFirm.contactPerson);
       
       // Submit the firm
       await submitVCFirm(vcFirm);
