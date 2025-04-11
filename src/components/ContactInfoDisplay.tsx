@@ -11,6 +11,8 @@ interface ContactInfoDisplayProps {
 }
 
 const ContactInfoDisplay = ({ selectedFirm, onCopyToClipboard }: ContactInfoDisplayProps) => {
+  console.log("Contact Info Display - Selected Firm:", selectedFirm);
+  
   if (!selectedFirm) {
     return (
       <Card>
@@ -29,6 +31,8 @@ const ContactInfoDisplay = ({ selectedFirm, onCopyToClipboard }: ContactInfoDisp
       </Card>
     );
   }
+
+  console.log("Contact Person:", selectedFirm.contactPerson);
 
   return (
     <Card>

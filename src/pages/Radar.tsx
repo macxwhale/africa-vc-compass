@@ -21,6 +21,11 @@ const Radar = () => {
     });
   };
 
+  const handleSelectFirm = (firm: VCFirm | null) => {
+    console.log("Selected firm:", firm);
+    setSelectedFirm(firm);
+  };
+
   return (
     <>
       <Navbar />
@@ -34,7 +39,7 @@ const Radar = () => {
           <VCFirmSelector 
             vcFirms={vcFirms} 
             selectedFirm={selectedFirm} 
-            onSelectFirm={setSelectedFirm} 
+            onSelectFirm={handleSelectFirm} 
           />
 
           <div className="md:col-span-7">

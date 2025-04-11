@@ -59,6 +59,12 @@ export const vcFirms: VCFirm[] = [
       email: "info@thevccompass",
       twitter: "savannah_vc",
       linkedin: "savannah-fund"
+    },
+    contactPerson: {
+      name: "Mbwana Alliy",
+      email: "mbwana@savannah.vc",
+      linkedinUrl: "https://linkedin.com/in/mbwana",
+      phone: "+254 700 000 000"
     }
   },
   {
@@ -85,6 +91,11 @@ export const vcFirms: VCFirm[] = [
     contactInfo: {
       email: "info@thevccompass",
       linkedin: "novastar-ventures"
+    },
+    contactPerson: {
+      name: "Steve Beck",
+      email: "steve@novastarventures.com",
+      linkedinUrl: "https://linkedin.com/in/stevebeck"
     }
   },
   {
