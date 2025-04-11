@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,6 +8,7 @@ import { openaiService } from "@/services/openaiService";
 import { useData } from "@/contexts/DataContext";
 import { Loader2, Search } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { supabaseService } from "@/services/supabaseService";
 import {
   Dialog,
   DialogContent,
@@ -22,17 +23,33 @@ export function AIResearchForm() {
   const [isResearching, setIsResearching] = useState(false);
   const [apiKeyDialogOpen, setApiKeyDialogOpen] = useState(false);
   const [apiKey, setApiKey] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const { submitVCFirm } = useData();
 
   // Check if API key exists on component mount
-  useState(() => {
-    const savedApiKey = localStorage.getItem("openai_api_key");
-    if (!savedApiKey) {
-      setApiKeyDialogOpen(true);
-    }
-  });
+  useEffect(() => {
+    const checkApiKey = async () => {
+      setIsLoading(true);
+      // Try to get API key from Supabase first
+      const storedApiKey = await supabaseService.getOpenAIApiKey();
+      
+      if (storedApiKey) {
+        // Store in localStorage for immediate use
+        localStorage.setItem("openai_api_key", storedApiKey);
+      } else {
+        // Fall back to localStorage if not in Supabase
+        const localApiKey = localStorage.getItem("openai_api_key");
+        if (!localApiKey) {
+          setApiKeyDialogOpen(true);
+        }
+      }
+      setIsLoading(false);
+    };
+    
+    checkApiKey();
+  }, []);
 
-  const saveApiKey = () => {
+  const saveApiKey = async () => {
     if (!apiKey.trim()) {
       toast({
         title: "API Key Required",
@@ -42,12 +59,36 @@ export function AIResearchForm() {
       return;
     }
     
+    setIsLoading(true);
+    
+    // Save to localStorage for immediate use
     localStorage.setItem("openai_api_key", apiKey.trim());
+    
+    // Also save to Supabase if connected
+    if (supabaseService.isSupabaseConfigured()) {
+      try {
+        await supabaseService.saveOpenAIApiKey(apiKey.trim());
+        toast({
+          title: "API Key Saved",
+          description: "Your OpenAI API key has been saved to the database",
+        });
+      } catch (error) {
+        console.error("Failed to save API key to Supabase:", error);
+        toast({
+          title: "Warning",
+          description: "API key saved locally but could not be saved to database",
+          variant: "destructive",
+        });
+      }
+    } else {
+      toast({
+        title: "API Key Saved Locally",
+        description: "Your OpenAI API key has been saved to local storage only",
+      });
+    }
+    
     setApiKeyDialogOpen(false);
-    toast({
-      title: "API Key Saved",
-      description: "Your OpenAI API key has been saved",
-    });
+    setIsLoading(false);
   };
 
   const handleResearch = async (e: React.FormEvent) => {
@@ -130,7 +171,7 @@ export function AIResearchForm() {
                 placeholder="e.g., Future Africa, Nigerian fintech investors"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                disabled={isResearching}
+                disabled={isResearching || isLoading}
               />
             </div>
           </form>
@@ -140,12 +181,13 @@ export function AIResearchForm() {
             variant="outline" 
             onClick={openApiKeyDialog}
             type="button"
+            disabled={isLoading}
           >
             Configure API Key
           </Button>
           <Button 
             onClick={handleResearch}
-            disabled={isResearching}
+            disabled={isResearching || isLoading}
           >
             {isResearching ? (
               <>
@@ -167,7 +209,7 @@ export function AIResearchForm() {
           <DialogHeader>
             <DialogTitle>OpenAI API Key</DialogTitle>
             <DialogDescription>
-              Enter your OpenAI API key to enable the research tool. The key will be stored in your browser's local storage.
+              Enter your OpenAI API key to enable the research tool. The key will be stored in the database and your browser's local storage.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -186,8 +228,15 @@ export function AIResearchForm() {
             <Button type="button" variant="secondary" onClick={() => setApiKeyDialogOpen(false)}>
               Cancel
             </Button>
-            <Button type="button" onClick={saveApiKey}>
-              Save
+            <Button type="button" onClick={saveApiKey} disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                "Save"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
