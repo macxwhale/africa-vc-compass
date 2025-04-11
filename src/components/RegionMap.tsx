@@ -14,11 +14,11 @@ const RegionMap = () => {
 
   // Generate colors for regions
   const getRegionColor = (name: string): string => {
-    if (name.includes("East")) return "bg-emerald-500";
-    if (name.includes("West")) return "bg-amber-500";
-    if (name.includes("North")) return "bg-sky-500";
-    if (name.includes("Southern")) return "bg-orange-500";
-    if (name.includes("Central")) return "bg-lime-500";
+    if (name.includes("East")) return "bg-amber-500";       // East Africa (orange/amber)
+    if (name.includes("West")) return "bg-sky-500";         // West Africa (light blue)
+    if (name.includes("North")) return "bg-blue-700";       // North Africa (dark blue)
+    if (name.includes("Southern")) return "bg-rose-500";    // Southern Africa (pink/rose)
+    if (name.includes("Central")) return "bg-lime-500";     // Central Africa (green/lime)
     return "bg-africa-blue"; // Default color
   };
 
@@ -51,21 +51,21 @@ const RegionMap = () => {
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="col-span-1 md:col-span-2">
-              <div className="relative w-full h-[350px] bg-[#E6F2F5] rounded-lg overflow-hidden">
-                {/* Africa map background */}
+              <div className="relative w-full h-[350px] bg-white rounded-lg overflow-hidden">
+                {/* New Africa map image */}
                 <img 
-                  src="/lovable-uploads/a6192766-083c-4f20-b6f1-0ed37fa436de.png" 
+                  src="/lovable-uploads/8d6bec59-583d-4c72-9072-4a270e686f55.png" 
                   alt="Map of Africa"
-                  className="absolute inset-0 w-full h-full object-contain opacity-30"
+                  className="absolute inset-0 w-full h-full object-contain"
                 />
                 
                 {/* North Africa */}
-                <div className="absolute top-[20%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 transition-all hover:scale-110">
+                <div className="absolute top-[15%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 transition-all hover:scale-110">
                   <div 
                     className={`cursor-pointer ${selectedRegion === "North Africa" ? "scale-110" : ""}`}
                     onClick={() => setSelectedRegion(selectedRegion === "North Africa" ? null : "North Africa")}
                   >
-                    <MapPin size={32} className={`${getRegionColor("North Africa")} text-white p-1 rounded-full`} />
+                    <MapPin size={32} className="text-white bg-blue-700 p-1 rounded-full" />
                     <div className="bg-white/90 px-2 py-1 rounded-md shadow-sm mt-1 text-xs font-semibold text-gray-800 text-center">
                       <div>North Africa</div>
                       <Badge variant="outline" className="mt-1">{regionsWithCounts.find(r => r.name === "North Africa")?.count || 0} VCs</Badge>
@@ -79,7 +79,7 @@ const RegionMap = () => {
                     className={`cursor-pointer ${selectedRegion === "West Africa" ? "scale-110" : ""}`}
                     onClick={() => setSelectedRegion(selectedRegion === "West Africa" ? null : "West Africa")}
                   >
-                    <MapPin size={32} className={`${getRegionColor("West Africa")} text-white p-1 rounded-full`} />
+                    <MapPin size={32} className="text-white bg-sky-500 p-1 rounded-full" />
                     <div className="bg-white/90 px-2 py-1 rounded-md shadow-sm mt-1 text-xs font-semibold text-gray-800 text-center">
                       <div>West Africa</div>
                       <Badge variant="outline" className="mt-1">{regionsWithCounts.find(r => r.name === "West Africa")?.count || 0} VCs</Badge>
@@ -93,7 +93,7 @@ const RegionMap = () => {
                     className={`cursor-pointer ${selectedRegion === "East Africa" ? "scale-110" : ""}`}
                     onClick={() => setSelectedRegion(selectedRegion === "East Africa" ? null : "East Africa")}
                   >
-                    <MapPin size={32} className={`${getRegionColor("East Africa")} text-white p-1 rounded-full`} />
+                    <MapPin size={32} className="text-white bg-amber-500 p-1 rounded-full" />
                     <div className="bg-white/90 px-2 py-1 rounded-md shadow-sm mt-1 text-xs font-semibold text-gray-800 text-center">
                       <div>East Africa</div>
                       <Badge variant="outline" className="mt-1">{regionsWithCounts.find(r => r.name === "East Africa")?.count || 0} VCs</Badge>
@@ -107,7 +107,7 @@ const RegionMap = () => {
                     className={`cursor-pointer ${selectedRegion === "Central Africa" ? "scale-110" : ""}`}
                     onClick={() => setSelectedRegion(selectedRegion === "Central Africa" ? null : "Central Africa")}
                   >
-                    <MapPin size={32} className={`${getRegionColor("Central Africa")} text-white p-1 rounded-full`} />
+                    <MapPin size={32} className="text-white bg-lime-500 p-1 rounded-full" />
                     <div className="bg-white/90 px-2 py-1 rounded-md shadow-sm mt-1 text-xs font-semibold text-gray-800 text-center">
                       <div>Central Africa</div>
                       <Badge variant="outline" className="mt-1">{regionsWithCounts.find(r => r.name === "Central Africa")?.count || 0} VCs</Badge>
@@ -121,17 +121,12 @@ const RegionMap = () => {
                     className={`cursor-pointer ${selectedRegion === "Southern Africa" ? "scale-110" : ""}`}
                     onClick={() => setSelectedRegion(selectedRegion === "Southern Africa" ? null : "Southern Africa")}
                   >
-                    <MapPin size={32} className={`${getRegionColor("Southern Africa")} text-white p-1 rounded-full`} />
+                    <MapPin size={32} className="text-white bg-rose-500 p-1 rounded-full" />
                     <div className="bg-white/90 px-2 py-1 rounded-md shadow-sm mt-1 text-xs font-semibold text-gray-800 text-center">
                       <div>Southern Africa</div>
                       <Badge variant="outline" className="mt-1">{regionsWithCounts.find(r => r.name === "Southern Africa")?.count || 0} VCs</Badge>
                     </div>
                   </div>
-                </div>
-                
-                {/* Title overlay */}
-                <div className="absolute top-[2%] left-[50%] transform -translate-x-1/2 text-xl font-bold text-gray-800">
-                  AFRICA
                 </div>
               </div>
             </div>

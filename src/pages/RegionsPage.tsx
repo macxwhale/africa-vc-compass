@@ -52,13 +52,13 @@ const RegionsPage = () => {
     ? vcFirms.filter(vc => vc.regionsOfInterest.includes(selectedRegion))
     : [];
 
-  // Assign colors based on region names
+  // Assign colors based on region names - updated to match the new map colors
   const getRegionColor = (name: string) => {
-    if (name.includes("East")) return "bg-emerald-500";
-    if (name.includes("West")) return "bg-amber-500";
-    if (name.includes("North")) return "bg-sky-500";
-    if (name.includes("Southern")) return "bg-orange-500";
-    if (name.includes("Central")) return "bg-lime-500";
+    if (name.includes("East")) return "bg-amber-500";       // East Africa (orange/amber)
+    if (name.includes("West")) return "bg-sky-500";         // West Africa (light blue)
+    if (name.includes("North")) return "bg-blue-700";       // North Africa (dark blue)
+    if (name.includes("Southern")) return "bg-rose-500";    // Southern Africa (pink/rose)
+    if (name.includes("Central")) return "bg-lime-500";     // Central Africa (green/lime)
     return "bg-africa-blue";
   };
 
@@ -92,57 +92,12 @@ const RegionsPage = () => {
               <div className="md:col-span-2">
                 <Card>
                   <CardContent className="p-6">
-                    <div className="aspect-[4/3] bg-[#E6F2F5] rounded-lg relative overflow-hidden" style={{ maxHeight: "350px" }}>
-                      {/* Africa map background with reduced size */}
+                    <div className="aspect-[4/3] bg-white rounded-lg relative overflow-hidden" style={{ maxHeight: "350px" }}>
+                      {/* Updated Africa map */}
                       <img 
-                        src="/lovable-uploads/a6192766-083c-4f20-b6f1-0ed37fa436de.png" 
+                        src="/lovable-uploads/8d6bec59-583d-4c72-9072-4a270e686f55.png" 
                         alt="Map of Africa"
-                        className="absolute inset-0 w-full h-full object-contain opacity-30"
-                      />
-                      
-                      {/* North Africa region highlight */}
-                      <div 
-                        className={`absolute top-[15%] left-[40%] w-[30%] h-[15%] 
-                          ${selectedRegion === "North Africa" ? 'bg-sky-500 opacity-40' : 'bg-transparent hover:bg-sky-500 hover:opacity-20'} 
-                          cursor-pointer transition-all duration-300`}
-                        onClick={() => setSelectedRegion(selectedRegion === "North Africa" ? null : "North Africa")}
-                        title={getRegionCountries("North Africa")}
-                      />
-                      
-                      {/* West Africa region highlight */}
-                      <div 
-                        className={`absolute top-[32%] left-[20%] w-[20%] h-[25%] 
-                          ${selectedRegion === "West Africa" ? 'bg-amber-500 opacity-40' : 'bg-transparent hover:bg-amber-500 hover:opacity-20'} 
-                          cursor-pointer transition-all duration-300`}
-                        onClick={() => setSelectedRegion(selectedRegion === "West Africa" ? null : "West Africa")}
-                        title={getRegionCountries("West Africa")}
-                      />
-                      
-                      {/* Central Africa region highlight */}
-                      <div 
-                        className={`absolute top-[45%] left-[40%] w-[20%] h-[20%] 
-                          ${selectedRegion === "Central Africa" ? 'bg-lime-500 opacity-40' : 'bg-transparent hover:bg-lime-500 hover:opacity-20'} 
-                          cursor-pointer transition-all duration-300`}
-                        onClick={() => setSelectedRegion(selectedRegion === "Central Africa" ? null : "Central Africa")}
-                        title={getRegionCountries("Central Africa")}
-                      />
-                      
-                      {/* East Africa region highlight */}
-                      <div 
-                        className={`absolute top-[35%] left-[60%] w-[20%] h-[25%] 
-                          ${selectedRegion === "East Africa" ? 'bg-emerald-500 opacity-40' : 'bg-transparent hover:bg-emerald-500 hover:opacity-20'} 
-                          cursor-pointer transition-all duration-300`}
-                        onClick={() => setSelectedRegion(selectedRegion === "East Africa" ? null : "East Africa")}
-                        title={getRegionCountries("East Africa")}
-                      />
-                      
-                      {/* Southern Africa region highlight */}
-                      <div 
-                        className={`absolute top-[65%] left-[45%] w-[25%] h-[20%] 
-                          ${selectedRegion === "Southern Africa" ? 'bg-orange-500 opacity-40' : 'bg-transparent hover:bg-orange-500 hover:opacity-20'} 
-                          cursor-pointer transition-all duration-300`}
-                        onClick={() => setSelectedRegion(selectedRegion === "Southern Africa" ? null : "Southern Africa")}
-                        title={getRegionCountries("Southern Africa")}
+                        className="absolute inset-0 w-full h-full object-contain"
                       />
                       
                       {/* VC Count markers */}
@@ -171,11 +126,6 @@ const RegionsPage = () => {
                           </div>
                         );
                       })}
-                      
-                      {/* Title overlay */}
-                      <div className="absolute top-[2%] left-[50%] transform -translate-x-1/2 text-2xl font-bold text-gray-800">
-                        AFRICA
-                      </div>
                     </div>
                   </CardContent>
                 </Card>
