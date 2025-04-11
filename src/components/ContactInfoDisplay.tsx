@@ -85,6 +85,12 @@ const ContactInfoDisplay = ({ selectedFirm, onCopyToClipboard }: ContactInfoDisp
     );
   }
 
+  // Verify if there's a valid contactPerson with at least a name
+  const hasValidContactPerson = 
+    selectedFirm.contactPerson && 
+    selectedFirm.contactPerson.name && 
+    selectedFirm.contactPerson.name.trim() !== "";
+
   return (
     <Card>
       <CardHeader>
@@ -98,96 +104,101 @@ const ContactInfoDisplay = ({ selectedFirm, onCopyToClipboard }: ContactInfoDisp
           )}
           <div>
             <CardTitle>{selectedFirm.name}</CardTitle>
-            <CardDescription>{selectedFirm.headquarters}</CardDescription>
+            {selectedFirm.headquarters && (
+              <CardDescription>{selectedFirm.headquarters}</CardDescription>
+            )}
           </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Contact Person Section - Display this first if available */}
-        {selectedFirm.contactPerson && (
+        {/* Contact Person Section - Only display if there's valid data */}
+        {hasValidContactPerson && (
           <ContactPersonInfo 
-            contactPerson={selectedFirm.contactPerson} 
+            contactPerson={selectedFirm.contactPerson!} 
             onCopyToClipboard={onCopyToClipboard} 
           />
         )}
 
-        {/* General Contact Information */}
-        <div className="space-y-4">
-          <h3 className="font-medium text-lg">General Firm Contact</h3>
+        {/* General Contact Information - Only show this section if there's at least one piece of contact info */}
+        {(selectedFirm.contactInfo?.email || selectedFirm.website || 
+          selectedFirm.contactInfo?.twitter || selectedFirm.contactInfo?.linkedin) && (
+          <div className="space-y-4">
+            <h3 className="font-medium text-lg">General Firm Contact</h3>
 
-          {selectedFirm.contactInfo && selectedFirm.contactInfo.email && (
-            <div className="flex items-center justify-between rounded-lg border p-3">
-              <div className="flex items-center space-x-3">
-                <Mail className="h-5 w-5 text-gray-500" />
-                <span>{selectedFirm.contactInfo.email}</span>
-              </div>
-              <Button 
-                size="sm" 
-                variant="ghost"
-                onClick={() => onCopyToClipboard(selectedFirm.contactInfo.email, 'Email')}
-              >
-                <Copy className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
-
-          {selectedFirm.website && (
-            <div className="flex items-center justify-between rounded-lg border p-3">
-              <div className="flex items-center space-x-3">
-                <Globe className="h-5 w-5 text-gray-500" />
-                <span>{selectedFirm.website}</span>
-              </div>
-              <div className="flex space-x-2">
+            {selectedFirm.contactInfo?.email && selectedFirm.contactInfo.email.trim() !== "" && (
+              <div className="flex items-center justify-between rounded-lg border p-3">
+                <div className="flex items-center space-x-3">
+                  <Mail className="h-5 w-5 text-gray-500" />
+                  <span>{selectedFirm.contactInfo.email}</span>
+                </div>
                 <Button 
                   size="sm" 
                   variant="ghost"
-                  onClick={() => onCopyToClipboard(selectedFirm.website, 'Website')}
+                  onClick={() => onCopyToClipboard(selectedFirm.contactInfo!.email!, 'Email')}
                 >
                   <Copy className="h-4 w-4" />
                 </Button>
+              </div>
+            )}
+
+            {selectedFirm.website && selectedFirm.website.trim() !== "" && (
+              <div className="flex items-center justify-between rounded-lg border p-3">
+                <div className="flex items-center space-x-3">
+                  <Globe className="h-5 w-5 text-gray-500" />
+                  <span>{selectedFirm.website}</span>
+                </div>
+                <div className="flex space-x-2">
+                  <Button 
+                    size="sm" 
+                    variant="ghost"
+                    onClick={() => onCopyToClipboard(selectedFirm.website!, 'Website')}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => window.open(selectedFirm.website, '_blank')}
+                  >
+                    Visit
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {selectedFirm.contactInfo?.twitter && selectedFirm.contactInfo.twitter.trim() !== "" && (
+              <div className="flex items-center justify-between rounded-lg border p-3">
+                <div className="flex items-center space-x-3">
+                  <Twitter className="h-5 w-5 text-gray-500" />
+                  <span>@{selectedFirm.contactInfo.twitter}</span>
+                </div>
                 <Button 
                   size="sm" 
                   variant="outline"
-                  onClick={() => window.open(selectedFirm.website, '_blank')}
+                  onClick={() => window.open(`https://twitter.com/${selectedFirm.contactInfo!.twitter}`, '_blank')}
                 >
                   Visit
                 </Button>
               </div>
-            </div>
-          )}
+            )}
 
-          {selectedFirm.contactInfo && selectedFirm.contactInfo.twitter && (
-            <div className="flex items-center justify-between rounded-lg border p-3">
-              <div className="flex items-center space-x-3">
-                <Twitter className="h-5 w-5 text-gray-500" />
-                <span>@{selectedFirm.contactInfo.twitter}</span>
+            {selectedFirm.contactInfo?.linkedin && selectedFirm.contactInfo.linkedin.trim() !== "" && (
+              <div className="flex items-center justify-between rounded-lg border p-3">
+                <div className="flex items-center space-x-3">
+                  <Linkedin className="h-5 w-5 text-gray-500" />
+                  <span>{selectedFirm.contactInfo.linkedin}</span>
+                </div>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => window.open(`https://linkedin.com/company/${selectedFirm.contactInfo!.linkedin}`, '_blank')}
+                >
+                  Visit
+                </Button>
               </div>
-              <Button 
-                size="sm" 
-                variant="outline"
-                onClick={() => window.open(`https://twitter.com/${selectedFirm.contactInfo.twitter}`, '_blank')}
-              >
-                Visit
-              </Button>
-            </div>
-          )}
-
-          {selectedFirm.contactInfo && selectedFirm.contactInfo.linkedin && (
-            <div className="flex items-center justify-between rounded-lg border p-3">
-              <div className="flex items-center space-x-3">
-                <Linkedin className="h-5 w-5 text-gray-500" />
-                <span>{selectedFirm.contactInfo.linkedin}</span>
-              </div>
-              <Button 
-                size="sm" 
-                variant="outline"
-                onClick={() => window.open(`https://linkedin.com/company/${selectedFirm.contactInfo.linkedin}`, '_blank')}
-              >
-                Visit
-              </Button>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
 
         <div className="pt-6">
           <p className="text-sm text-gray-500 italic">

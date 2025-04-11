@@ -50,15 +50,17 @@ const ContactPersonInfo = ({ contactPerson, onCopyToClipboard }: ContactPersonIn
 
   return (
     <div className="space-y-4">
-      {/* Contact Person Name */}
-      <div className="flex items-center justify-between rounded-lg border bg-background p-3">
-        <div className="flex items-center space-x-3">
-          <User className="h-5 w-5 text-africa-blue" />
-          <span className="font-medium">{contactPerson.name}</span>
+      {/* Contact Person Name - only shown if name exists */}
+      {contactPerson.name && (
+        <div className="flex items-center justify-between rounded-lg border bg-background p-3">
+          <div className="flex items-center space-x-3">
+            <User className="h-5 w-5 text-africa-blue" />
+            <span className="font-medium">{contactPerson.name}</span>
+          </div>
         </div>
-      </div>
+      )}
       
-      {/* Contact Person Email */}
+      {/* Contact Person Email - only shown if email exists */}
       {contactPerson.email && (
         <div className="flex items-center justify-between rounded-lg border bg-background p-3">
           <div className="flex items-center space-x-3">
@@ -77,8 +79,8 @@ const ContactPersonInfo = ({ contactPerson, onCopyToClipboard }: ContactPersonIn
         </div>
       )}
       
-      {/* Contact Person Phone */}
-      {contactPerson.phone && (
+      {/* Contact Person Phone - only shown if phone exists and is not empty */}
+      {contactPerson.phone && contactPerson.phone.trim() !== "" && (
         <div className="flex items-center justify-between rounded-lg border bg-background p-3">
           <div className="flex items-center space-x-3">
             <Phone className="h-5 w-5 text-africa-blue" />
@@ -94,8 +96,8 @@ const ContactPersonInfo = ({ contactPerson, onCopyToClipboard }: ContactPersonIn
         </div>
       )}
       
-      {/* Contact Person LinkedIn */}
-      {contactPerson.linkedinUrl && (
+      {/* Contact Person LinkedIn - only shown if linkedinUrl exists and is not empty */}
+      {contactPerson.linkedinUrl && contactPerson.linkedinUrl.trim() !== "" && (
         <div className="flex items-center justify-between rounded-lg border bg-background p-3">
           <div className="flex items-center space-x-3">
             <Linkedin className="h-5 w-5 text-africa-blue" />
