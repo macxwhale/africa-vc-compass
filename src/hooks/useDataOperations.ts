@@ -186,11 +186,10 @@ export function useDataOperations(
           name: firm.contactPerson.name || "",
           email: firm.contactPerson.email || "",
           linkedinUrl: firm.contactPerson.linkedinUrl || "",
-          title: firm.contactPerson.title || "",
         };
         
         if (!firm.contactPerson.name && !firm.contactPerson.email && 
-            !firm.contactPerson.linkedinUrl && !firm.contactPerson.title) {
+            !firm.contactPerson.linkedinUrl) {
           firm.contactPerson = undefined;
         }
       }
@@ -238,11 +237,10 @@ export function useDataOperations(
           name: firm.contactPerson.name || "",
           email: firm.contactPerson.email || "",
           linkedinUrl: firm.contactPerson.linkedinUrl || "",
-          title: firm.contactPerson.title || "",
         };
         
         if (!firm.contactPerson.name && !firm.contactPerson.email && 
-            !firm.contactPerson.linkedinUrl && !firm.contactPerson.title) {
+            !firm.contactPerson.linkedinUrl) {
           firm.contactPerson = undefined;
         }
       }
