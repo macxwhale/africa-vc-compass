@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -18,6 +19,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { PendingVCFirm } from "@/hooks/useDataOperations";
 import { Badge } from "@/components/ui/badge";
 import { AIResearchForm } from "@/components/admin/AIResearchForm";
+import AdminLogin from "@/components/admin/AdminLogin";
 
 interface Item {
   id: string;
@@ -25,6 +27,7 @@ interface Item {
 }
 
 const Admin = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState("regions");
   
   const { 
@@ -70,6 +73,35 @@ const Admin = () => {
       });
     }
   }, [pendingCount, viewingPendingFirm, activeTab]);
+
+  // Check for authentication in localStorage on component mount
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem('admin_authenticated') === 'true';
+    setIsAuthenticated(isLoggedIn);
+  }, []);
+
+  // Handle successful login
+  const handleLogin = () => {
+    localStorage.setItem('admin_authenticated', 'true');
+    setIsAuthenticated(true);
+  };
+
+  // Handle logout
+  const handleLogout = () => {
+    localStorage.removeItem('admin_authenticated');
+    setIsAuthenticated(false);
+  };
+
+  // If not authenticated, show login screen
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <AdminLogin onLogin={handleLogin} />
+        <Footer />
+      </div>
+    );
+  }
 
   const handleAddRegion = () => {
     if (newRegion.trim() === "") {
@@ -293,6 +325,9 @@ const Admin = () => {
               <div className="flex space-x-2">
                 <Button variant="outline" asChild>
                   <Link to="/directory">Back to Directory</Link>
+                </Button>
+                <Button variant="outline" onClick={handleLogout}>
+                  Logout
                 </Button>
                 {!isSupabaseConnected && (
                   <Button variant="secondary" asChild>
