@@ -52,9 +52,17 @@ const ContactInfoDisplay = ({ selectedFirm, onCopyToClipboard }: ContactInfoDisp
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
+        {/* Contact Person Section - Display this first if available */}
+        {selectedFirm.contactPerson && (
+          <ContactPersonInfo 
+            contactPerson={selectedFirm.contactPerson} 
+            onCopyToClipboard={onCopyToClipboard} 
+          />
+        )}
+
         {/* General Contact Information */}
         <div className="space-y-4">
-          <h3 className="font-medium text-lg">General Contact</h3>
+          <h3 className="font-medium text-lg">General Firm Contact</h3>
 
           {selectedFirm.contactInfo && selectedFirm.contactInfo.email && (
             <div className="flex items-center justify-between rounded-lg border p-3">
@@ -129,14 +137,6 @@ const ContactInfoDisplay = ({ selectedFirm, onCopyToClipboard }: ContactInfoDisp
             </div>
           )}
         </div>
-
-        {/* Contact Person Section */}
-        {selectedFirm.contactPerson && (
-          <ContactPersonInfo 
-            contactPerson={selectedFirm.contactPerson} 
-            onCopyToClipboard={onCopyToClipboard} 
-          />
-        )}
 
         <div className="pt-6">
           <p className="text-sm text-gray-500 italic">

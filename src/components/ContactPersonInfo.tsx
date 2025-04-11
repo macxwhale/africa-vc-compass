@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { User, Mail, Linkedin, Phone, Copy } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface ContactPersonInfoProps {
   contactPerson: {
@@ -16,20 +17,26 @@ const ContactPersonInfo = ({ contactPerson, onCopyToClipboard }: ContactPersonIn
   if (!contactPerson) return null;
 
   return (
-    <div className="space-y-4 pt-4 border-t">
-      <h3 className="font-medium text-lg">Contact Person</h3>
+    <div className="space-y-4 p-4 bg-primary/5 rounded-lg border border-primary/20">
+      <div className="flex items-center justify-between">
+        <h3 className="font-medium text-lg flex items-center">
+          <User className="h-5 w-5 mr-2 text-primary" />
+          Personal Contact
+          <Badge variant="outline" className="ml-3 bg-primary/10">Direct Contact</Badge>
+        </h3>
+      </div>
       
       {/* Contact Person Name */}
-      <div className="flex items-center justify-between rounded-lg border p-3">
+      <div className="flex items-center justify-between rounded-lg border bg-background p-3">
         <div className="flex items-center space-x-3">
           <User className="h-5 w-5 text-gray-500" />
-          <span>{contactPerson.name}</span>
+          <span className="font-medium">{contactPerson.name}</span>
         </div>
       </div>
       
       {/* Contact Person Email */}
       {contactPerson.email && (
-        <div className="flex items-center justify-between rounded-lg border p-3">
+        <div className="flex items-center justify-between rounded-lg border bg-background p-3">
           <div className="flex items-center space-x-3">
             <Mail className="h-5 w-5 text-gray-500" />
             <span>{contactPerson.email}</span>
@@ -46,7 +53,7 @@ const ContactPersonInfo = ({ contactPerson, onCopyToClipboard }: ContactPersonIn
       
       {/* Contact Person LinkedIn */}
       {contactPerson.linkedinUrl && (
-        <div className="flex items-center justify-between rounded-lg border p-3">
+        <div className="flex items-center justify-between rounded-lg border bg-background p-3">
           <div className="flex items-center space-x-3">
             <Linkedin className="h-5 w-5 text-gray-500" />
             <span>LinkedIn Profile</span>
@@ -63,7 +70,7 @@ const ContactPersonInfo = ({ contactPerson, onCopyToClipboard }: ContactPersonIn
 
       {/* Contact Person Phone */}
       {contactPerson.phone && (
-        <div className="flex items-center justify-between rounded-lg border p-3">
+        <div className="flex items-center justify-between rounded-lg border bg-background p-3">
           <div className="flex items-center space-x-3">
             <Phone className="h-5 w-5 text-gray-500" />
             <span>{contactPerson.phone}</span>
