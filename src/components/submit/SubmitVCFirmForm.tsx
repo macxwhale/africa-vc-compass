@@ -43,7 +43,11 @@ const formSchema = z.object({
   stagePreference: z.array(z.string()).min(1, { message: "Select at least one investment stage" }),
   ticketSize: z.string().optional(),
   contactEmail: z.string().email({ message: "Please enter a valid email" }).optional(),
+  contactTwitter: z.string().optional(),
+  contactLinkedin: z.string().optional(),
   contactName: z.string().optional(),
+  contactPersonEmail: z.string().email({ message: "Please enter a valid email" }).optional(),
+  contactPersonLinkedin: z.string().url({ message: "Please enter a valid LinkedIn URL" }).optional().or(z.literal('')),
 });
 
 export function SubmitVCFirmForm() {
@@ -64,7 +68,11 @@ export function SubmitVCFirmForm() {
       stagePreference: [],
       ticketSize: "",
       contactEmail: "",
+      contactTwitter: "",
+      contactLinkedin: "",
       contactName: "",
+      contactPersonEmail: "",
+      contactPersonLinkedin: "",
     },
   });
   
@@ -89,10 +97,13 @@ export function SubmitVCFirmForm() {
         keyPartners: [], // Not in the simple form
         contactInfo: {
           email: values.contactEmail || "",
+          twitter: values.contactTwitter || undefined,
+          linkedin: values.contactLinkedin || undefined,
         },
-        contactPerson: values.contactName ? {
-          name: values.contactName,
-          email: values.contactEmail || "",
+        contactPerson: (values.contactName || values.contactPersonEmail || values.contactPersonLinkedin) ? {
+          name: values.contactName || "",
+          email: values.contactPersonEmail || "",
+          linkedinUrl: values.contactPersonLinkedin || undefined,
         } : undefined
       };
       
@@ -315,34 +326,100 @@ export function SubmitVCFirmForm() {
               )}
             />
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="contactName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Contact Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="John Doe" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="contactEmail"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Contact Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="contact@example.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            {/* General Contact Information */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">Contact Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <FormField
+                  control={form.control}
+                  name="contactEmail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contact Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="contact@example.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="contactTwitter"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Twitter Handle</FormLabel>
+                      <FormControl>
+                        <Input placeholder="acmevc" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="contactLinkedin"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>LinkedIn Handle</FormLabel>
+                      <FormControl>
+                        <Input placeholder="acme-ventures" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+            
+            {/* Contact Person */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">Contact Person</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <FormField
+                  control={form.control}
+                  name="contactName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Full Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="John Doe" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="contactPersonEmail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="john.doe@example.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="contactPersonLinkedin"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>LinkedIn URL</FormLabel>
+                      <FormControl>
+                        <Input placeholder="https://linkedin.com/in/johndoe" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
             
             <DialogFooter>
