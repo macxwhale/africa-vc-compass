@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +9,7 @@ import { VCFirm } from "@/data/vcData";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const Radar = () => {
   const { vcFirms } = useData();
@@ -239,6 +241,7 @@ const Radar = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 };
