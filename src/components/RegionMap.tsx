@@ -51,13 +51,13 @@ const RegionMap = () => {
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="col-span-1 md:col-span-2">
-              {/* Increased height container for the map */}
-              <div className="relative w-full h-[450px] bg-white rounded-lg overflow-hidden">
+              {/* Doubled the height for the map container and added flex for centering */}
+              <div className="relative w-full h-[900px] bg-white rounded-lg overflow-hidden flex items-center justify-center">
                 {/* Map image with improved sizing */}
                 <img 
                   src="/lovable-uploads/8d6bec59-583d-4c72-9072-4a270e686f55.png" 
                   alt="Map of Africa"
-                  className="absolute inset-0 w-full h-full object-contain"
+                  className="w-auto h-full object-contain mx-auto"
                 />
                 
                 {/* North Africa */}
