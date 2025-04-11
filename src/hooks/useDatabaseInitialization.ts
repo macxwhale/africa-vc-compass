@@ -1,7 +1,6 @@
-
 import { useState, useEffect, useRef } from "react";
 import { VCFirm } from "@/data/types";
-import { supabase, isSupabaseConfigured, testDatabaseConnection } from "@/services/supabaseService";
+import { supabase, isSupabaseConfigured, testDatabaseConnection, fixDatabaseSchema } from "@/services/supabaseService";
 import { Item } from "@/contexts/DataContext";
 import { 
   createTablesIfNeeded, 
@@ -46,6 +45,10 @@ export function useDatabaseInitialization(defaultData: DefaultData) {
             } else {
               console.log("Successfully connected to Supabase!");
               setIsSupabaseConnected(true);
+              
+              // Fix any schema issues first
+              console.log("Running database schema fixes during initialization...");
+              await fixDatabaseSchema();
               
               // Create tables if they don't exist
               await createTablesIfNeeded();

@@ -1,8 +1,9 @@
+
 import { useState, useEffect, useRef } from "react";
 import { VCFirm } from "@/data/types";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/services/supabaseService";
-import { vcFirmService, regionService, industryService, stageService, pendingVCFirmService, ensureContactPersonColumn } from "@/services/supabaseService";
+import { vcFirmService, regionService, industryService, stageService, pendingVCFirmService, ensureContactPersonColumn, fixDatabaseSchema } from "@/services/supabaseService";
 import { Item, PendingVCFirm } from "@/contexts/DataContext";
 import { updateRegionItems, updateIndustryItems, updateStageItems } from "@/utils/databaseUtils";
 
@@ -30,10 +31,10 @@ export function useDataOperations(
         try {
           console.log("Loading data from Supabase...");
           
-          // Ensure the contactPerson column exists in tables
+          // Fix database schema first - includes contactPerson column check
           if (isSupabaseConnected) {
-            console.log("Checking for contactPerson column...");
-            await ensureContactPersonColumn();
+            console.log("Running database schema fixes...");
+            await fixDatabaseSchema();
           }
           
           const dbRegions = await regionService.getAllRegions();
@@ -161,6 +162,9 @@ export function useDataOperations(
         return;
       }
 
+      // First run schema fix to ensure contactPerson column exists
+      await fixDatabaseSchema();
+      
       console.log("Attempting to save VC firm to Supabase:", firmToSave);
       const result = await vcFirmService.createVCFirm(firmToSave);
       
@@ -193,6 +197,9 @@ export function useDataOperations(
         return;
       }
 
+      // First run schema fix to ensure contactPerson column exists
+      await fixDatabaseSchema();
+      
       // Create another deep copy specifically for Supabase update
       const firmToUpdate = JSON.parse(JSON.stringify(firm)) as VCFirm;
       
@@ -278,6 +285,9 @@ export function useDataOperations(
         return;
       }
 
+      // Run schema fix to ensure contactPerson column exists
+      await fixDatabaseSchema();
+      
       // Create a deep copy specifically for Supabase
       const firmToSave = JSON.parse(JSON.stringify(newFirm));
       
@@ -306,6 +316,11 @@ export function useDataOperations(
   const approveVCFirm = async (pendingFirm: PendingVCFirm) => {
     try {
       console.log("Approving VC firm with isSupabaseConnected:", isSupabaseConnected);
+      
+      // Run schema fix to ensure contactPerson column exists
+      if (isSupabaseConnected) {
+        await fixDatabaseSchema();
+      }
       
       const approvedFirm: VCFirm = {
         id: `firm-${Date.now()}`,

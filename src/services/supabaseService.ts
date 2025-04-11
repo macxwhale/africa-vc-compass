@@ -56,6 +56,64 @@ export const testDatabaseConnection = async (): Promise<boolean> => {
   }
 };
 
+// Comprehensive database schema fix function
+export const fixDatabaseSchema = async (): Promise<boolean> => {
+  if (!isSupabaseConfigured()) {
+    console.warn('Supabase is not configured. Cannot fix database schema.');
+    return false;
+  }
+  
+  try {
+    const client = initializeSupabase();
+    console.log("Running database schema fix script...");
+    
+    // Fix vc_firms table schema
+    await client.rpc('execute_sql', { 
+      sql_query: `
+        ALTER TABLE IF EXISTS vc_firms 
+        ADD COLUMN IF NOT EXISTS "contactPerson" JSONB;
+      `
+    });
+    
+    // Fix pending_vc_firms table schema
+    await client.rpc('execute_sql', { 
+      sql_query: `
+        ALTER TABLE IF EXISTS pending_vc_firms 
+        ADD COLUMN IF NOT EXISTS "contactPerson" JSONB;
+      `
+    });
+    
+    console.log("Database schema fix completed successfully.");
+    return true;
+  } catch (error) {
+    console.error('Failed to fix database schema:', error);
+    return false;
+  }
+};
+
+// Ensure all required database schemas are correct
+export const ensureDatabaseSchema = async (): Promise<boolean> => {
+  if (!isSupabaseConfigured()) {
+    console.warn('Supabase is not configured. Cannot ensure database schema.');
+    return false;
+  }
+  
+  try {
+    // First check connection
+    const isConnected = await testDatabaseConnection();
+    if (!isConnected) {
+      console.error("Cannot ensure database schema - connection failed");
+      return false;
+    }
+    
+    // Run schema fixes
+    return await fixDatabaseSchema();
+  } catch (error) {
+    console.error('Error ensuring database schema:', error);
+    return false;
+  }
+};
+
 // Ensure contactPerson column exists in tables
 export const ensureContactPersonColumn = async (): Promise<boolean> => {
   if (!isSupabaseConfigured()) {
@@ -847,4 +905,6 @@ export const supabaseService = {
     }
   },
   ensureContactPersonColumn,
+  fixDatabaseSchema,
+  ensureDatabaseSchema,
 };
