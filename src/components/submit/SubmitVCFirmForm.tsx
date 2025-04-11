@@ -88,9 +88,12 @@ export function SubmitVCFirmForm() {
         portfolioCompanies: [], // Not in the simple form
         keyPartners: [], // Not in the simple form
         contactInfo: {
-          email: values.contactEmail,
+          email: values.contactEmail || "",
+        },
+        contactPerson: values.contactName ? {
           name: values.contactName,
-        }
+          email: values.contactEmail || "",
+        } : undefined
       };
       
       // Submit the firm
