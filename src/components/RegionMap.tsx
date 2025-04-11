@@ -51,7 +51,7 @@ const RegionMap = () => {
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="col-span-1 md:col-span-2">
-              {/* Doubled the height for the map container and added flex for centering */}
+              {/* Map container with height */}
               <div className="relative w-full h-[900px] bg-white rounded-lg overflow-hidden flex items-center justify-center">
                 {/* Map image with improved sizing */}
                 <img 
@@ -132,7 +132,8 @@ const RegionMap = () => {
               </div>
             </div>
             
-            <div>
+            {/* VC Distribution section - added flex classes to vertically center content */}
+            <div className="flex flex-col justify-center h-full">
               <h3 className="text-lg font-medium mb-3">VC Distribution</h3>
               <div className="space-y-1">
                 {regionsWithCounts.map((region) => (
@@ -197,4 +198,3 @@ const RegionMap = () => {
 };
 
 export default RegionMap;
-
