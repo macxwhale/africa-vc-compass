@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { VCFirm } from "@/data/types";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/services/supabaseService";
-import { vcFirmService, regionService, industryService, stageService, pendingVCFirmService, fixDatabaseSchema } from "@/services/supabaseService";
+import { vcFirmService, regionService, industryService, stageService, pendingVCFirmService, ensureContactPersonColumn } from "@/services/supabaseService";
 import { Item, PendingVCFirm } from "@/contexts/DataContext";
 import { updateRegionItems, updateIndustryItems, updateStageItems } from "@/utils/databaseUtils";
 
@@ -30,10 +30,10 @@ export function useDataOperations(
         try {
           console.log("Loading data from Supabase...");
           
-          // Run the database fix script to ensure all columns are present
+          // Ensure the contactPerson column exists in tables
           if (isSupabaseConnected) {
-            console.log("Running database schema fix to ensure all required columns exist...");
-            await fixDatabaseSchema();
+            console.log("Checking for contactPerson column...");
+            await ensureContactPersonColumn();
           }
           
           const dbRegions = await regionService.getAllRegions();
