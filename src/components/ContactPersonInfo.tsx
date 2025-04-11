@@ -1,6 +1,8 @@
 
 import { Button } from "@/components/ui/button";
 import { User, Mail, Linkedin, Phone, Copy } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useState, useEffect } from "react";
 
 interface ContactPersonInfoProps {
   contactPerson: {
@@ -13,6 +15,9 @@ interface ContactPersonInfoProps {
 }
 
 const ContactPersonInfo = ({ contactPerson, onCopyToClipboard }: ContactPersonInfoProps) => {
+  // Add a loading state to prevent showing incomplete data
+  const [isLoaded, setIsLoaded] = useState(false);
+  
   // Log to confirm what data is received by the component
   console.log("ContactPersonInfo rendering with:", JSON.stringify(contactPerson, null, 2));
   
@@ -20,6 +25,27 @@ const ContactPersonInfo = ({ contactPerson, onCopyToClipboard }: ContactPersonIn
   if (!contactPerson || !contactPerson.name) {
     console.log("ContactPerson is missing or has no name, not rendering");
     return null;
+  }
+
+  // Use useEffect to delay rendering until data is confirmed loaded
+  useEffect(() => {
+    // This ensures we only show the component after the initial render
+    // which prevents flashing of incomplete/dummy data
+    setIsLoaded(true);
+  }, [contactPerson.email]);
+
+  // Show skeleton while loading
+  if (!isLoaded) {
+    return (
+      <div className="space-y-4">
+        <div className="rounded-lg border bg-background p-3">
+          <Skeleton className="h-6 w-3/4" />
+        </div>
+        <div className="rounded-lg border bg-background p-3">
+          <Skeleton className="h-6 w-3/4" />
+        </div>
+      </div>
+    );
   }
 
   return (

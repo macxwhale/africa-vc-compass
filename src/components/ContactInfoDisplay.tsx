@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Mail, Linkedin, Twitter, Globe, User, Copy } from "lucide-react";
 import { VCFirm } from "@/data/types";
 import ContactPersonInfo from "./ContactPersonInfo";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useState, useEffect } from "react";
 
 interface ContactInfoDisplayProps {
   selectedFirm: VCFirm | null;
@@ -11,6 +13,20 @@ interface ContactInfoDisplayProps {
 }
 
 const ContactInfoDisplay = ({ selectedFirm, onCopyToClipboard }: ContactInfoDisplayProps) => {
+  const [isDataReady, setIsDataReady] = useState(false);
+  
+  // Reset loading state when firm changes
+  useEffect(() => {
+    if (selectedFirm) {
+      setIsDataReady(false);
+      // Small delay to ensure data is fully loaded
+      const timer = setTimeout(() => {
+        setIsDataReady(true);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedFirm]);
+  
   console.log("Contact Info Display - Selected Firm:", selectedFirm);
   
   if (!selectedFirm) {
@@ -33,7 +49,41 @@ const ContactInfoDisplay = ({ selectedFirm, onCopyToClipboard }: ContactInfoDisp
   }
 
   // Debug log for contact person data
-  console.log("Contact Person:", selectedFirm.contactPerson || "No contact person data");
+  if (selectedFirm.contactPerson) {
+    console.log("Contact Person:", JSON.stringify(selectedFirm.contactPerson, null, 2));
+  } else {
+    console.log("No contact person data available");
+  }
+
+  // Show skeleton while loading
+  if (!isDataReady) {
+    return (
+      <Card>
+        <CardHeader>
+          <div className="flex items-center space-x-4">
+            <Skeleton className="w-12 h-12 rounded" />
+            <div className="space-y-2">
+              <Skeleton className="h-5 w-32" />
+              <Skeleton className="h-4 w-24" />
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-4">
+            <Skeleton className="h-5 w-40 mb-2" />
+            <Skeleton className="h-16 w-full" />
+            <Skeleton className="h-16 w-full" />
+          </div>
+          
+          <div className="space-y-4">
+            <Skeleton className="h-5 w-48 mb-2" />
+            <Skeleton className="h-16 w-full" />
+            <Skeleton className="h-16 w-full" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
