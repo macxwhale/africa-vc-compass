@@ -24,6 +24,13 @@ const Radar = () => {
     });
   };
 
+  // Debug selected firm
+  const handleSelectFirm = (value: string) => {
+    const firm = vcFirms.find(f => f.id === value);
+    setSelectedFirm(firm || null);
+    console.log("Selected firm:", firm); // Add debugging
+  };
+
   return (
     <>
       <Navbar />
@@ -43,11 +50,7 @@ const Radar = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Select onValueChange={(value) => {
-                  const firm = vcFirms.find(f => f.id === value);
-                  setSelectedFirm(firm || null);
-                  console.log("Selected firm:", firm); // Add debugging
-                }}>
+                <Select onValueChange={handleSelectFirm}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a VC firm" />
                   </SelectTrigger>
@@ -170,11 +173,12 @@ const Radar = () => {
                     )}
                   </div>
 
-                  {/* Contact Person - Added null check for contactPerson */}
+                  {/* Contact Person Section */}
                   {selectedFirm.contactPerson && (
                     <div className="space-y-4 pt-4 border-t">
                       <h3 className="font-medium text-lg">Contact Person</h3>
                       
+                      {/* Contact Person Name */}
                       <div className="flex items-center justify-between rounded-lg border p-3">
                         <div className="flex items-center space-x-3">
                           <User className="h-5 w-5 text-gray-500" />
@@ -182,6 +186,7 @@ const Radar = () => {
                         </div>
                       </div>
                       
+                      {/* Contact Person Email */}
                       {selectedFirm.contactPerson.email && (
                         <div className="flex items-center justify-between rounded-lg border p-3">
                           <div className="flex items-center space-x-3">
@@ -198,6 +203,7 @@ const Radar = () => {
                         </div>
                       )}
                       
+                      {/* Contact Person LinkedIn */}
                       {selectedFirm.contactPerson.linkedinUrl && (
                         <div className="flex items-center justify-between rounded-lg border p-3">
                           <div className="flex items-center space-x-3">
@@ -214,7 +220,7 @@ const Radar = () => {
                         </div>
                       )}
 
-                      {/* Add phone display if available - with proper optional chaining */}
+                      {/* Contact Person Phone */}
                       {selectedFirm.contactPerson.phone && (
                         <div className="flex items-center justify-between rounded-lg border p-3">
                           <div className="flex items-center space-x-3">
