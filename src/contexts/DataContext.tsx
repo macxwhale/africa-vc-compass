@@ -1,6 +1,6 @@
 
 import { createContext, useContext } from "react";
-import { VCFirm } from "@/data/vcData";
+import { VCFirm } from "@/data/types";
 import { PendingVCFirm } from "@/hooks/useDataOperations";
 
 export interface Item {

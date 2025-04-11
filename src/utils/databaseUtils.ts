@@ -1,7 +1,6 @@
-
 import { supabase, isSupabaseConfigured, executeSQL, testDatabaseConnection, createAllTables, regionService, industryService, stageService, vcFirmService } from "@/services/supabaseService";
 import { Item } from "@/contexts/DataContext";
-import { VCFirm } from "@/data/vcData";
+import { VCFirm } from "@/data/types";
 
 // Function to check if tables exist and create them if they don't
 export const createTablesIfNeeded = async () => {

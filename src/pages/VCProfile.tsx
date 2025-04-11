@@ -1,15 +1,22 @@
-
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useData } from "@/contexts/DataContext";
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardFooter, 
+  CardHeader, 
+  CardTitle 
+} from "@/components/ui/card";
+import { VCFirm } from "@/data/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ExternalLink, MapPin, Calendar, Mail, Twitter, Linkedin } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { useEffect, useState } from "react";
-import { useData } from "@/contexts/DataContext";
-import { VCFirm } from "@/data/vcData";
 
 const VCProfile = () => {
   const { id } = useParams<{ id: string }>();

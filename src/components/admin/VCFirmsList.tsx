@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Edit, Trash, Plus, Eye } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { VCFirm } from "@/data/vcData";
+import { VCFirm } from "@/data/types";
 import { 
   Dialog,
   DialogContent,

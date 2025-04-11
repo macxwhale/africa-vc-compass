@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useRef } from "react";
-import { VCFirm } from "@/data/vcData";
+import { VCFirm } from "@/data/types";
 import { supabase, isSupabaseConfigured, testDatabaseConnection } from "@/services/supabaseService";
 import { Item } from "@/contexts/DataContext";
 import { 

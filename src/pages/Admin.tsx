@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -10,16 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Edit, Trash, Plus, Check, X, AlertTriangle, Database, FileCheck, Search } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useData } from "@/contexts/DataContext";
-import { VCFirm } from "@/data/vcData";
+import { VCFirm } from "@/data/types";
 import VCFirmForm from "@/components/admin/VCFirmForm";
-import VCFirmsList from "@/components/admin/VCFirmsList";
-import PendingVCFirmsList from "@/components/admin/PendingVCFirmsList";
-import PendingVCFirmDetail from "@/components/admin/PendingVCFirmDetail";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { PendingVCFirm } from "@/hooks/useDataOperations";
-import { Badge } from "@/components/ui/badge";
-import { AIResearchForm } from "@/components/admin/AIResearchForm";
-import AdminLogin from "@/components/admin/AdminLogin";
 
 interface Item {
   id: string;
@@ -60,13 +51,10 @@ const Admin = () => {
   const [viewingPendingFirm, setViewingPendingFirm] = useState<PendingVCFirm | null>(null);
   const [pendingFirmDetailOpen, setPendingFirmDetailOpen] = useState(false);
   
-  // Count pending firms for badge
   const pendingCount = pendingVCFirms.filter(firm => firm.status === 'pending').length;
 
-  // Automatically switch to pending tab if there are pending firms and none are being viewed
   useEffect(() => {
     if (pendingCount > 0 && !viewingPendingFirm && activeTab !== 'pending') {
-      // Only show a notification if we're not already on the pending tab
       toast({
         title: "Pending VC Firms",
         description: `You have ${pendingCount} VC firm${pendingCount > 1 ? 's' : ''} pending review`,
@@ -74,25 +62,21 @@ const Admin = () => {
     }
   }, [pendingCount, viewingPendingFirm, activeTab]);
 
-  // Check for authentication in localStorage on component mount
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('admin_authenticated') === 'true';
     setIsAuthenticated(isLoggedIn);
   }, []);
 
-  // Handle successful login
   const handleLogin = () => {
     localStorage.setItem('admin_authenticated', 'true');
     setIsAuthenticated(true);
   };
 
-  // Handle logout
   const handleLogout = () => {
     localStorage.removeItem('admin_authenticated');
     setIsAuthenticated(false);
   };
 
-  // If not authenticated, show login screen
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex flex-col">
