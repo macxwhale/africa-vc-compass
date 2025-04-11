@@ -61,10 +61,14 @@ export function useDataOperations(
             setVcFirmsState(dbVCFirms as VCFirm[]);
           }
           
-          const dbPendingVCFirms = await pendingVCFirmService.getAllPendingVCFirms();
-          if (dbPendingVCFirms && dbPendingVCFirms.length > 0) {
-            console.log("Loaded pending VC firms from database:", dbPendingVCFirms);
-            setPendingVCFirms(dbPendingVCFirms);
+          try {
+            const dbPendingVCFirms = await pendingVCFirmService.getAllPendingVCFirms();
+            if (dbPendingVCFirms && dbPendingVCFirms.length > 0) {
+              console.log("Loaded pending VC firms from database:", dbPendingVCFirms);
+              setPendingVCFirms(dbPendingVCFirms);
+            }
+          } catch (error) {
+            console.error("Error loading pending VC firms:", error);
           }
           
         } catch (error) {
@@ -96,19 +100,10 @@ export function useDataOperations(
     
     if (isSupabaseConnected) {
       try {
-        await regionService.updateAllRegions(items);
+        await updateRegionItems(items, isSupabaseConnected);
         console.log("Regions saved to database");
-        toast({
-          title: "Success",
-          description: "Regions updated successfully and saved to database",
-        });
       } catch (error) {
         console.error("Error saving regions to database:", error);
-        toast({
-          title: "Error",
-          description: "Failed to save regions to database",
-          variant: "destructive",
-        });
       }
     }
   };
@@ -119,19 +114,10 @@ export function useDataOperations(
     
     if (isSupabaseConnected) {
       try {
-        await industryService.updateAllIndustries(items);
+        await updateIndustryItems(items, isSupabaseConnected);
         console.log("Industries saved to database");
-        toast({
-          title: "Success",
-          description: "Industries updated successfully and saved to database",
-        });
       } catch (error) {
         console.error("Error saving industries to database:", error);
-        toast({
-          title: "Error",
-          description: "Failed to save industries to database",
-          variant: "destructive",
-        });
       }
     }
   };
@@ -142,19 +128,10 @@ export function useDataOperations(
     
     if (isSupabaseConnected) {
       try {
-        await stageService.updateAllStages(items);
+        await updateStageItems(items, isSupabaseConnected);
         console.log("Stages saved to database");
-        toast({
-          title: "Success",
-          description: "Investment stages updated successfully and saved to database",
-        });
       } catch (error) {
         console.error("Error saving stages to database:", error);
-        toast({
-          title: "Error",
-          description: "Failed to save stages to database",
-          variant: "destructive",
-        });
       }
     }
   };
@@ -175,10 +152,6 @@ export function useDataOperations(
       setVcFirmsState(prevFirms => [...prevFirms, firm]);
       
       if (!isSupabaseConnected) {
-        toast({
-          title: "Success",
-          description: "VC firm added successfully (local only)",
-        });
         return;
       }
 
@@ -190,17 +163,8 @@ export function useDataOperations(
       }
       
       console.log("VC firm successfully saved to database:", result.data);
-      toast({
-        title: "Success",
-        description: "VC firm added successfully and saved to database",
-      });
     } catch (error) {
       console.error("Error adding VC firm:", error);
-      toast({
-        title: "Error",
-        description: `Failed to add VC firm: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        variant: "destructive",
-      });
     }
   };
 
@@ -211,10 +175,6 @@ export function useDataOperations(
       setVcFirmsState(prevFirms => prevFirms.map(f => f.id === firm.id ? firm : f));
       
       if (!isSupabaseConnected) {
-        toast({
-          title: "Success",
-          description: "VC firm updated successfully (local only)",
-        });
         return;
       }
 
@@ -226,17 +186,8 @@ export function useDataOperations(
       }
       
       console.log("VC firm successfully updated in database:", result.data);
-      toast({
-        title: "Success",
-        description: "VC firm updated successfully and saved to database",
-      });
     } catch (error) {
       console.error("Error updating VC firm:", error);
-      toast({
-        title: "Error",
-        description: `Failed to update VC firm: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        variant: "destructive",
-      });
     }
   };
 
@@ -247,10 +198,6 @@ export function useDataOperations(
       setVcFirmsState(prevFirms => prevFirms.filter(f => f.id !== id));
       
       if (!isSupabaseConnected) {
-        toast({
-          title: "Success",
-          description: "VC firm deleted successfully (local only)",
-        });
         return;
       }
 
@@ -262,17 +209,8 @@ export function useDataOperations(
       }
       
       console.log("VC firm successfully deleted from database");
-      toast({
-        title: "Success",
-        description: "VC firm deleted successfully and removed from database",
-      });
     } catch (error) {
       console.error("Error deleting VC firm:", error);
-      toast({
-        title: "Error",
-        description: `Failed to delete VC firm: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        variant: "destructive",
-      });
     }
   };
 
