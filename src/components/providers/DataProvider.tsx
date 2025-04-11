@@ -1,3 +1,4 @@
+
 import { ReactNode, useMemo, useEffect, useState } from "react";
 import { DataContext } from "@/contexts/DataContext";
 import { industries, stages, regions, vcFirms } from "@/data";
@@ -9,7 +10,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   // Only show loading state once
   const [showLoading, setShowLoading] = useState(true);
   
-  // Create default data objects
+  // Create default data objects - fix the initialization order
   const defaultRegions = useMemo(() => 
     regions.map((name, index) => ({ id: `region-${index}`, name })), []);
   
@@ -41,7 +42,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
   // Initialize data operations with the isSupabaseConnected flag
   const {
-    vcFirms,
+    vcFirms: operationVcFirms,
     regionItems,
     industryItems,
     stageItems,
@@ -81,7 +82,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         regionItems, 
         industryItems, 
         stageItems,
-        vcFirms,
+        vcFirms: operationVcFirms,
         pendingVCFirms,
         setRegionItems, 
         setIndustryItems, 

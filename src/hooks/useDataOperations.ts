@@ -1,18 +1,10 @@
-
 import { useState, useEffect, useRef } from "react";
 import { VCFirm } from "@/data/types";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/services/supabaseService";
 import { vcFirmService, regionService, industryService, stageService, pendingVCFirmService } from "@/services/supabaseService";
-import { Item } from "@/contexts/DataContext";
+import { Item, PendingVCFirm } from "@/contexts/DataContext";
 import { updateRegionItems, updateIndustryItems, updateStageItems } from "@/utils/databaseUtils";
-
-export interface PendingVCFirm extends VCFirm {
-  status: 'pending' | 'approved' | 'rejected';
-  submittedAt: string;
-  reviewedAt?: string;
-  reviewNotes?: string;
-}
 
 export function useDataOperations(
   initialData: {
