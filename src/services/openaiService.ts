@@ -1,5 +1,5 @@
 
-import { toast } from "@/hooks/use-toast";
+// Import the renamed supabaseService
 import { supabaseService } from "@/services/supabaseService";
 
 interface ResearchVCFirmResponse {

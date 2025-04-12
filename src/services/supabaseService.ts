@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from './database.types';
 import { VCFirm } from '@/data/vcData';
-import { PendingVCFirm } from '@/hooks/useDataOperations';
+import { PendingVCFirm } from '@/types/vcTypes';
 import { Item } from '@/contexts/DataContext';
 
 // Initialize Supabase client
@@ -107,6 +107,13 @@ const createAllTables = async () => {
         reviewNotes TEXT
       );
     `;
+    
+    const createSettingsTableSQL = `
+      CREATE TABLE IF NOT EXISTS settings (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL
+      );
+    `;
 
     // Execute SQL statements to create tables
     await executeSQL(createRegionsTableSQL);
@@ -114,6 +121,7 @@ const createAllTables = async () => {
     await executeSQL(createStagesTableSQL);
     await executeSQL(createVCFirmsTableSQL);
     await executeSQL(createPendingVCFirmsTableSQL);
+    await executeSQL(createSettingsTableSQL);
 
     console.log("All tables created successfully");
     return true;
@@ -467,6 +475,45 @@ export const pendingVCFirmService = {
       return true;
     } catch (error) {
       console.error("Error deleting pending VC Firm:", error);
+      return false;
+    }
+  }
+};
+
+// Create a service for OpenAI API key management
+export const supabaseService = {
+  isSupabaseConfigured: () => isSupabaseConfigured,
+  
+  getOpenAIApiKey: async () => {
+    try {
+      if (!isSupabaseConfigured) return null;
+      
+      const { data, error } = await supabase
+        .from('settings')
+        .select('value')
+        .eq('key', 'openai_api_key')
+        .single();
+      
+      if (error || !data) return null;
+      return data.value;
+    } catch (error) {
+      console.error("Error getting OpenAI API key:", error);
+      return null;
+    }
+  },
+  
+  saveOpenAIApiKey: async (apiKey: string) => {
+    try {
+      if (!isSupabaseConfigured) return false;
+      
+      const { error } = await supabase
+        .from('settings')
+        .upsert({ key: 'openai_api_key', value: apiKey })
+        .select();
+      
+      return !error;
+    } catch (error) {
+      console.error("Error saving OpenAI API key:", error);
       return false;
     }
   }
