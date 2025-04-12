@@ -1,4 +1,5 @@
 
+
 -- First enable the uuid-ossp extension if not already enabled
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -69,3 +70,4 @@ BEGIN
   EXECUTE sql_statement;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
