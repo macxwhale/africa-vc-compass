@@ -1,0 +1,143 @@
+
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "VC Firm Schema",
+  "description": "Schema for VC firm data used in forms",
+  "type": "object",
+  "required": ["name", "description", "regionsOfInterest", "industries", "investmentStage"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the VC firm"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of the VC firm"
+    },
+    "website": {
+      "type": "string",
+      "format": "uri",
+      "description": "Website URL of the VC firm"
+    },
+    "hqLocation": {
+      "type": "string",
+      "description": "Headquarters location of the VC firm"
+    },
+    "regionsOfInterest": {
+      "type": "array",
+      "description": "Regions where the VC firm invests",
+      "items": {
+        "type": "string"
+      }
+    },
+    "industries": {
+      "type": "array",
+      "description": "Industries the VC firm invests in",
+      "items": {
+        "type": "string"
+      }
+    },
+    "investmentStage": {
+      "type": "array",
+      "description": "Investment stages the VC firm focuses on",
+      "items": {
+        "type": "string"
+      }
+    },
+    "typicalTicketSize": {
+      "type": "string",
+      "description": "Typical investment amount range"
+    },
+    "contactPerson": {
+      "type": "object",
+      "description": "Contact person details",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the contact person"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Email of the contact person"
+        },
+        "linkedinUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "LinkedIn profile URL of the contact person"
+        }
+      }
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the VC firm"
+    },
+    "linkedinUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "LinkedIn profile URL of the VC firm"
+    },
+    "twitterUrl": {
+      "type": "string",
+      "description": "Twitter profile URL of the VC firm"
+    },
+    "logo": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to the logo image"
+    },
+    "foundedYear": {
+      "type": "integer",
+      "description": "Year the VC firm was founded"
+    },
+    "portfolioCompanies": {
+      "type": "array",
+      "description": "Companies in the VC firm's portfolio",
+      "items": {
+        "type": "string"
+      }
+    },
+    "keyPartners": {
+      "type": "array",
+      "description": "Key partners or team members of the VC firm",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the partner"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title or position of the partner"
+          },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to the partner's image"
+          }
+        },
+        "required": ["name", "title"]
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "approved", "rejected"],
+      "description": "Status of the VC firm submission"
+    },
+    "submittedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date and time when the VC firm was submitted"
+    },
+    "reviewedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date and time when the VC firm was reviewed"
+    },
+    "reviewNotes": {
+      "type": "string",
+      "description": "Notes from the review process"
+    }
+  }
+}
