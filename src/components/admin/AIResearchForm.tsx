@@ -169,7 +169,7 @@ export function AIResearchForm() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleResearch} className="space-y-4">
+          <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="query">VC Firm Name or Keywords</Label>
               <Input
@@ -180,7 +180,7 @@ export function AIResearchForm() {
                 disabled={isResearching || isLoading}
               />
             </div>
-          </form>
+          </div>
         </CardContent>
         <CardFooter className="flex justify-between">
           <Button 
@@ -250,3 +250,4 @@ export function AIResearchForm() {
     </>
   );
 }
+
