@@ -1,6 +1,7 @@
 
 // Import the renamed supabaseService
 import { supabaseService } from "@/services/supabaseService";
+import { toast } from "@/hooks/use-toast";
 
 interface ResearchVCFirmResponse {
   name: string;
