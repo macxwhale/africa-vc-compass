@@ -49,6 +49,13 @@ const executeSQL = async (sql: string) => {
 // Function to create all tables
 const createAllTables = async () => {
   try {
+    console.log("Attempting to enable uuid-ossp extension...");
+    // First enable uuid-ossp extension for uuid generation
+    const enableUuidExtensionSQL = `
+      CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+    `;
+    await executeSQL(enableUuidExtensionSQL);
+    
     // SQL statements to create tables
     const createRegionsTableSQL = `
       CREATE TABLE IF NOT EXISTS regions (
@@ -299,15 +306,18 @@ export const vcFirmService = {
     try {
       console.log("Getting all VC firms...");
       
+      // Remove limit to get all firms, not just the first ones
       const { data, error } = await supabase
         .from('vc_firms')
-        .select('*');
+        .select('*')
+        .order('name', { ascending: true });
         
       if (error) {
         console.error("Error fetching VC Firms:", error);
         return [];
       }
       
+      console.log(`Retrieved ${data?.length || 0} VC firms from database`);
       return data || [];
     } catch (error) {
       console.error("Error fetching VC Firms:", error);
@@ -389,15 +399,34 @@ export const pendingVCFirmService = {
     try {
       console.log("Getting all pending VC firms...");
       
+      // First check if the table exists
+      try {
+        const { count, error: countError } = await supabase
+          .from('pending_vc_firms')
+          .select('*', { count: 'exact', head: true });
+          
+        // If there's an error with the table not existing
+        if (countError && countError.code === '42P01') {
+          console.log("Pending VC firms table doesn't exist yet, creating now...");
+          await createAllTables();
+        }
+      } catch (checkError) {
+        console.error("Error checking pending VC firms table:", checkError);
+        // Try creating the tables if there was an error checking
+        await createAllTables();
+      }
+      
       const { data, error } = await supabase
         .from('pending_vc_firms')
-        .select('*');
+        .select('*')
+        .order('submittedAt', { ascending: false });
         
       if (error) {
         console.error("Error fetching pending VC Firms:", error);
         return [];
       }
       
+      console.log(`Retrieved ${data?.length || 0} pending VC firms from database`);
       return data || [];
     } catch (error) {
       console.error("Error fetching pending VC Firms:", error);
