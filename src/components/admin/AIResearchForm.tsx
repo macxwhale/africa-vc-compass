@@ -109,25 +109,31 @@ export function AIResearchForm() {
       const vcData = await openaiService.researchVCFirm(query);
       
       if (vcData) {
-        // Submit the researched VC firm to pending queue
+        // Map the API response to our VCFirm structure
         await submitVCFirm({
           name: vcData.name,
-          logo: "/placeholder.svg", // Use placeholder logo
+          logo: vcData.logo || "/placeholder.svg",
           description: vcData.description,
           website: vcData.website,
-          headquarters: vcData.headquarters,
+          headquarters: vcData.hqLocation || vcData.headquarters,
           foundedYear: vcData.foundedYear,
-          investmentFocus: [], // Not available from research
-          industries: vcData.industries,
-          stagePreference: vcData.stagePreference,
-          ticketSize: vcData.ticketSize,
-          regionsOfInterest: vcData.regionsOfInterest,
-          portfolioCompanies: [], // Not available from research
-          keyPartners: [], // Not available from research
+          investmentFocus: vcData.investmentStage || [],
+          industries: vcData.industries || [],
+          stagePreference: vcData.stagePreference || vcData.investmentStage || [],
+          ticketSize: vcData.typicalTicketSize || vcData.ticketSize,
+          regionsOfInterest: vcData.regionsOfInterest || [],
+          portfolioCompanies: vcData.portfolioCompanies || [],
+          keyPartners: vcData.keyPartners || [],
           contactInfo: {
-            email: vcData.contactEmail || "",
+            email: vcData.contactPerson?.email || "",
+            twitter: vcData.twitterUrl || "",
+            linkedin: vcData.linkedinUrl || ""
           },
-          contactPerson: undefined
+          contactPerson: vcData.contactPerson ? {
+            name: vcData.contactPerson.name || "",
+            email: vcData.contactPerson.email || "", 
+            linkedinUrl: vcData.contactPerson.linkedinUrl || ""
+          } : undefined
         });
         
         toast({

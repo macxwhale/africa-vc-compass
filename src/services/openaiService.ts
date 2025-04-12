@@ -6,14 +6,35 @@ import { toast } from "@/hooks/use-toast";
 interface ResearchVCFirmResponse {
   name: string;
   description: string;
-  headquarters: string;
+  headquarters?: string;
+  hqLocation?: string;
   website?: string;
   foundedYear?: number;
   industries: string[];
   regionsOfInterest: string[];
-  stagePreference: string[];
+  stagePreference?: string[];
+  investmentStage?: string[];
   ticketSize?: string;
+  typicalTicketSize?: string;
   contactEmail?: string;
+  contactPerson?: {
+    name?: string;
+    email?: string;
+    linkedinUrl?: string;
+  };
+  linkedinUrl?: string;
+  twitterUrl?: string;
+  logo?: string;
+  portfolioCompanies?: string[];
+  keyPartners?: Array<{
+    name: string;
+    title: string;
+    image?: string;
+  }>;
+  status?: string;
+  submittedAt?: string;
+  reviewedAt?: string;
+  reviewNotes?: string;
 }
 
 export const openaiService = {
@@ -51,20 +72,35 @@ export const openaiService = {
         return null;
       }
 
-      const systemPrompt = `You are a helpful assistant that researches venture capital firms in Africa. 
-      Respond with ONLY a JSON object containing the following information about the VC firm:
-      - name: string (required)
-      - description: string (required, at least 100 characters)
-      - headquarters: string (required)
-      - website: string (optional)
-      - foundedYear: number (optional)
-      - industries: string[] (required, at least 1 industry)
-      - regionsOfInterest: string[] (required, at least 1 region from: East Africa, West Africa, North Africa, Southern Africa, Central Africa, Pan-African)
-      - stagePreference: string[] (required, at least 1 stage from: Pre-seed, Seed, Early Stage, Series A, Series B, Growth)
-      - ticketSize: string (optional)
-      - contactEmail: string (optional)
-      
-      DO NOT include any explanations, notes or other text outside the JSON object.`;
+      const systemPrompt = `Research venture capital firms that invest in Africa. For each firm, present the data in the following JSON format. Fill in as many fields as possible based on available information. Do not include explanations—only output valid JSON objects for each VC firm:
+
+{
+  "name": "Example Capital",
+  "website": "https://www.examplecapital.com",
+  "hqLocation": "Nairobi, Kenya",
+  "regionsOfInterest": ["Sub-Saharan Africa", "East Africa"],
+  "industries": ["Fintech", "Agritech"],
+  "investmentStage": ["Seed", "Series A"],
+  "typicalTicketSize": "$100,000 - $1,000,000",
+  "contactPerson": {
+    "name": "Jane Doe",
+    "email": "jane@examplecapital.com",
+    "linkedinUrl": "https://www.linkedin.com/in/janedoe"
+  },
+  "description": "Example Capital is a VC firm focused on funding early-stage startups in emerging African markets.",
+  "linkedinUrl": "https://www.linkedin.com/company/example-capital",
+  "twitterUrl": "https://twitter.com/examplecapital",
+  "logo": "https://www.examplecapital.com/logo.png",
+  "foundedYear": 2015,
+  "portfolioCompanies": ["Startup A", "Startup B"],
+  "keyPartners": [
+    {
+      "name": "John Smith",
+      "title": "Managing Partner",
+      "image": "https://www.examplecapital.com/team/john.png"
+    }
+  ]
+}`;
 
       console.log("Making OpenAI API request for VC research...");
       
@@ -75,7 +111,7 @@ export const openaiService = {
           Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: "gpt-4o",
+          model: "gpt-4o-mini",
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: `Research this African VC firm: ${query}` }
@@ -116,3 +152,4 @@ export const openaiService = {
     }
   }
 };
+

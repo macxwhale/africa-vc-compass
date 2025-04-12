@@ -4,7 +4,7 @@
   "title": "VC Firm Schema",
   "description": "Schema for VC firm data used in forms",
   "type": "object",
-  "required": ["name", "description", "regionsOfInterest", "industries", "investmentStage"],
+  "required": ["name", "description", "regionsOfInterest", "industries"],
   "properties": {
     "id": {
       "type": "string",
