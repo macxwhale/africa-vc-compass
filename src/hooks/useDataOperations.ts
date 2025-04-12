@@ -66,18 +66,8 @@ export function useDataOperations(
             console.log("Loaded pending VC firms from database:", dbPendingVCFirms);
             setPendingVCFirms(dbPendingVCFirms);
           }
-          
-          toast({
-            title: "Data Loaded",
-            description: "Data successfully loaded from Supabase",
-          });
         } catch (error) {
           console.error("Error loading data from Supabase:", error);
-          toast({
-            title: "Data Load Error",
-            description: "Error loading data from Supabase. Using local data.",
-            variant: "destructive",
-          });
         }
       }
     };
@@ -109,7 +99,7 @@ export function useDataOperations(
         console.log("Regions saved to database");
         toast({
           title: "Success",
-          description: "Regions updated successfully and saved to database",
+          description: `Regions updated successfully and saved to database`,
         });
       } catch (error) {
         console.error("Error saving regions to database:", error);
@@ -132,7 +122,7 @@ export function useDataOperations(
         console.log("Industries saved to database");
         toast({
           title: "Success",
-          description: "Industries updated successfully and saved to database",
+          description: `Industries updated successfully and saved to database`,
         });
       } catch (error) {
         console.error("Error saving industries to database:", error);
@@ -155,7 +145,7 @@ export function useDataOperations(
         console.log("Stages saved to database");
         toast({
           title: "Success",
-          description: "Investment stages updated successfully and saved to database",
+          description: `Investment stages updated successfully and saved to database`,
         });
       } catch (error) {
         console.error("Error saving stages to database:", error);

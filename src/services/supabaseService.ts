@@ -1,729 +1,475 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
+import { Database } from './database.types';
 import { VCFirm } from '@/data/vcData';
 import { PendingVCFirm } from '@/hooks/useDataOperations';
-
-// Singleton pattern to ensure only one instance of the SupabaseClient
-let supabaseClient: SupabaseClient | null = null;
+import { Item } from '@/contexts/DataContext';
 
 // Initialize Supabase client
-export const initializeSupabase = (): SupabaseClient => {
-  if (supabaseClient) {
-    return supabaseClient;
-  }
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (!isSupabaseConfigured()) {
-    throw new Error('Supabase not configured');
-  }
+// Check if Supabase URL and key are defined
+const isSupabaseConfigured = !!(supabaseUrl && supabaseKey);
 
-  const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-  const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Create Supabase client
+const supabase = createClient<Database>(supabaseUrl as string, supabaseKey as string);
 
-  supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  return supabaseClient;
-};
-
-// Check if Supabase is configured
-export const isSupabaseConfigured = (): boolean => {
-  const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-  const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
-  return Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
-};
-
-// Export the initialized client for direct access
-export const supabase = isSupabaseConfigured() ? initializeSupabase() : null;
-
-// Test the database connection
-export const testDatabaseConnection = async (): Promise<boolean> => {
-  if (!isSupabaseConfigured()) {
-    console.warn('Supabase is not configured. Cannot test connection.');
-    return false;
-  }
-  
+// Function to test the database connection
+const testDatabaseConnection = async () => {
   try {
-    const client = initializeSupabase();
-    const { data, error } = await client.from('regions').select('count').limit(1);
-    
+    const { data, error } = await supabase.from('regions').select('id').limit(1);
     if (error) {
-      console.error('Error testing database connection:', error);
+      console.error("Supabase connection test failed:", error);
       return false;
     }
-    
+    console.log("Supabase connection test successful");
     return true;
   } catch (error) {
-    console.error('Failed to test database connection:', error);
+    console.error("Supabase connection test failed:", error);
     return false;
   }
 };
 
-// Create tables if they don't exist
-export const createAllTables = async (): Promise<boolean> => {
-  if (!isSupabaseConfigured()) {
-    console.warn('Supabase is not configured. Cannot create tables.');
-    return false;
-  }
-  
+// Function to execute a raw SQL query
+const executeSQL = async (sql: string) => {
   try {
-    const client = initializeSupabase();
-    
-    // Create regions table
-    await client.rpc('execute_sql', { 
-      sql_query: `
-        CREATE TABLE IF NOT EXISTS regions (
-          id TEXT PRIMARY KEY,
-          name TEXT NOT NULL UNIQUE
-        );
-      `
-    });
-    
-    // Create industries table
-    await client.rpc('execute_sql', { 
-      sql_query: `
-        CREATE TABLE IF NOT EXISTS industries (
-          id TEXT PRIMARY KEY,
-          name TEXT NOT NULL UNIQUE
-        );
-      `
-    });
-    
-    // Create stages table
-    await client.rpc('execute_sql', { 
-      sql_query: `
-        CREATE TABLE IF NOT EXISTS stages (
-          id TEXT PRIMARY KEY,
-          name TEXT NOT NULL UNIQUE
-        );
-      `
-    });
-    
-    // Create vc_firms table
-    await client.rpc('execute_sql', { 
-      sql_query: `
-        CREATE TABLE IF NOT EXISTS vc_firms (
-          id TEXT PRIMARY KEY,
-          name TEXT NOT NULL,
-          logo TEXT,
-          description TEXT,
-          website TEXT,
-          headquarters TEXT,
-          foundedYear INTEGER,
-          investmentFocus JSONB,
-          industries JSONB,
-          stagePreference JSONB,
-          ticketSize TEXT,
-          regionsOfInterest JSONB,
-          portfolioCompanies JSONB,
-          keyPartners JSONB,
-          contactInfo JSONB,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
-          updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
-        );
-      `
-    });
-    
-    // Create pending_vc_firms table
-    await client.rpc('execute_sql', { 
-      sql_query: `
-        CREATE TABLE IF NOT EXISTS pending_vc_firms (
-          id TEXT PRIMARY KEY,
-          name TEXT NOT NULL,
-          logo TEXT,
-          description TEXT,
-          website TEXT,
-          headquarters TEXT,
-          foundedYear INTEGER,
-          investmentFocus JSONB,
-          industries JSONB,
-          stagePreference JSONB,
-          ticketSize TEXT,
-          regionsOfInterest JSONB,
-          portfolioCompanies JSONB,
-          keyPartners JSONB,
-          contactInfo JSONB,
-          status TEXT,
-          submittedAt TIMESTAMP WITH TIME ZONE,
-          reviewedAt TIMESTAMP WITH TIME ZONE,
-          reviewNotes TEXT
-        );
-      `
-    });
-    
-    return true;
-  } catch (error) {
-    console.error('Failed to create tables:', error);
-    return false;
-  }
-};
-
-// Execute SQL
-export const executeSQL = async (query: string): Promise<any> => {
-  if (!isSupabaseConfigured()) {
-    console.warn('Supabase is not configured. Cannot execute SQL.');
-    return null;
-  }
-  
-  try {
-    const client = initializeSupabase();
-    const { data, error } = await client.rpc('execute_sql', { sql_query: query });
-    
+    const { data, error } = await supabase.rpc('execute_sql', { sql_statement: sql });
     if (error) {
-      console.error('Error executing SQL:', error);
-      throw error;
+      console.error("Error executing SQL:", error);
+      return { data: null, error };
     }
-    
-    return data;
+    return { data, error: null };
   } catch (error) {
-    console.error('Failed to execute SQL:', error);
-    throw error;
+    console.error("Error executing SQL:", error);
+    return { data: null, error };
   }
 };
 
-// Region Service
+// Function to create all tables
+const createAllTables = async () => {
+  try {
+    // SQL statements to create tables
+    const createRegionsTableSQL = `
+      CREATE TABLE IF NOT EXISTS regions (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL
+      );
+    `;
+    
+    const createIndustriesTableSQL = `
+      CREATE TABLE IF NOT EXISTS industries (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL
+      );
+    `;
+    
+    const createStagesTableSQL = `
+      CREATE TABLE IF NOT EXISTS stages (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL
+      );
+    `;
+    
+    const createVCFirmsTableSQL = `
+      CREATE TABLE IF NOT EXISTS vc_firms (
+        id TEXT PRIMARY KEY DEFAULT uuid_generate_v4(),
+        name TEXT NOT NULL,
+        website TEXT,
+        hqLocation TEXT,
+        regionsOfInterest TEXT[],
+        industries TEXT[],
+        investmentStage TEXT[],
+        typicalTicketSize TEXT,
+        contactPerson JSONB,
+        description TEXT,
+        linkedinUrl TEXT,
+        twitterUrl TEXT
+      );
+    `;
+    
+    const createPendingVCFirmsTableSQL = `
+      CREATE TABLE IF NOT EXISTS pending_vc_firms (
+        id TEXT PRIMARY KEY DEFAULT uuid_generate_v4(),
+        name TEXT NOT NULL,
+        website TEXT,
+        hqLocation TEXT,
+        regionsOfInterest TEXT[],
+        industries TEXT[],
+        investmentStage TEXT[],
+        typicalTicketSize TEXT,
+        contactPerson JSONB,
+        description TEXT,
+        linkedinUrl TEXT,
+        twitterUrl TEXT,
+        status TEXT NOT NULL,
+        submittedAt TEXT NOT NULL,
+        reviewedAt TEXT,
+        reviewNotes TEXT
+      );
+    `;
+
+    // Execute SQL statements to create tables
+    await executeSQL(createRegionsTableSQL);
+    await executeSQL(createIndustriesTableSQL);
+    await executeSQL(createStagesTableSQL);
+    await executeSQL(createVCFirmsTableSQL);
+    await executeSQL(createPendingVCFirmsTableSQL);
+
+    console.log("All tables created successfully");
+    return true;
+  } catch (error) {
+    console.error("Error creating tables:", error);
+    return false;
+  }
+};
+
 export const regionService = {
   getAllRegions: async () => {
-    if (!isSupabaseConfigured()) {
-      console.warn('Supabase is not configured. Returning empty regions.');
-      return [];
-    }
-  
-    const client = initializeSupabase();
-  
     try {
-      const { data, error } = await client
+      console.log("Getting all regions...");
+      
+      const { data, error } = await supabase
         .from('regions')
         .select('*');
-  
+        
       if (error) {
-        console.error('Error fetching regions:', error);
+        console.error("Error fetching regions:", error);
         return [];
       }
-  
+      
       return data || [];
     } catch (error) {
-      console.error('Failed to get regions:', error);
+      console.error("Error fetching regions:", error);
       return [];
     }
   },
-
-  updateAllRegions: async (regions: { id: string; name: string }[]) => {
-    if (!isSupabaseConfigured()) {
-      console.warn('Supabase is not configured. Regions will not be stored.');
-      return;
-    }
   
-    const client = initializeSupabase();
-  
+  updateAllRegions: async (regions: Item[]) => {
     try {
-      const { error } = await client
+      console.log("Updating all regions...");
+      
+      // Delete existing regions
+      const { error: deleteError } = await supabase
         .from('regions')
-        .upsert(regions);
-  
-      if (error) {
-        console.error('Error storing regions:', error);
+        .delete()
+        .neq('id', 'null');
+        
+      if (deleteError) {
+        console.error("Error deleting existing regions:", deleteError);
+        return { data: null, error: deleteError };
       }
+      
+      // Insert new regions
+      const { data, error: insertError } = await supabase
+        .from('regions')
+        .insert(regions);
+        
+      if (insertError) {
+        console.error("Error inserting regions:", insertError);
+        return { data: null, error: insertError };
+      }
+      
+      return { data, error: null };
     } catch (error) {
-      console.error('Failed to store regions:', error);
+      console.error("Error updating regions:", error);
+      return { data: null, error };
     }
   }
 };
 
-// Industry Service
 export const industryService = {
   getAllIndustries: async () => {
-    if (!isSupabaseConfigured()) {
-      console.warn('Supabase is not configured. Returning empty industries.');
-      return [];
-    }
-  
-    const client = initializeSupabase();
-  
     try {
-      const { data, error } = await client
+      console.log("Getting all industries...");
+      
+      const { data, error } = await supabase
         .from('industries')
         .select('*');
-  
+        
       if (error) {
-        console.error('Error fetching industries:', error);
+        console.error("Error fetching industries:", error);
         return [];
       }
-  
+      
       return data || [];
     } catch (error) {
-      console.error('Failed to get industries:', error);
+      console.error("Error fetching industries:", error);
       return [];
     }
   },
-
-  updateAllIndustries: async (industries: { id: string; name: string }[]) => {
-    if (!isSupabaseConfigured()) {
-      console.warn('Supabase is not configured. Industries will not be stored.');
-      return;
-    }
   
-    const client = initializeSupabase();
-  
+  updateAllIndustries: async (industries: Item[]) => {
     try {
-      const { error } = await client
+      console.log("Updating all industries...");
+      
+      // Delete existing industries
+      const { error: deleteError } = await supabase
         .from('industries')
-        .upsert(industries);
-  
-      if (error) {
-        console.error('Error storing industries:', error);
+        .delete()
+        .neq('id', 'null');
+        
+      if (deleteError) {
+        console.error("Error deleting existing industries:", deleteError);
+        return { data: null, error: deleteError };
       }
+      
+      // Insert new industries
+      const { data, error: insertError } = await supabase
+        .from('industries')
+        .insert(industries);
+        
+      if (insertError) {
+        console.error("Error inserting industries:", insertError);
+        return { data: null, error: insertError };
+      }
+      
+      return { data, error: null };
     } catch (error) {
-      console.error('Failed to store industries:', error);
+      console.error("Error updating industries:", error);
+      return { data: null, error };
     }
   }
 };
 
-// Stage Service
 export const stageService = {
   getAllStages: async () => {
-    if (!isSupabaseConfigured()) {
-      console.warn('Supabase is not configured. Returning empty stages.');
-      return [];
-    }
-  
-    const client = initializeSupabase();
-  
     try {
-      const { data, error } = await client
+      console.log("Getting all stages...");
+      
+      const { data, error } = await supabase
         .from('stages')
         .select('*');
-  
+        
       if (error) {
-        console.error('Error fetching stages:', error);
+        console.error("Error fetching stages:", error);
         return [];
       }
-  
+      
       return data || [];
     } catch (error) {
-      console.error('Failed to get stages:', error);
+      console.error("Error fetching stages:", error);
       return [];
     }
   },
-
-  updateAllStages: async (stages: { id: string; name: string }[]) => {
-    if (!isSupabaseConfigured()) {
-      console.warn('Supabase is not configured. Stages will not be stored.');
-      return;
-    }
   
-    const client = initializeSupabase();
-  
+  updateAllStages: async (stages: Item[]) => {
     try {
-      const { error } = await client
+      console.log("Updating all stages...");
+      
+      // Delete existing stages
+      const { error: deleteError } = await supabase
         .from('stages')
-        .upsert(stages);
-  
-      if (error) {
-        console.error('Error storing stages:', error);
+        .delete()
+        .neq('id', 'null');
+        
+      if (deleteError) {
+        console.error("Error deleting existing stages:", deleteError);
+        return { data: null, error: deleteError };
       }
+      
+      // Insert new stages
+      const { data, error: insertError } = await supabase
+        .from('stages')
+        .insert(stages);
+        
+      if (insertError) {
+        console.error("Error inserting stages:", insertError);
+        return { data: null, error: insertError };
+      }
+      
+      return { data, error: null };
     } catch (error) {
-      console.error('Failed to store stages:', error);
+      console.error("Error updating stages:", error);
+      return { data: null, error };
     }
   }
 };
 
-// VC Firm Service
 export const vcFirmService = {
   getAllVCFirms: async () => {
-    if (!isSupabaseConfigured()) {
-      console.warn('Supabase is not configured. Returning empty VC Firms.');
-      return [];
-    }
-  
-    const client = initializeSupabase();
-  
     try {
-      const { data, error } = await client
+      console.log("Getting all VC firms...");
+      
+      const { data, error } = await supabase
         .from('vc_firms')
         .select('*');
-  
+        
       if (error) {
-        console.error('Error fetching VC Firms:', error);
+        console.error("Error fetching VC Firms:", error);
         return [];
       }
-  
+      
       return data || [];
     } catch (error) {
-      console.error('Failed to get VC Firms:', error);
+      console.error("Error fetching VC Firms:", error);
       return [];
     }
   },
   
-  createVCFirm: async (firm: Omit<VCFirm, "id">) => {
-    if (!isSupabaseConfigured()) {
-      console.warn('Supabase is not configured. VC Firm will not be stored.');
-      return { data: null, error: new Error('Supabase not configured') };
-    }
-  
-    const client = initializeSupabase();
-  
+  createVCFirm: async (firmData: Omit<VCFirm, "id">) => {
     try {
-      const { id, ...firmWithoutId } = firm as VCFirm;
+      console.log("Creating VC firm...");
       
-      const { data, error } = await client
+      const { data, error } = await supabase
         .from('vc_firms')
-        .insert(firmWithoutId)
-        .select()
+        .insert(firmData)
+        .select('*')
         .single();
-  
+        
       if (error) {
-        console.error('Error storing VC Firm:', error);
-        return { data: null, error };
-      }
-      
-      return { data: data as VCFirm, error: null };
-    } catch (error) {
-      console.error('Failed to store VC Firm:', error);
-      return { data: null, error: error instanceof Error ? error : new Error('Unknown error') };
-    }
-  },
-  
-  updateVCFirm: async (firm: VCFirm) => {
-    if (!isSupabaseConfigured()) {
-      console.warn('Supabase is not configured. VC Firm will not be updated.');
-      return { data: null, error: new Error('Supabase not configured') };
-    }
-  
-    const client = initializeSupabase();
-  
-    try {
-      const { data, error } = await client
-        .from('vc_firms')
-        .update(firm)
-        .eq('id', firm.id)
-        .select()
-        .single();
-  
-      if (error) {
-        console.error('Error updating VC Firm:', error);
+        console.error("Error creating VC Firm:", error);
         return { data: null, error };
       }
       
       return { data, error: null };
     } catch (error) {
-      console.error('Failed to update VC Firm:', error);
-      return { data: null, error: error instanceof Error ? error : new Error('Unknown error') };
+      console.error("Error creating VC Firm:", error);
+      return { data: null, error };
+    }
+  },
+  
+  updateVCFirm: async (firmData: VCFirm) => {
+    try {
+      console.log("Updating VC firm...");
+      
+      const { id, ...updateData } = firmData;
+      
+      const { data, error } = await supabase
+        .from('vc_firms')
+        .update(updateData)
+        .eq('id', id)
+        .select('*')
+        .single();
+        
+      if (error) {
+        console.error("Error updating VC Firm:", error);
+        return { data: null, error };
+      }
+      
+      return { data, error: null };
+    } catch (error) {
+      console.error("Error updating VC Firm:", error);
+      return { data: null, error };
     }
   },
   
   deleteVCFirm: async (id: string) => {
-    if (!isSupabaseConfigured()) {
-      console.warn('Supabase is not configured. VC Firm will not be deleted.');
-      return false;
-    }
-  
-    const client = initializeSupabase();
-  
     try {
-      const { error } = await client
+      console.log("Deleting VC firm...");
+      
+      const { error } = await supabase
         .from('vc_firms')
         .delete()
         .eq('id', id);
-  
+        
       if (error) {
-        console.error('Error deleting VC Firm:', error);
+        console.error("Error deleting VC Firm:", error);
         return false;
       }
       
       return true;
     } catch (error) {
-      console.error('Failed to delete VC Firm:', error);
+      console.error("Error deleting VC Firm:", error);
       return false;
     }
   }
 };
 
-// Pending VC Firm Service
 export const pendingVCFirmService = {
   getAllPendingVCFirms: async () => {
-    if (!isSupabaseConfigured()) {
-      console.warn('Supabase is not configured. Returning empty pending VC Firms.');
-      return [];
-    }
-  
-    const client = initializeSupabase();
-  
     try {
-      const { data, error } = await client
+      console.log("Getting all pending VC firms...");
+      
+      const { data, error } = await supabase
         .from('pending_vc_firms')
-        .select('*')
-        .order('submittedAt', { ascending: false });
-  
+        .select('*');
+        
       if (error) {
-        console.error('Error fetching pending VC Firms:', error);
+        console.error("Error fetching pending VC Firms:", error);
         return [];
       }
-  
+      
       return data || [];
     } catch (error) {
-      console.error('Failed to get pending VC Firms:', error);
+      console.error("Error fetching pending VC Firms:", error);
       return [];
     }
   },
   
-  createPendingVCFirm: async (firm: Omit<PendingVCFirm, "id" | "status" | "submittedAt"> & { status?: string, submittedAt?: string }) => {
-    if (!isSupabaseConfigured()) {
-      console.warn('Supabase is not configured. Pending VC Firm will not be submitted.');
-      return { data: null, error: new Error('Supabase not configured') };
-    }
-  
-    const client = initializeSupabase();
-  
+  createPendingVCFirm: async (firmData: Omit<VCFirm, "id">) => {
     try {
-      const firmWithDefaults = {
-        ...firm,
-        status: firm.status || 'pending',
-        submittedAt: firm.submittedAt || new Date().toISOString()
+      console.log("Creating pending VC firm...");
+      
+      // Add status and submittedAt fields
+      const pendingFirm = {
+        ...firmData,
+        status: 'pending',
+        submittedAt: new Date().toISOString()
       };
       
-      const { id, ...firmWithoutId } = firmWithDefaults as PendingVCFirm;
-      
-      const { data, error } = await client
+      const { data, error } = await supabase
         .from('pending_vc_firms')
-        .insert([firmWithoutId])
-        .select()
+        .insert(pendingFirm)
+        .select('*')
         .single();
-  
+        
       if (error) {
-        console.error('Error submitting pending VC Firm:', error);
+        console.error("Error creating pending VC Firm:", error);
         return { data: null, error };
       }
-  
-      return { data: data as PendingVCFirm, error: null };
+      
+      return { data, error: null };
     } catch (error) {
-      console.error('Failed to submit pending VC Firm:', error);
-      return { data: null, error: error instanceof Error ? error : new Error('Unknown error') };
+      console.error("Error creating pending VC Firm:", error);
+      return { data: null, error };
     }
   },
   
-  updatePendingVCFirm: async (firm: PendingVCFirm) => {
-    if (!isSupabaseConfigured()) {
-      console.warn('Supabase is not configured. Pending VC Firm will not be updated.');
-      return { data: null, error: new Error('Supabase not configured') };
-    }
-  
-    const client = initializeSupabase();
-  
+  updatePendingVCFirm: async (firmData: PendingVCFirm) => {
     try {
-      const { data, error } = await client
+      console.log("Updating pending VC firm...");
+      
+      const { id, ...updateData } = firmData;
+      
+      const { data, error } = await supabase
         .from('pending_vc_firms')
-        .update(firm)
-        .eq('id', firm.id)
-        .select()
+        .update(updateData)
+        .eq('id', id)
+        .select('*')
         .single();
-  
+        
       if (error) {
-        console.error('Error updating pending VC Firm:', error);
+        console.error("Error updating pending VC Firm:", error);
         return { data: null, error };
       }
-  
-      return { data: data as PendingVCFirm, error: null };
+      
+      return { data, error: null };
     } catch (error) {
-      console.error('Failed to update pending VC Firm:', error);
-      return { data: null, error: error instanceof Error ? error : new Error('Unknown error') };
+      console.error("Error updating pending VC Firm:", error);
+      return { data: null, error };
+    }
+  },
+  
+  deletePendingVCFirm: async (id: string) => {
+    try {
+      console.log("Deleting pending VC firm...");
+      
+      const { error } = await supabase
+        .from('pending_vc_firms')
+        .delete()
+        .eq('id', id);
+        
+      if (error) {
+        console.error("Error deleting pending VC Firm:", error);
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      console.error("Error deleting pending VC Firm:", error);
+      return false;
     }
   }
 };
 
-// Functions for the original supabaseService object to maintain compatibility
-export const supabaseService = {
-  isSupabaseConfigured,
-  initializeSupabase,
-  storeRegions: regionService.updateAllRegions,
-  getRegions: regionService.getAllRegions,
-  storeIndustries: industryService.updateAllIndustries,
-  getIndustries: industryService.getAllIndustries,
-  storeStages: stageService.updateAllStages,
-  getStages: stageService.getAllStages,
-  storeVCFirm: async (firm: VCFirm) => {
-    const result = await vcFirmService.createVCFirm(firm);
-    return result.data;
-  },
-  getVCFirms: vcFirmService.getAllVCFirms,
-  deleteVCFirm: vcFirmService.deleteVCFirm,
-  updateVCFirm: async (firm: VCFirm) => {
-    const result = await vcFirmService.updateVCFirm(firm);
-    return result.data;
-  },
-  getPendingVCFirms: pendingVCFirmService.getAllPendingVCFirms,
-  approvePendingVCFirm: async (firm: PendingVCFirm) => {
-    if (!isSupabaseConfigured()) {
-      console.warn('Supabase is not configured. Pending VC Firm will not be approved.');
-      return;
-    }
-  
-    const client = initializeSupabase();
-  
-    try {
-      // Start a transaction
-      await client.from('pending_vc_firms').update({ status: 'approving' }).eq('id', firm.id);
-  
-      // Insert the approved firm into the vc_firms table
-      const { error: insertError } = await client
-        .from('vc_firms')
-        .insert({
-          id: firm.id,
-          name: firm.name,
-          logo: firm.logo,
-          description: firm.description,
-          website: firm.website,
-          headquarters: firm.headquarters,
-          foundedYear: firm.foundedYear,
-          investmentFocus: firm.investmentFocus,
-          industries: firm.industries,
-          stagePreference: firm.stagePreference,
-          ticketSize: firm.ticketSize,
-          regionsOfInterest: firm.regionsOfInterest,
-          portfolioCompanies: firm.portfolioCompanies,
-          keyPartners: firm.keyPartners,
-          contactInfo: firm.contactInfo,
-        });
-  
-      if (insertError) {
-        console.error('Error inserting VC Firm:', insertError);
-        // Rollback transaction by setting status back to pending
-        await client.from('pending_vc_firms').update({ status: 'pending' }).eq('id', firm.id);
-        throw insertError;
-      }
-  
-      // Delete the firm from the pending_vc_firms table
-      const { error: deleteError } = await client
-        .from('pending_vc_firms')
-        .delete()
-        .eq('id', firm.id);
-  
-      if (deleteError) {
-        console.error('Error deleting pending VC Firm:', deleteError);
-        // Rollback transaction by deleting the inserted firm
-        await client.from('vc_firms').delete().eq('id', firm.id);
-        throw deleteError;
-      }
-  
-      // If all operations were successful, commit the transaction implicitly
-      console.log(`VC Firm ${firm.name} approved and moved to VC Firms table.`);
-    } catch (error) {
-      console.error('Transaction failed:', error);
-      // Handle the error appropriately, e.g., show a user-friendly message
-      throw error;
-    }
-  },
-  rejectPendingVCFirm: async (firm: PendingVCFirm, rejectionNotes?: string) => {
-    if (!isSupabaseConfigured()) {
-      console.warn('Supabase is not configured. Pending VC Firm will not be rejected.');
-      return;
-    }
-  
-    const client = initializeSupabase();
-  
-    try {
-      const { error } = await client
-        .from('pending_vc_firms')
-        .update({ status: 'rejected', rejectionNotes })
-        .eq('id', firm.id);
-  
-      if (error) {
-        console.error('Error rejecting pending VC Firm:', error);
-      }
-    } catch (error) {
-      console.error('Failed to reject pending VC Firm:', error);
-    }
-  },
-  async saveOpenAIApiKey(apiKey: string): Promise<void> {
-    try {
-      const client = initializeSupabase();
-      
-      // Check if settings table exists and create it if it doesn't
-      try {
-        const { error: checkError } = await client
-          .from("app_settings")
-          .select("count")
-          .limit(1);
-        
-        if (checkError) {
-          console.log("Creating app_settings table...");
-          await client.rpc("execute_sql", { 
-            sql_query: `
-              CREATE TABLE IF NOT EXISTS app_settings (
-                id TEXT PRIMARY KEY,
-                key TEXT NOT NULL UNIQUE,
-                value TEXT NOT NULL,
-                created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
-                updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
-              );
-            `
-          });
-        }
-      } catch (checkTableError) {
-        console.error("Error checking if app_settings table exists:", checkTableError);
-      }
-      
-      // Upsert the API key (insert or update)
-      const { error } = await client
-        .from("app_settings")
-        .upsert({
-          id: "openai_api_key",
-          key: "openai_api_key",
-          value: apiKey,
-          updated_at: new Date().toISOString()
-        });
-      
-      if (error) {
-        console.error("Error saving OpenAI API key:", error);
-        throw error;
-      }
-      
-    } catch (error) {
-      console.error("Failed to save OpenAI API key:", error);
-      throw error;
-    }
-  },
-  
-  async getOpenAIApiKey(): Promise<string | null> {
-    try {
-      if (!isSupabaseConfigured()) {
-        return null;
-      }
-      
-      const client = initializeSupabase();
-      
-      try {
-        const { data, error } = await client
-          .from("app_settings")
-          .select("value")
-          .eq("key", "openai_api_key")
-          .single();
-        
-        if (error || !data) {
-          console.log("No API key found in database");
-          return null;
-        }
-        
-        return data.value;
-      } catch (error) {
-        console.error("Error getting API key from database:", error);
-        return null;
-      }
-      
-    } catch (error) {
-      console.error("Failed to get OpenAI API key:", error);
-      return null;
-    }
-  },
-
-  async submitPendingVCFirm(firm: Omit<PendingVCFirm, "id" | "status" | "submittedAt">): Promise<PendingVCFirm | null> {
-    try {
-      const result = await pendingVCFirmService.createPendingVCFirm({
-        ...firm,
-        id: `pending-${Date.now()}`
-      });
-      
-      return result.data;
-    } catch (error) {
-      console.error('Failed to submit pending VC Firm:', error);
-      throw error;
-    }
-  },
-};
+export { supabase, isSupabaseConfigured, testDatabaseConnection, executeSQL, createAllTables };
