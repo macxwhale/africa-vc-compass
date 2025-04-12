@@ -1,3 +1,4 @@
+
 import { createClient } from '@supabase/supabase-js';
 import { Database } from './database.types';
 import { VCFirm } from '@/data/vcData';
@@ -5,8 +6,8 @@ import { PendingVCFirm } from '@/types/vcTypes';
 import { Item } from '@/contexts/DataContext';
 
 // Initialize Supabase client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Check if Supabase URL and key are defined
 const isSupabaseConfigured = !!(supabaseUrl && supabaseKey);
