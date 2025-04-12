@@ -91,21 +91,15 @@ export function AIResearchForm() {
     setIsLoading(false);
   };
 
-  const handleResearch = async (e: React.FormEvent) => {
+  const handleResearch = async (e: React.MouseEvent) => {
     e.preventDefault();
     
-    if (!query.trim()) {
-      toast({
-        title: "Query Required",
-        description: "Please enter a VC firm name to research",
-        variant: "destructive",
-      });
-      return;
-    }
+    // Allow empty query - removed validation check
     
     setIsResearching(true);
     
     try {
+      // Pass the query (which could be empty)
       const vcData = await openaiService.researchVCFirm(query);
       
       if (vcData) {
@@ -171,7 +165,7 @@ export function AIResearchForm() {
         <CardContent>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="query">VC Firm Name or Keywords</Label>
+              <Label htmlFor="query">VC Firm Name or Keywords (Optional)</Label>
               <Input
                 id="query"
                 placeholder="e.g., Future Africa, Nigerian fintech investors"
@@ -250,4 +244,3 @@ export function AIResearchForm() {
     </>
   );
 }
-

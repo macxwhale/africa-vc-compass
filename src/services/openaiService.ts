@@ -104,6 +104,11 @@ export const openaiService = {
 
       console.log("Making OpenAI API request for VC research...");
       
+      // If query is empty, ask to research any African VC firm
+      const userPrompt = query.trim() 
+        ? `Research this African VC firm: ${query}` 
+        : "Research a notable venture capital firm that invests in African startups";
+
       const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -114,7 +119,7 @@ export const openaiService = {
           model: "gpt-4o-mini",
           messages: [
             { role: "system", content: systemPrompt },
-            { role: "user", content: `Research this African VC firm: ${query}` }
+            { role: "user", content: userPrompt }
           ],
           temperature: 0.7,
         }),
@@ -152,4 +157,3 @@ export const openaiService = {
     }
   }
 };
-
