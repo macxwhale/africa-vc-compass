@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -21,6 +20,7 @@ import {
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { isSupabaseConfigured } from "@/services/supabaseService";
+import RunSqlScript from "@/components/admin/RunSqlScript";
 
 export default function SupabaseSetup() {
   const [activeTab, setActiveTab] = useState("setup");
@@ -137,6 +137,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
               <TabsList className="mb-8">
                 <TabsTrigger value="setup">Setup Guide</TabsTrigger>
                 <TabsTrigger value="tables">Create Tables</TabsTrigger>
+                <TabsTrigger value="script">SQL Script</TabsTrigger>
                 <TabsTrigger value="advanced">Advanced Config</TabsTrigger>
               </TabsList>
               
@@ -293,6 +294,10 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
                     </div>
                   </CardContent>
                 </Card>
+              </TabsContent>
+              
+              <TabsContent value="script">
+                <RunSqlScript />
               </TabsContent>
               
               <TabsContent value="advanced">
