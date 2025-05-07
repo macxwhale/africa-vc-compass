@@ -15,23 +15,35 @@ export function usePendingVCFirmOperations(
     try {
       console.log("Submitting VC firm with isSupabaseConnected:", isSupabaseConnected);
       
-      if (firm.contactPerson) {
-        firm.contactPerson = {
-          name: firm.contactPerson.name || "",
-          email: firm.contactPerson.email || "",
-          linkedinUrl: firm.contactPerson.linkedinUrl || "",
+      // Extract contactInfo fields into direct properties for the database
+      const { contactInfo, ...restFirm } = firm as any;
+      
+      // Create the transformed firm object to match database schema
+      const transformedFirm = {
+        ...restFirm,
+        // Add LinkedIn and Twitter from contactInfo if they exist
+        linkedinUrl: contactInfo?.linkedin || restFirm.linkedinUrl,
+        twitterUrl: contactInfo?.twitter || restFirm.twitterUrl,
+      };
+      
+      // Process contactPerson to avoid empty objects
+      if (transformedFirm.contactPerson) {
+        transformedFirm.contactPerson = {
+          name: transformedFirm.contactPerson.name || "",
+          email: transformedFirm.contactPerson.email || "",
+          linkedinUrl: transformedFirm.contactPerson.linkedinUrl || "",
         };
         
-        if (!firm.contactPerson.name && !firm.contactPerson.email && 
-            !firm.contactPerson.linkedinUrl) {
-          firm.contactPerson = undefined;
+        if (!transformedFirm.contactPerson.name && !transformedFirm.contactPerson.email && 
+            !transformedFirm.contactPerson.linkedinUrl) {
+          transformedFirm.contactPerson = undefined;
         }
       }
       
       if (!isSupabaseConnected) {
         // For local-only operation, generate a temporary ID
         const tempPendingFirm: PendingVCFirm = {
-          ...firm,
+          ...transformedFirm,
           id: `pending-${Date.now()}`,
           status: 'pending',
           submittedAt: new Date().toISOString(),
@@ -41,8 +53,8 @@ export function usePendingVCFirmOperations(
         return;
       }
 
-      console.log("Attempting to save pending VC firm to Supabase:", firm);
-      const result = await pendingVCFirmService.createPendingVCFirm(firm);
+      console.log("Attempting to save pending VC firm to Supabase:", transformedFirm);
+      const result = await pendingVCFirmService.createPendingVCFirm(transformedFirm);
       
       if (result.error) {
         throw result.error;

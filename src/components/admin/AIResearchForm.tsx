@@ -111,18 +111,15 @@ export function AIResearchForm() {
           website: vcData.website,
           headquarters: vcData.hqLocation || vcData.headquarters,
           foundedYear: vcData.foundedYear,
-          investmentFocus: vcData.investmentStage || [],
+          investmentStage: vcData.investmentStage || [],
           industries: vcData.industries || [],
           stagePreference: vcData.stagePreference || vcData.investmentStage || [],
           ticketSize: vcData.typicalTicketSize || vcData.ticketSize,
           regionsOfInterest: vcData.regionsOfInterest || [],
           portfolioCompanies: vcData.portfolioCompanies || [],
           keyPartners: vcData.keyPartners || [],
-          contactInfo: {
-            email: vcData.contactPerson?.email || "",
-            twitter: vcData.twitterUrl || "",
-            linkedin: vcData.linkedinUrl || ""
-          },
+          linkedinUrl: vcData.linkedinUrl || "",
+          twitterUrl: vcData.twitterUrl || "",
           contactPerson: vcData.contactPerson ? {
             name: vcData.contactPerson.name || "",
             email: vcData.contactPerson.email || "", 
