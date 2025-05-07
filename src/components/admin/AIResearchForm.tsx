@@ -104,7 +104,7 @@ export function AIResearchForm() {
         console.log("Research successful, VC data:", vcData);
         
         // Map the API response to our VCFirm structure with correct field mapping
-        await submitVCFirm({
+        const result = await submitVCFirm({
           name: vcData.name,
           logo: vcData.logo || "/placeholder.svg",
           description: vcData.description,
@@ -125,12 +125,14 @@ export function AIResearchForm() {
           }
         });
         
-        toast({
-          title: "Research Successful",
-          description: `${vcData.name} has been added to the pending queue`,
-        });
-        
-        setQuery("");
+        if (result) {
+          toast({
+            title: "Research Successful",
+            description: `${vcData.name} has been added to the pending queue`,
+          });
+          
+          setQuery("");
+        }
       }
     } catch (error) {
       console.error("Research failed:", error);

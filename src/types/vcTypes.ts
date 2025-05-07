@@ -7,6 +7,8 @@ export interface PendingVCFirm extends VCFirm {
   submittedAt: string;
   reviewedAt?: string;
   reviewNotes?: string;
+  linkedinUrl?: string; // Add these properties to match database schema
+  twitterUrl?: string;  // Add these properties to match database schema
 }
 
 export interface DataOperationsInitialData {

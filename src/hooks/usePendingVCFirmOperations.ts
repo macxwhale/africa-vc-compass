@@ -37,15 +37,11 @@ export function usePendingVCFirmOperations(
     try {
       console.log("Submitting VC firm with isSupabaseConnected:", isSupabaseConnected);
       
-      // Extract contactInfo fields into direct properties for the database
-      const { contactInfo, ...restFirm } = firm as any;
-      
       // Create the transformed firm object to match database schema
       const transformedFirm = {
-        ...restFirm,
-        // Add LinkedIn and Twitter from contactInfo if they exist
-        linkedinUrl: contactInfo?.linkedin || restFirm.linkedinUrl,
-        twitterUrl: contactInfo?.twitter || restFirm.twitterUrl,
+        ...firm,
+        // Extract contact info if it exists
+        contactInfo: undefined // We'll remove this before creating the PendingVCFirm
       };
       
       // Process contactPerson to avoid empty objects
@@ -68,6 +64,10 @@ export function usePendingVCFirmOperations(
         id: `pending-${Date.now()}`,
         status: 'pending',
         submittedAt: new Date().toISOString(),
+        // Add contactInfo properties as direct properties for compatibility with PendingVCFirm type
+        // and the database schema
+        linkedinUrl: firm.contactInfo?.linkedin || "",
+        twitterUrl: firm.contactInfo?.twitter || "",
       };
       
       // Update local state first
@@ -90,6 +90,7 @@ export function usePendingVCFirmOperations(
         description: `Failed to submit VC firm: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: "destructive",
       });
+      return undefined;
     }
   };
 
@@ -208,7 +209,7 @@ export function usePendingVCFirmOperations(
           toast({
             title: "Database Warning",
             description: "Firm rejected locally but could not be updated in database.",
-            variant: "warning",
+            variant: "destructive",
           });
         }
       }

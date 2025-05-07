@@ -31,7 +31,7 @@ interface DataContextType {
   updateVCFirm: (firm: VCFirm) => Promise<void>;
   deleteVCFirm: (id: string) => Promise<void>;
   
-  submitVCFirm: (firm: Omit<VCFirm, "id">) => Promise<void>;
+  submitVCFirm: (firm: Omit<VCFirm, "id">) => Promise<PendingVCFirm | undefined>;
   approveVCFirm: (firm: PendingVCFirm) => Promise<void>;
   rejectVCFirm: (firm: PendingVCFirm, notes?: string) => Promise<void>;
   
