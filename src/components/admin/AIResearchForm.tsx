@@ -94,8 +94,6 @@ export function AIResearchForm() {
   const handleResearch = async (e: React.MouseEvent) => {
     e.preventDefault();
     
-    // Allow empty query - removed validation check
-    
     setIsResearching(true);
     
     try {
@@ -105,7 +103,7 @@ export function AIResearchForm() {
       if (vcData) {
         console.log("Research successful, VC data:", vcData);
         
-        // Map the API response to our VCFirm structure
+        // Map the API response to our VCFirm structure with correct field mapping
         await submitVCFirm({
           name: vcData.name,
           logo: vcData.logo || "/placeholder.svg",
@@ -124,12 +122,7 @@ export function AIResearchForm() {
             email: vcData.contactPerson?.email || "",
             linkedin: vcData.linkedinUrl || "",
             twitter: vcData.twitterUrl || ""
-          },
-          contactPerson: vcData.contactPerson ? {
-            name: vcData.contactPerson.name || "",
-            email: vcData.contactPerson.email || "", 
-            linkedinUrl: vcData.contactPerson.linkedinUrl || ""
-          } : undefined
+          }
         });
         
         toast({
