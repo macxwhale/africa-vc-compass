@@ -118,8 +118,11 @@ export function AIResearchForm() {
           regionsOfInterest: vcData.regionsOfInterest || [],
           portfolioCompanies: vcData.portfolioCompanies || [],
           keyPartners: vcData.keyPartners || [],
-          linkedinUrl: vcData.linkedinUrl || "",
-          twitterUrl: vcData.twitterUrl || "",
+          contactInfo: {
+            email: vcData.contactPerson?.email || "",
+            linkedin: vcData.linkedinUrl || "",
+            twitter: vcData.twitterUrl || ""
+          },
           contactPerson: vcData.contactPerson ? {
             name: vcData.contactPerson.name || "",
             email: vcData.contactPerson.email || "", 
