@@ -72,7 +72,7 @@ export const openaiService = {
         return null;
       }
 
-      const systemPrompt = `Research venture capital firms that invest in Africa. For each firm, present the data in the following JSON format. Fill in as many fields as possible based on available information. Do not include explanations—only output valid JSON objects for each VC firm:
+      const systemPrompt = `Research venture capital firms that invest in Africa. For each firm, present the data in the following JSON format. Fill in as many fields as possible based on available information. Do not include explanations. Do not use markdown or code blocks. Only return a valid JSON object:
 
 {
   "name": "Example Capital",
@@ -139,7 +139,19 @@ export const openaiService = {
 
       // Parse the JSON response
       try {
-        const parsedData = JSON.parse(content);
+        // Clean up the response if it contains markdown code blocks
+        let jsonContent = content.trim();
+        
+        // Remove markdown code block indicators if they exist
+        const codeBlockRegex = /```(?:json)?\s*([\s\S]*?)\s*```/;
+        const match = jsonContent.match(codeBlockRegex);
+        
+        if (match && match[1]) {
+          jsonContent = match[1].trim();
+        }
+        
+        console.log("Cleaned JSON content:", jsonContent);
+        const parsedData = JSON.parse(jsonContent);
         return parsedData;
       } catch (parseError) {
         console.error("Failed to parse OpenAI response:", content);

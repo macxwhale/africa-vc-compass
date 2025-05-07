@@ -103,6 +103,8 @@ export function AIResearchForm() {
       const vcData = await openaiService.researchVCFirm(query);
       
       if (vcData) {
+        console.log("Research successful, VC data:", vcData);
+        
         // Map the API response to our VCFirm structure
         await submitVCFirm({
           name: vcData.name,
@@ -111,7 +113,7 @@ export function AIResearchForm() {
           website: vcData.website,
           headquarters: vcData.hqLocation || vcData.headquarters,
           foundedYear: vcData.foundedYear,
-          investmentFocus: vcData.investmentStage || [],
+          investmentFocus: vcData.investmentStage || [], // Map investmentStage to investmentFocus
           industries: vcData.industries || [],
           stagePreference: vcData.stagePreference || vcData.investmentStage || [],
           ticketSize: vcData.typicalTicketSize || vcData.ticketSize,
