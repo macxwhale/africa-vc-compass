@@ -111,7 +111,7 @@ export function AIResearchForm() {
           website: vcData.website,
           headquarters: vcData.hqLocation || vcData.headquarters,
           foundedYear: vcData.foundedYear,
-          investmentStage: vcData.investmentStage || [],
+          investmentFocus: vcData.investmentStage || [],
           industries: vcData.industries || [],
           stagePreference: vcData.stagePreference || vcData.investmentStage || [],
           ticketSize: vcData.typicalTicketSize || vcData.ticketSize,
