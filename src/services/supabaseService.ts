@@ -3,6 +3,7 @@ import { VCFirm } from '@/data/vcData';
 import { PendingVCFirm } from '@/types/vcTypes';
 import { Item } from '@/contexts/DataContext';
 import type { Database } from '@/integrations/supabase/types';
+import { toast } from '@/hooks/use-toast';
 
 // Lovable Cloud is always configured
 
@@ -280,36 +281,55 @@ export const regionService = {
   
   updateAllRegions: async (regions: Item[]) => {
     try {
-      console.log("Updating all regions...");
+      console.log("Step 3 & 4: Updating all regions with enhanced error handling...", { count: regions.length });
       
-      // Delete all existing regions
+      // Delete all existing regions using explicit condition
       const { error: deleteError } = await supabase
         .from('regions')
         .delete()
-        .not('id', 'is', null);
+        .neq('id', '');
         
       if (deleteError) {
         console.error("Error deleting existing regions:", deleteError);
+        toast({
+          title: "Database Error",
+          description: `Failed to clear regions: ${deleteError.message}`,
+          variant: "destructive",
+        });
         throw deleteError;
       }
       
+      console.log("Existing regions deleted successfully");
+      
       // Insert new regions if there are any
       if (regions.length > 0) {
+        console.log("Inserting new regions:", regions);
         const { data, error: insertError } = await supabase
           .from('regions')
-          .insert(regions);
+          .insert(regions)
+          .select();
           
         if (insertError) {
-          console.error("Error inserting regions:", insertError);
+          console.error("Error inserting regions:", insertError, { data: regions });
+          toast({
+            title: "Database Error",
+            description: `Failed to save regions: ${insertError.message}`,
+            variant: "destructive",
+          });
           throw insertError;
         }
         
+        console.log("Regions inserted successfully:", data);
+        toast({
+          title: "Success",
+          description: `${regions.length} regions saved to Lovable Cloud`,
+        });
         return data;
       }
       
       return [];
     } catch (error) {
-      console.error("Error updating regions:", error);
+      console.error("Critical error updating regions:", error);
       throw error;
     }
   }
@@ -338,36 +358,55 @@ export const industryService = {
   
   updateAllIndustries: async (industries: Item[]) => {
     try {
-      console.log("Updating all industries...");
+      console.log("Step 3 & 4: Updating all industries with enhanced error handling...", { count: industries.length });
       
-      // Delete all existing industries
+      // Delete all existing industries using explicit condition
       const { error: deleteError } = await supabase
         .from('industries')
         .delete()
-        .not('id', 'is', null);
+        .neq('id', '');
         
       if (deleteError) {
         console.error("Error deleting existing industries:", deleteError);
+        toast({
+          title: "Database Error",
+          description: `Failed to clear industries: ${deleteError.message}`,
+          variant: "destructive",
+        });
         throw deleteError;
       }
       
+      console.log("Existing industries deleted successfully");
+      
       // Insert new industries if there are any
       if (industries.length > 0) {
+        console.log("Inserting new industries:", industries);
         const { data, error: insertError } = await supabase
           .from('industries')
-          .insert(industries);
+          .insert(industries)
+          .select();
           
         if (insertError) {
-          console.error("Error inserting industries:", insertError);
+          console.error("Error inserting industries:", insertError, { data: industries });
+          toast({
+            title: "Database Error",
+            description: `Failed to save industries: ${insertError.message}`,
+            variant: "destructive",
+          });
           throw insertError;
         }
         
+        console.log("Industries inserted successfully:", data);
+        toast({
+          title: "Success",
+          description: `${industries.length} industries saved to Lovable Cloud`,
+        });
         return data;
       }
       
       return [];
     } catch (error) {
-      console.error("Error updating industries:", error);
+      console.error("Critical error updating industries:", error);
       throw error;
     }
   }
@@ -396,36 +435,55 @@ export const stageService = {
   
   updateAllStages: async (stages: Item[]) => {
     try {
-      console.log("Updating all stages...");
+      console.log("Step 3 & 4: Updating all stages with enhanced error handling...", { count: stages.length });
       
-      // Delete all existing stages
+      // Delete all existing stages using explicit condition
       const { error: deleteError } = await supabase
         .from('stages')
         .delete()
-        .not('id', 'is', null);
+        .neq('id', '');
         
       if (deleteError) {
         console.error("Error deleting existing stages:", deleteError);
+        toast({
+          title: "Database Error",
+          description: `Failed to clear stages: ${deleteError.message}`,
+          variant: "destructive",
+        });
         throw deleteError;
       }
       
+      console.log("Existing stages deleted successfully");
+      
       // Insert new stages if there are any
       if (stages.length > 0) {
+        console.log("Inserting new stages:", stages);
         const { data, error: insertError } = await supabase
           .from('stages')
-          .insert(stages);
+          .insert(stages)
+          .select();
           
         if (insertError) {
-          console.error("Error inserting stages:", insertError);
+          console.error("Error inserting stages:", insertError, { data: stages });
+          toast({
+            title: "Database Error",
+            description: `Failed to save stages: ${insertError.message}`,
+            variant: "destructive",
+          });
           throw insertError;
         }
         
+        console.log("Stages inserted successfully:", data);
+        toast({
+          title: "Success",
+          description: `${stages.length} stages saved to Lovable Cloud`,
+        });
         return data;
       }
       
       return [];
     } catch (error) {
-      console.error("Error updating stages:", error);
+      console.error("Critical error updating stages:", error);
       throw error;
     }
   }

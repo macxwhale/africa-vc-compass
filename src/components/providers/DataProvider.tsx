@@ -7,15 +7,24 @@ import { useDataOperations } from "@/hooks/useDataOperations";
 import { Item } from "@/contexts/DataContext";
 
 export const DataProvider = ({ children }: { children: ReactNode }) => {
-  // Create default data objects
+  // Step 2: Create default data objects with robust, content-based IDs
   const defaultRegions = useMemo(() => 
-    initialRegions.map((name, index) => ({ id: `region-${index}`, name })), []);
+    initialRegions.map((name, index) => ({ 
+      id: `region-${name.toLowerCase().replace(/\s+/g, '-')}-${index}`, 
+      name 
+    })), []);
   
   const defaultIndustries = useMemo(() => 
-    initialIndustries.map((name, index) => ({ id: `industry-${index}`, name })), []);
+    initialIndustries.map((name, index) => ({ 
+      id: `industry-${name.toLowerCase().replace(/\s+/g, '-')}-${index}`, 
+      name 
+    })), []);
   
   const defaultStages = useMemo(() => 
-    initialStages.map((name, index) => ({ id: `stage-${index}`, name })), []);
+    initialStages.map((name, index) => ({ 
+      id: `stage-${name.toLowerCase().replace(/\s+/g, '-')}-${index}`, 
+      name 
+    })), []);
   
   const defaultVcFirms = useMemo(() => initialVcFirms, []);
 

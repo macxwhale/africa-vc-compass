@@ -32,16 +32,16 @@ export function useDatabaseInitialization(defaultData: DefaultData) {
       setIsLoading(true);
       
       try {
-        console.log("Checking Lovable Cloud connection...");
+        console.log("Step 6: Checking Lovable Cloud connection...");
         
         // Test connection
         const isConnected = await testDatabaseConnection();
         
         if (!isConnected) {
-          console.error("Failed to connect to Lovable Cloud");
+          console.error("Step 6: Failed to connect to Lovable Cloud");
           setIsConnected(false);
         } else {
-          console.log("Successfully connected to Lovable Cloud!");
+          console.log("Step 6: Successfully connected to Lovable Cloud!");
           setIsConnected(true);
           
           // Create tables if they don't exist
@@ -51,17 +51,20 @@ export function useDatabaseInitialization(defaultData: DefaultData) {
           const tablesHaveData = await checkTablesHaveData();
           
           if (!tablesHaveData) {
-            console.log("Tables exist but no data found. Initializing with default data...");
+            console.log("Step 6: Tables exist but no data found. Initializing with default data...");
             await initializeDatabaseWithDefaultData(
               defaultData.regions,
               defaultData.industries,
               defaultData.stages,
               defaultData.vcFirms
             );
+            console.log("Step 6: Default data initialization complete");
+          } else {
+            console.log("Step 6: Tables already contain data, skipping initialization");
           }
         }
       } catch (error) {
-        console.error('Error initializing database:', error);
+        console.error('Step 6: Error initializing database:', error);
         setIsConnected(false);
       } finally {
         setIsLoading(false);
@@ -71,7 +74,7 @@ export function useDatabaseInitialization(defaultData: DefaultData) {
     initializeTablesIfNeeded();
   }, []);
 
-  // Helper function to check if tables have data
+  // Step 6: Helper function to check if tables have data
   const checkTablesHaveData = async () => {
     try {
       // Check if there's any data in the regions table
@@ -79,13 +82,17 @@ export function useDatabaseInitialization(defaultData: DefaultData) {
         .from('regions')
         .select('*', { count: 'exact', head: true });
         
-      if (regionsError || !count || count === 0) {
+      if (regionsError) {
+        console.error("Step 6: Error checking regions:", regionsError);
         return false;
       }
       
-      return true;
+      const hasData = count && count > 0;
+      console.log(`Step 6: Tables have ${count || 0} regions - ${hasData ? 'data exists' : 'no data'}`);
+      
+      return hasData;
     } catch (error) {
-      console.error('Error checking if tables have data:', error);
+      console.error('Step 6: Error checking if tables have data:', error);
       return false;
     }
   };
