@@ -20,9 +20,24 @@ interface DataContextType {
   stageNames: string[];
   
   setVcFirms: (firms: VCFirm[]) => Promise<void>;
-  setRegionItems: (items: Item[]) => Promise<void>;
-  setIndustryItems: (items: Item[]) => Promise<void>;
-  setStageItems: (items: Item[]) => Promise<void>;
+  setRegionItems: (items: Item[]) => void;
+  setIndustryItems: (items: Item[]) => void;
+  setStageItems: (items: Item[]) => void;
+  
+  // Individual region operations
+  createRegion: (region: Item) => Promise<void>;
+  updateRegion: (region: Item) => Promise<void>;
+  deleteRegion: (id: string) => Promise<void>;
+  
+  // Individual industry operations
+  createIndustry: (industry: Item) => Promise<void>;
+  updateIndustry: (industry: Item) => Promise<void>;
+  deleteIndustry: (id: string) => Promise<void>;
+  
+  // Individual stage operations
+  createStage: (stage: Item) => Promise<void>;
+  updateStage: (stage: Item) => Promise<void>;
+  deleteStage: (id: string) => Promise<void>;
   
   getVCsByIndustry: (industry: string, limit?: number) => VCFirm[];
   getVCsByRegion: (region: string, limit?: number) => VCFirm[];

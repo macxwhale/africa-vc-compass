@@ -32,7 +32,16 @@ export function useDataOperations(initialData: DataOperationsInitialData) {
     stageNames,
     setRegionItems,
     setIndustryItems,
-    setStageItems
+    setStageItems,
+    createRegion,
+    updateRegion,
+    deleteRegion,
+    createIndustry,
+    updateIndustry,
+    deleteIndustry,
+    createStage,
+    updateStage,
+    deleteStage
   } = useCategoryOperations({
     regionItems: initialData.regionItems,
     industryItems: initialData.industryItems,
@@ -77,6 +86,16 @@ export function useDataOperations(initialData: DataOperationsInitialData) {
     setRegionItems,
     setIndustryItems,
     setStageItems,
+    
+    createRegion,
+    updateRegion,
+    deleteRegion,
+    createIndustry,
+    updateIndustry,
+    deleteIndustry,
+    createStage,
+    updateStage,
+    deleteStage,
     
     getVCsByIndustry,
     getVCsByRegion,

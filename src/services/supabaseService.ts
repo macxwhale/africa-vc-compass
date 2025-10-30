@@ -279,11 +279,58 @@ export const regionService = {
     }
   },
   
+  createRegion: async (region: Item) => {
+    try {
+      const { data, error } = await supabase
+        .from('regions')
+        .insert(region)
+        .select()
+        .single();
+        
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error("Error creating region:", error);
+      throw error;
+    }
+  },
+
+  updateRegion: async (region: Item) => {
+    try {
+      const { data, error } = await supabase
+        .from('regions')
+        .update({ name: region.name })
+        .eq('id', region.id)
+        .select()
+        .single();
+        
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error("Error updating region:", error);
+      throw error;
+    }
+  },
+
+  deleteRegion: async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('regions')
+        .delete()
+        .eq('id', id);
+        
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      console.error("Error deleting region:", error);
+      throw error;
+    }
+  },
+  
   updateAllRegions: async (regions: Item[]) => {
     try {
-      console.log("Step 3 & 4: Updating all regions with enhanced error handling...", { count: regions.length });
+      console.log("Bulk updating all regions...", { count: regions.length });
       
-      // Delete all existing regions using explicit condition
       const { error: deleteError } = await supabase
         .from('regions')
         .delete()
@@ -291,39 +338,20 @@ export const regionService = {
         
       if (deleteError) {
         console.error("Error deleting existing regions:", deleteError);
-        toast({
-          title: "Database Error",
-          description: `Failed to clear regions: ${deleteError.message}`,
-          variant: "destructive",
-        });
         throw deleteError;
       }
       
-      console.log("Existing regions deleted successfully");
-      
-      // Insert new regions if there are any
       if (regions.length > 0) {
-        console.log("Inserting new regions:", regions);
         const { data, error: insertError } = await supabase
           .from('regions')
           .insert(regions)
           .select();
           
         if (insertError) {
-          console.error("Error inserting regions:", insertError, { data: regions });
-          toast({
-            title: "Database Error",
-            description: `Failed to save regions: ${insertError.message}`,
-            variant: "destructive",
-          });
+          console.error("Error inserting regions:", insertError);
           throw insertError;
         }
         
-        console.log("Regions inserted successfully:", data);
-        toast({
-          title: "Success",
-          description: `${regions.length} regions saved to Lovable Cloud`,
-        });
         return data;
       }
       
@@ -356,11 +384,58 @@ export const industryService = {
     }
   },
   
+  createIndustry: async (industry: Item) => {
+    try {
+      const { data, error } = await supabase
+        .from('industries')
+        .insert(industry)
+        .select()
+        .single();
+        
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error("Error creating industry:", error);
+      throw error;
+    }
+  },
+
+  updateIndustry: async (industry: Item) => {
+    try {
+      const { data, error } = await supabase
+        .from('industries')
+        .update({ name: industry.name })
+        .eq('id', industry.id)
+        .select()
+        .single();
+        
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error("Error updating industry:", error);
+      throw error;
+    }
+  },
+
+  deleteIndustry: async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('industries')
+        .delete()
+        .eq('id', id);
+        
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      console.error("Error deleting industry:", error);
+      throw error;
+    }
+  },
+  
   updateAllIndustries: async (industries: Item[]) => {
     try {
-      console.log("Step 3 & 4: Updating all industries with enhanced error handling...", { count: industries.length });
+      console.log("Bulk updating all industries...", { count: industries.length });
       
-      // Delete all existing industries using explicit condition
       const { error: deleteError } = await supabase
         .from('industries')
         .delete()
@@ -368,39 +443,20 @@ export const industryService = {
         
       if (deleteError) {
         console.error("Error deleting existing industries:", deleteError);
-        toast({
-          title: "Database Error",
-          description: `Failed to clear industries: ${deleteError.message}`,
-          variant: "destructive",
-        });
         throw deleteError;
       }
       
-      console.log("Existing industries deleted successfully");
-      
-      // Insert new industries if there are any
       if (industries.length > 0) {
-        console.log("Inserting new industries:", industries);
         const { data, error: insertError } = await supabase
           .from('industries')
           .insert(industries)
           .select();
           
         if (insertError) {
-          console.error("Error inserting industries:", insertError, { data: industries });
-          toast({
-            title: "Database Error",
-            description: `Failed to save industries: ${insertError.message}`,
-            variant: "destructive",
-          });
+          console.error("Error inserting industries:", insertError);
           throw insertError;
         }
         
-        console.log("Industries inserted successfully:", data);
-        toast({
-          title: "Success",
-          description: `${industries.length} industries saved to Lovable Cloud`,
-        });
         return data;
       }
       
@@ -433,11 +489,58 @@ export const stageService = {
     }
   },
   
+  createStage: async (stage: Item) => {
+    try {
+      const { data, error } = await supabase
+        .from('stages')
+        .insert(stage)
+        .select()
+        .single();
+        
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error("Error creating stage:", error);
+      throw error;
+    }
+  },
+
+  updateStage: async (stage: Item) => {
+    try {
+      const { data, error } = await supabase
+        .from('stages')
+        .update({ name: stage.name })
+        .eq('id', stage.id)
+        .select()
+        .single();
+        
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error("Error updating stage:", error);
+      throw error;
+    }
+  },
+
+  deleteStage: async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('stages')
+        .delete()
+        .eq('id', id);
+        
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      console.error("Error deleting stage:", error);
+      throw error;
+    }
+  },
+  
   updateAllStages: async (stages: Item[]) => {
     try {
-      console.log("Step 3 & 4: Updating all stages with enhanced error handling...", { count: stages.length });
+      console.log("Bulk updating all stages...", { count: stages.length });
       
-      // Delete all existing stages using explicit condition
       const { error: deleteError } = await supabase
         .from('stages')
         .delete()
@@ -445,39 +548,20 @@ export const stageService = {
         
       if (deleteError) {
         console.error("Error deleting existing stages:", deleteError);
-        toast({
-          title: "Database Error",
-          description: `Failed to clear stages: ${deleteError.message}`,
-          variant: "destructive",
-        });
         throw deleteError;
       }
       
-      console.log("Existing stages deleted successfully");
-      
-      // Insert new stages if there are any
       if (stages.length > 0) {
-        console.log("Inserting new stages:", stages);
         const { data, error: insertError } = await supabase
           .from('stages')
           .insert(stages)
           .select();
           
         if (insertError) {
-          console.error("Error inserting stages:", insertError, { data: stages });
-          toast({
-            title: "Database Error",
-            description: `Failed to save stages: ${insertError.message}`,
-            variant: "destructive",
-          });
+          console.error("Error inserting stages:", insertError);
           throw insertError;
         }
         
-        console.log("Stages inserted successfully:", data);
-        toast({
-          title: "Success",
-          description: `${stages.length} stages saved to Lovable Cloud`,
-        });
         return data;
       }
       

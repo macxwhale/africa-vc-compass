@@ -7,9 +7,9 @@ import { Item } from "@/contexts/DataContext";
 
 export function useDataLoader(setters: {
   setVcFirms: (firms: VCFirm[]) => Promise<void>;
-  setRegionItems: (items: Item[]) => Promise<void>;
-  setIndustryItems: (items: Item[]) => Promise<void>;
-  setStageItems: (items: Item[]) => Promise<void>;
+  setRegionItems: (items: Item[]) => void;
+  setIndustryItems: (items: Item[]) => void;
+  setStageItems: (items: Item[]) => void;
   setPendingVCFirms: (firms: PendingVCFirm[]) => void;
 }) {
   const { setVcFirms, setRegionItems, setIndustryItems, setStageItems, setPendingVCFirms } = setters;
@@ -26,19 +26,19 @@ export function useDataLoader(setters: {
           const dbRegions = await regionService.getAllRegions();
           console.log(`Loaded ${dbRegions?.length || 0} regions from database`);
           if (dbRegions && dbRegions.length > 0) {
-            await setRegionItems(dbRegions as Item[]);
+            setRegionItems(dbRegions as Item[]);
           }
           
           const dbIndustries = await industryService.getAllIndustries();
           console.log(`Loaded ${dbIndustries?.length || 0} industries from database`);
           if (dbIndustries && dbIndustries.length > 0) {
-            await setIndustryItems(dbIndustries as Item[]);
+            setIndustryItems(dbIndustries as Item[]);
           }
           
           const dbStages = await stageService.getAllStages();
           console.log(`Loaded ${dbStages?.length || 0} stages from database`);
           if (dbStages && dbStages.length > 0) {
-            await setStageItems(dbStages as Item[]);
+            setStageItems(dbStages as Item[]);
           }
           
           const dbVCFirms = await vcFirmService.getAllVCFirms();

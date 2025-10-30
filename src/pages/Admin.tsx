@@ -38,9 +38,15 @@ const Admin = () => {
     stageItems,
     vcFirms,
     pendingVCFirms,
-    setRegionItems, 
-    setIndustryItems, 
-    setStageItems,
+    createRegion,
+    updateRegion,
+    deleteRegion,
+    createIndustry,
+    updateIndustry,
+    deleteIndustry,
+    createStage,
+    updateStage,
+    deleteStage,
     addVCFirm,
     updateVCFirm,
     deleteVCFirm,
@@ -105,7 +111,7 @@ const Admin = () => {
     );
   }
 
-  const handleAddRegion = () => {
+  const handleAddRegion = async () => {
     if (newRegion.trim() === "") {
       toast({
         title: "Error",
@@ -116,15 +122,11 @@ const Admin = () => {
     }
     
     const newItem = { id: `region-${Date.now()}`, name: newRegion };
-    setRegionItems([...regionItems, newItem]);
+    await createRegion(newItem);
     setNewRegion("");
-    toast({
-      title: "Success",
-      description: "Region added successfully and saved to database",
-    });
   };
 
-  const handleAddIndustry = () => {
+  const handleAddIndustry = async () => {
     if (newIndustry.trim() === "") {
       toast({
         title: "Error",
@@ -135,15 +137,11 @@ const Admin = () => {
     }
     
     const newItem = { id: `industry-${Date.now()}`, name: newIndustry };
-    setIndustryItems([...industryItems, newItem]);
+    await createIndustry(newItem);
     setNewIndustry("");
-    toast({
-      title: "Success",
-      description: "Industry added successfully and saved to database",
-    });
   };
 
-  const handleAddStage = () => {
+  const handleAddStage = async () => {
     if (newStage.trim() === "") {
       toast({
         title: "Error",
@@ -154,12 +152,8 @@ const Admin = () => {
     }
     
     const newItem = { id: `stage-${Date.now()}`, name: newStage };
-    setStageItems([...stageItems, newItem]);
+    await createStage(newItem);
     setNewStage("");
-    toast({
-      title: "Success",
-      description: "Investment stage added successfully and saved to database",
-    });
   };
 
   const startEditing = (id: string, currentValue: string) => {
@@ -172,7 +166,7 @@ const Admin = () => {
     setEditValue("");
   };
 
-  const saveEdit = (id: string, type: "region" | "industry" | "stage") => {
+  const saveEdit = async (id: string, type: "region" | "industry" | "stage") => {
     if (editValue.trim() === "") {
       toast({
         title: "Error",
@@ -183,40 +177,25 @@ const Admin = () => {
     }
 
     if (type === "region") {
-      setRegionItems(regionItems.map(item => 
-        item.id === id ? { ...item, name: editValue } : item
-      ));
+      await updateRegion({ id, name: editValue });
     } else if (type === "industry") {
-      setIndustryItems(industryItems.map(item => 
-        item.id === id ? { ...item, name: editValue } : item
-      ));
+      await updateIndustry({ id, name: editValue });
     } else if (type === "stage") {
-      setStageItems(stageItems.map(item => 
-        item.id === id ? { ...item, name: editValue } : item
-      ));
+      await updateStage({ id, name: editValue });
     }
 
     setEditingId(null);
     setEditValue("");
-    toast({
-      title: "Success",
-      description: "Item updated successfully and saved to database",
-    });
   };
 
-  const deleteItem = (id: string, type: "region" | "industry" | "stage") => {
+  const deleteItem = async (id: string, type: "region" | "industry" | "stage") => {
     if (type === "region") {
-      setRegionItems(regionItems.filter(item => item.id !== id));
+      await deleteRegion(id);
     } else if (type === "industry") {
-      setIndustryItems(industryItems.filter(item => item.id !== id));
+      await deleteIndustry(id);
     } else if (type === "stage") {
-      setStageItems(stageItems.filter(item => item.id !== id));
+      await deleteStage(id);
     }
-
-    toast({
-      title: "Success",
-      description: "Item deleted successfully and removed from database",
-    });
   };
 
   const handleAddFirm = () => {
