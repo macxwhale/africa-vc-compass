@@ -39,23 +39,13 @@ interface ResearchVCFirmResponse {
 
 export const openaiService = {
   async getApiKey(): Promise<string | null> {
-    // First try to get from localStorage for quick access
-    let apiKey = localStorage.getItem("openai_api_key");
-    
-    // If not in localStorage but Supabase is configured, try to get from Supabase
-    if (!apiKey && supabaseService.isSupabaseConfigured()) {
-      try {
-        apiKey = await supabaseService.getOpenAIApiKey();
-        if (apiKey) {
-          // Save to localStorage for future use
-          localStorage.setItem("openai_api_key", apiKey);
-        }
-      } catch (error) {
-        console.error("Error getting API key from Supabase:", error);
-      }
+    try {
+      const apiKey = await supabaseService.getOpenAIApiKey();
+      return apiKey;
+    } catch (error) {
+      console.error("Error getting API key from Lovable Cloud:", error);
+      return null;
     }
-    
-    return apiKey;
   },
   
   async researchVCFirm(query: string): Promise<ResearchVCFirmResponse | null> {

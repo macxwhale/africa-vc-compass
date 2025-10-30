@@ -1,12 +1,10 @@
-import { supabase, isSupabaseConfigured, executeSQL, testDatabaseConnection, createAllTables, regionService, industryService, stageService, vcFirmService } from "@/services/supabaseService";
+import { supabase, executeSQL, testDatabaseConnection, createAllTables, regionService, industryService, stageService, vcFirmService } from "@/services/supabaseService";
 import { Item } from "@/contexts/DataContext";
 import { VCFirm } from "@/data/vcData";
 import { toast } from "@/hooks/use-toast";
 
 // Function to check if tables exist and create them if they don't
 export const createTablesIfNeeded = async () => {
-  if (!isSupabaseConfigured) return false;
-
   try {
     console.log("Testing database connection...");
     const isConnected = await testDatabaseConnection();
@@ -223,12 +221,7 @@ export const loadDataFromSupabase = async (
 };
 
 // Function to update regions and save to database
-export const updateRegionItems = async (items: Item[], isSupabaseConnected: boolean) => {
-  if (!isSupabaseConnected) {
-    console.log("Supabase not connected. Changes will only persist in memory.");
-    return items;
-  }
-  
+export const updateRegionItems = async (items: Item[]) => {
   try {
     console.log("Updating regions in database:", items);
     await regionService.updateAllRegions(items);
@@ -250,12 +243,7 @@ export const updateRegionItems = async (items: Item[], isSupabaseConnected: bool
 };
 
 // Function to update industries and save to database
-export const updateIndustryItems = async (items: Item[], isSupabaseConnected: boolean) => {
-  if (!isSupabaseConnected) {
-    console.log("Supabase not connected. Changes will only persist in memory.");
-    return items;
-  }
-  
+export const updateIndustryItems = async (items: Item[]) => {
   try {
     console.log("Updating industries in database:", items);
     await industryService.updateAllIndustries(items);
@@ -277,12 +265,7 @@ export const updateIndustryItems = async (items: Item[], isSupabaseConnected: bo
 };
 
 // Function to update stages and save to database
-export const updateStageItems = async (items: Item[], isSupabaseConnected: boolean) => {
-  if (!isSupabaseConnected) {
-    console.log("Supabase not connected. Changes will only persist in memory.");
-    return items;
-  }
-  
+export const updateStageItems = async (items: Item[]) => {
   try {
     console.log("Updating stages in database:", items);
     await stageService.updateAllStages(items);

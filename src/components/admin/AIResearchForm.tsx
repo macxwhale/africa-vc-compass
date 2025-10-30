@@ -30,18 +30,10 @@ export function AIResearchForm() {
   useEffect(() => {
     const checkApiKey = async () => {
       setIsLoading(true);
-      // Try to get API key from Supabase first
       const storedApiKey = await supabaseService.getOpenAIApiKey();
       
-      if (storedApiKey) {
-        // Store in localStorage for immediate use
-        localStorage.setItem("openai_api_key", storedApiKey);
-      } else {
-        // Fall back to localStorage if not in Supabase
-        const localApiKey = localStorage.getItem("openai_api_key");
-        if (!localApiKey) {
-          setApiKeyDialogOpen(true);
-        }
+      if (!storedApiKey) {
+        setApiKeyDialogOpen(true);
       }
       setIsLoading(false);
     };
@@ -61,29 +53,18 @@ export function AIResearchForm() {
     
     setIsLoading(true);
     
-    // Save to localStorage for immediate use
-    localStorage.setItem("openai_api_key", apiKey.trim());
-    
-    // Also save to Supabase if connected
-    if (supabaseService.isSupabaseConfigured()) {
-      try {
-        await supabaseService.saveOpenAIApiKey(apiKey.trim());
-        toast({
-          title: "API Key Saved",
-          description: "Your OpenAI API key has been saved to the database",
-        });
-      } catch (error) {
-        console.error("Failed to save API key to Supabase:", error);
-        toast({
-          title: "Warning",
-          description: "API key saved locally but could not be saved to database",
-          variant: "destructive",
-        });
-      }
-    } else {
+    try {
+      await supabaseService.saveOpenAIApiKey(apiKey.trim());
       toast({
-        title: "API Key Saved Locally",
-        description: "Your OpenAI API key has been saved to local storage only",
+        title: "API Key Saved",
+        description: "Your OpenAI API key has been saved",
+      });
+    } catch (error) {
+      console.error("Error saving API key:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save API key",
+        variant: "destructive",
       });
     }
     

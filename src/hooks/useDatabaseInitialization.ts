@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { VCFirm } from "@/data/vcData";
-import { supabase, isSupabaseConfigured, testDatabaseConnection } from "@/services/supabaseService";
+import { supabase, testDatabaseConnection } from "@/services/supabaseService";
 import { Item } from "@/contexts/DataContext";
 import { 
   createTablesIfNeeded, 
@@ -32,44 +32,33 @@ export function useDatabaseInitialization(defaultData: DefaultData) {
       setIsLoading(true);
       
       try {
-        // Only attempt to connect to Supabase if it's configured
-        if (isSupabaseConfigured) {
-          try {
-            console.log("Checking Supabase connection...");
-            
-            // Test connection
-            const isConnected = await testDatabaseConnection();
-            
-            if (!isConnected) {
-              console.error("Failed to connect to Supabase");
-              setIsSupabaseConnected(false);
-            } else {
-              console.log("Successfully connected to Supabase!");
-              setIsSupabaseConnected(true);
-              
-              // Create tables if they don't exist
-              await createTablesIfNeeded();
-              
-              // Check if data exists in Supabase, if not, initialize with default data
-              const tablesHaveData = await checkTablesHaveData();
-              
-              if (!tablesHaveData) {
-                console.log("Tables exist but no data found. Initializing with default data...");
-                await initializeDatabaseWithDefaultData(
-                  defaultData.regions,
-                  defaultData.industries,
-                  defaultData.stages,
-                  defaultData.vcFirms
-                );
-              }
-            }
-          } catch (error) {
-            console.error("Error checking Supabase connection:", error);
-            setIsSupabaseConnected(false);
-          }
-        } else {
-          console.warn("Supabase credentials are missing or invalid. Check your environment variables.");
+        console.log("Checking Lovable Cloud connection...");
+        
+        // Test connection
+        const isConnected = await testDatabaseConnection();
+        
+        if (!isConnected) {
+          console.error("Failed to connect to Lovable Cloud");
           setIsSupabaseConnected(false);
+        } else {
+          console.log("Successfully connected to Lovable Cloud!");
+          setIsSupabaseConnected(true);
+          
+          // Create tables if they don't exist
+          await createTablesIfNeeded();
+          
+          // Check if data exists, if not, initialize with default data
+          const tablesHaveData = await checkTablesHaveData();
+          
+          if (!tablesHaveData) {
+            console.log("Tables exist but no data found. Initializing with default data...");
+            await initializeDatabaseWithDefaultData(
+              defaultData.regions,
+              defaultData.industries,
+              defaultData.stages,
+              defaultData.vcFirms
+            );
+          }
         }
       } catch (error) {
         console.error('Error initializing database:', error);

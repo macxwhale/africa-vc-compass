@@ -19,7 +19,6 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { isSupabaseConfigured } from "@/services/supabaseService";
 import RunSqlScript from "@/components/admin/RunSqlScript";
 
 export default function SupabaseSetup() {
@@ -111,27 +110,13 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
               </Button>
             </div>
             
-            {!isSupabaseConfigured ? (
-              <Alert variant="destructive" className="mb-6">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertTitle>Environment Variables Missing</AlertTitle>
-                <AlertDescription>
-                  Your Supabase environment variables are missing or invalid. Check that you have set:
-                  <ul className="list-disc ml-6 mt-2">
-                    <li><code className="bg-gray-100 px-1 rounded">VITE_SUPABASE_URL</code> - Your Supabase project URL</li>
-                    <li><code className="bg-gray-100 px-1 rounded">VITE_SUPABASE_ANON_KEY</code> - Your Supabase anon/public key</li>
-                  </ul>
-                </AlertDescription>
-              </Alert>
-            ) : (
-              <Alert className="mb-6 bg-green-50 border-green-200">
-                <Check className="h-4 w-4 text-green-500" />
-                <AlertTitle>Environment Variables Detected</AlertTitle>
-                <AlertDescription>
-                  Your Supabase environment variables are configured correctly.
-                </AlertDescription>
-              </Alert>
-            )}
+            <Alert className="mb-6">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Lovable Cloud Backend</AlertTitle>
+              <AlertDescription>
+                Your application is connected to Lovable Cloud, which provides a fully managed backend with database, authentication, and storage.
+              </AlertDescription>
+            </Alert>
             
             <Tabs defaultValue="setup" value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="mb-8">

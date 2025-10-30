@@ -4,10 +4,7 @@ import { PendingVCFirm } from '@/types/vcTypes';
 import { Item } from '@/contexts/DataContext';
 import type { Database } from '@/integrations/supabase/types';
 
-// Check if Supabase URL and key are defined
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const isSupabaseConfigured = !!(supabaseUrl && supabaseKey);
+// Lovable Cloud is always configured
 
 // Type helpers for database rows
 type DBVCFirm = Database['public']['Tables']['vc_firms']['Row'];
@@ -637,17 +634,13 @@ export const pendingVCFirmService = {
 
 // Create a service for OpenAI API key management
 export const supabaseService = {
-  isSupabaseConfigured: () => isSupabaseConfigured,
-  
   getOpenAIApiKey: async () => {
     try {
-      if (!isSupabaseConfigured) return null;
-      
       const { data, error } = await supabase
         .from('settings')
         .select('value')
         .eq('key', 'openai_api_key')
-        .single();
+        .maybeSingle();
       
       if (error || !data) return null;
       return data.value;
@@ -659,8 +652,6 @@ export const supabaseService = {
   
   saveOpenAIApiKey: async (apiKey: string) => {
     try {
-      if (!isSupabaseConfigured) return false;
-      
       const { error } = await supabase
         .from('settings')
         .upsert({ key: 'openai_api_key', value: apiKey })
@@ -674,4 +665,4 @@ export const supabaseService = {
   }
 };
 
-export { supabase, isSupabaseConfigured, testDatabaseConnection, executeSQL, createAllTables };
+export { supabase, testDatabaseConnection, executeSQL, createAllTables };
