@@ -196,7 +196,7 @@ export const loadDataFromSupabase = async (
       
       // If VC firms data exists in database, use it
       if (dbVCFirmsData && dbVCFirmsData.length > 0) {
-        setItems.setVcFirms(dbVCFirmsData as VCFirm[]);
+        setItems.setVcFirms(dbVCFirmsData);
         console.log("Loaded VC firms from database:", dbVCFirmsData);
       } else {
         // Otherwise initialize with default data

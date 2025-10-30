@@ -86,12 +86,11 @@ export function useDatabaseInitialization(defaultData: DefaultData) {
   const checkTablesHaveData = async () => {
     try {
       // Check if there's any data in the regions table
-      const { data: regionsData, error: regionsError } = await supabase
+      const { count, error: regionsError } = await supabase
         .from('regions')
-        .select('count')
-        .single();
+        .select('*', { count: 'exact', head: true });
         
-      if (regionsError || !regionsData || regionsData.count === 0) {
+      if (regionsError || !count || count === 0) {
         return false;
       }
       

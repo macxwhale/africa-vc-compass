@@ -43,7 +43,7 @@ export function useDataLoader(setters: {
           const dbVCFirms = await vcFirmService.getAllVCFirms();
           if (dbVCFirms && dbVCFirms.length > 0) {
             console.log("Loaded VC firms from database:", dbVCFirms);
-            await setVcFirms(dbVCFirms as VCFirm[]);
+            await setVcFirms(dbVCFirms);
           }
           
           const dbPendingVCFirms = await pendingVCFirmService.getAllPendingVCFirms();

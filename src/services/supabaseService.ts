@@ -1,19 +1,142 @@
-
-import { createClient } from '@supabase/supabase-js';
-import { Database } from './database.types';
+import { supabase } from '@/integrations/supabase/client';
 import { VCFirm } from '@/data/vcData';
 import { PendingVCFirm } from '@/types/vcTypes';
 import { Item } from '@/contexts/DataContext';
-
-// Initialize Supabase client
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+import type { Database } from '@/integrations/supabase/types';
 
 // Check if Supabase URL and key are defined
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const isSupabaseConfigured = !!(supabaseUrl && supabaseKey);
 
-// Create Supabase client
-const supabase = createClient<Database>(supabaseUrl as string, supabaseKey as string);
+// Type helpers for database rows
+type DBVCFirm = Database['public']['Tables']['vc_firms']['Row'];
+type DBPendingVCFirm = Database['public']['Tables']['pending_vc_firms']['Row'];
+
+// Transform database VCFirm to application VCFirm
+function transformDBVCFirmToVCFirm(dbFirm: DBVCFirm): VCFirm {
+  return {
+    id: dbFirm.id,
+    name: dbFirm.name || '',
+    logo: dbFirm.logo || '',
+    description: dbFirm.description || '',
+    website: dbFirm.website || '',
+    headquarters: dbFirm.headquarters || '',
+    foundedYear: dbFirm.founded_year || 0,
+    investmentFocus: dbFirm.investment_focus || [],
+    industries: dbFirm.industries || [],
+    stagePreference: dbFirm.stage_preference || [],
+    ticketSize: dbFirm.ticket_size || '',
+    regionsOfInterest: [],
+    portfolioCompanies: dbFirm.portfolio_companies || [],
+    keyPartners: [],
+    contactInfo: {
+      email: '',
+      linkedin: dbFirm.linkedin_url || '',
+      twitter: dbFirm.twitter_url || ''
+    },
+    contactPerson: dbFirm.contact_person as any
+  };
+}
+
+// Transform database PendingVCFirm to application PendingVCFirm
+function transformDBPendingVCFirmToPendingVCFirm(dbFirm: DBPendingVCFirm): PendingVCFirm {
+  return {
+    id: dbFirm.id,
+    name: dbFirm.name || '',
+    logo: dbFirm.logo || '',
+    description: dbFirm.description || '',
+    website: dbFirm.website || '',
+    headquarters: dbFirm.headquarters || '',
+    foundedYear: dbFirm.founded_year || 0,
+    investmentFocus: dbFirm.investment_focus || [],
+    industries: dbFirm.industries || [],
+    stagePreference: dbFirm.stage_preference || [],
+    ticketSize: dbFirm.ticket_size || '',
+    regionsOfInterest: [],
+    portfolioCompanies: dbFirm.portfolio_companies || [],
+    keyPartners: [],
+    contactInfo: {
+      email: '',
+      linkedin: dbFirm.linkedin_url || '',
+      twitter: dbFirm.twitter_url || ''
+    },
+    contactPerson: dbFirm.contact_person as any,
+    status: (dbFirm.status as 'pending' | 'approved' | 'rejected') || 'pending',
+    submittedAt: dbFirm.submitted_at || '',
+    reviewedAt: dbFirm.reviewed_at || undefined,
+    reviewNotes: dbFirm.review_notes || undefined,
+    linkedinUrl: dbFirm.linkedin_url || undefined,
+    twitterUrl: dbFirm.twitter_url || undefined
+  };
+}
+
+// Transform application VCFirm to database insert format
+function transformVCFirmToDBInsert(firm: Omit<VCFirm, 'id'>): Database['public']['Tables']['vc_firms']['Insert'] {
+  return {
+    name: firm.name,
+    logo: firm.logo,
+    description: firm.description,
+    website: firm.website,
+    headquarters: firm.headquarters,
+    founded_year: firm.foundedYear,
+    investment_focus: firm.investmentFocus,
+    industries: firm.industries,
+    stage_preference: firm.stagePreference,
+    ticket_size: firm.ticketSize,
+    portfolio_companies: firm.portfolioCompanies,
+    notable_investments: [],
+    linkedin_url: firm.contactInfo?.linkedin || (firm as any).linkedinUrl,
+    twitter_url: firm.contactInfo?.twitter || (firm as any).twitterUrl,
+    contact_person: firm.contactPerson as any
+  };
+}
+
+// Transform application VCFirm to database update format
+function transformVCFirmToDBUpdate(firm: VCFirm): Database['public']['Tables']['vc_firms']['Update'] {
+  return {
+    name: firm.name,
+    logo: firm.logo,
+    description: firm.description,
+    website: firm.website,
+    headquarters: firm.headquarters,
+    founded_year: firm.foundedYear,
+    investment_focus: firm.investmentFocus,
+    industries: firm.industries,
+    stage_preference: firm.stagePreference,
+    ticket_size: firm.ticketSize,
+    portfolio_companies: firm.portfolioCompanies,
+    notable_investments: [],
+    linkedin_url: firm.contactInfo?.linkedin || (firm as any).linkedinUrl,
+    twitter_url: firm.contactInfo?.twitter || (firm as any).twitterUrl,
+    contact_person: firm.contactPerson as any
+  };
+}
+
+// Transform application PendingVCFirm to database update format
+function transformPendingVCFirmToDBUpdate(firm: PendingVCFirm): Database['public']['Tables']['pending_vc_firms']['Update'] {
+  return {
+    name: firm.name,
+    logo: firm.logo,
+    description: firm.description,
+    website: firm.website,
+    headquarters: firm.headquarters,
+    founded_year: firm.foundedYear,
+    investment_focus: firm.investmentFocus,
+    industries: firm.industries,
+    stage_preference: firm.stagePreference,
+    ticket_size: firm.ticketSize,
+    portfolio_companies: firm.portfolioCompanies,
+    notable_investments: [],
+    linkedin_url: firm.linkedinUrl || firm.contactInfo?.linkedin,
+    twitter_url: firm.twitterUrl || firm.contactInfo?.twitter,
+    contact_person: firm.contactPerson as any,
+    status: firm.status,
+    submitted_at: firm.submittedAt,
+    reviewed_at: firm.reviewedAt,
+    review_notes: firm.reviewNotes
+  };
+}
 
 // Function to test the database connection
 const testDatabaseConnection = async () => {
@@ -34,12 +157,10 @@ const testDatabaseConnection = async () => {
 // Function to execute a raw SQL query
 const executeSQL = async (sql: string) => {
   try {
-    const { data, error } = await supabase.rpc('execute_sql', { sql_statement: sql });
-    if (error) {
-      console.error("Error executing SQL:", error);
-      return { data: null, error };
-    }
-    return { data, error: null };
+    // Note: This requires an RPC function to be created in Supabase
+    // For now, we'll comment this out as it's not available
+    console.log("SQL execution not available - RPC function not configured");
+    return { data: null, error: new Error('SQL execution not configured') };
   } catch (error) {
     console.error("Error executing SQL:", error);
     return { data: null, error };
@@ -172,7 +293,7 @@ export const regionService = {
         
       if (deleteError) {
         console.error("Error deleting existing regions:", deleteError);
-        return { data: null, error: deleteError };
+        throw deleteError;
       }
       
       // Insert new regions
@@ -182,13 +303,13 @@ export const regionService = {
         
       if (insertError) {
         console.error("Error inserting regions:", insertError);
-        return { data: null, error: insertError };
+        throw insertError;
       }
       
-      return { data, error: null };
+      return data;
     } catch (error) {
       console.error("Error updating regions:", error);
-      return { data: null, error };
+      throw error;
     }
   }
 };
@@ -226,7 +347,7 @@ export const industryService = {
         
       if (deleteError) {
         console.error("Error deleting existing industries:", deleteError);
-        return { data: null, error: deleteError };
+        throw deleteError;
       }
       
       // Insert new industries
@@ -236,13 +357,13 @@ export const industryService = {
         
       if (insertError) {
         console.error("Error inserting industries:", insertError);
-        return { data: null, error: insertError };
+        throw insertError;
       }
       
-      return { data, error: null };
+      return data;
     } catch (error) {
       console.error("Error updating industries:", error);
-      return { data: null, error };
+      throw error;
     }
   }
 };
@@ -280,7 +401,7 @@ export const stageService = {
         
       if (deleteError) {
         console.error("Error deleting existing stages:", deleteError);
-        return { data: null, error: deleteError };
+        throw deleteError;
       }
       
       // Insert new stages
@@ -290,13 +411,13 @@ export const stageService = {
         
       if (insertError) {
         console.error("Error inserting stages:", insertError);
-        return { data: null, error: insertError };
+        throw insertError;
       }
       
-      return { data, error: null };
+      return data;
     } catch (error) {
       console.error("Error updating stages:", error);
-      return { data: null, error };
+      throw error;
     }
   }
 };
@@ -318,7 +439,7 @@ export const vcFirmService = {
       }
       
       console.log(`Retrieved ${data?.length || 0} VC firms from database`);
-      return data || [];
+      return (data || []).map(transformDBVCFirmToVCFirm);
     } catch (error) {
       console.error("Error fetching VC Firms:", error);
       return [];
@@ -329,21 +450,23 @@ export const vcFirmService = {
     try {
       console.log("Creating VC firm...");
       
+      const dbFirm = transformVCFirmToDBInsert(firmData);
+      
       const { data, error } = await supabase
         .from('vc_firms')
-        .insert(firmData)
+        .insert(dbFirm)
         .select('*')
         .single();
         
       if (error) {
         console.error("Error creating VC Firm:", error);
-        return { data: null, error };
+        throw error;
       }
       
-      return { data, error: null };
+      return transformDBVCFirmToVCFirm(data);
     } catch (error) {
       console.error("Error creating VC Firm:", error);
-      return { data: null, error };
+      throw error;
     }
   },
   
@@ -351,24 +474,24 @@ export const vcFirmService = {
     try {
       console.log("Updating VC firm...");
       
-      const { id, ...updateData } = firmData;
+      const dbUpdate = transformVCFirmToDBUpdate(firmData);
       
       const { data, error } = await supabase
         .from('vc_firms')
-        .update(updateData)
-        .eq('id', id)
+        .update(dbUpdate)
+        .eq('id', firmData.id)
         .select('*')
         .single();
         
       if (error) {
         console.error("Error updating VC Firm:", error);
-        return { data: null, error };
+        throw error;
       }
       
-      return { data, error: null };
+      return transformDBVCFirmToVCFirm(data);
     } catch (error) {
       console.error("Error updating VC Firm:", error);
-      return { data: null, error };
+      throw error;
     }
   },
   
@@ -419,7 +542,7 @@ export const pendingVCFirmService = {
       const { data, error } = await supabase
         .from('pending_vc_firms')
         .select('*')
-        .order('submittedAt', { ascending: false });
+        .order('submitted_at', { ascending: false });
         
       if (error) {
         console.error("Error fetching pending VC Firms:", error);
@@ -427,7 +550,7 @@ export const pendingVCFirmService = {
       }
       
       console.log(`Retrieved ${data?.length || 0} pending VC firms from database`);
-      return data || [];
+      return (data || []).map(transformDBPendingVCFirmToPendingVCFirm);
     } catch (error) {
       console.error("Error fetching pending VC Firms:", error);
       return [];
@@ -438,11 +561,13 @@ export const pendingVCFirmService = {
     try {
       console.log("Creating pending VC firm...");
       
+      const dbFirm = transformVCFirmToDBInsert(firmData);
+      
       // Add status and submittedAt fields
       const pendingFirm = {
-        ...firmData,
+        ...dbFirm,
         status: 'pending',
-        submittedAt: new Date().toISOString()
+        submitted_at: new Date().toISOString()
       };
       
       const { data, error } = await supabase
@@ -453,13 +578,13 @@ export const pendingVCFirmService = {
         
       if (error) {
         console.error("Error creating pending VC Firm:", error);
-        return { data: null, error };
+        throw error;
       }
       
-      return { data, error: null };
+      return transformDBPendingVCFirmToPendingVCFirm(data);
     } catch (error) {
       console.error("Error creating pending VC Firm:", error);
-      return { data: null, error };
+      throw error;
     }
   },
   
@@ -467,24 +592,24 @@ export const pendingVCFirmService = {
     try {
       console.log("Updating pending VC firm...");
       
-      const { id, ...updateData } = firmData;
+      const dbUpdate = transformPendingVCFirmToDBUpdate(firmData);
       
       const { data, error } = await supabase
         .from('pending_vc_firms')
-        .update(updateData)
-        .eq('id', id)
+        .update(dbUpdate)
+        .eq('id', firmData.id)
         .select('*')
         .single();
         
       if (error) {
         console.error("Error updating pending VC Firm:", error);
-        return { data: null, error };
+        throw error;
       }
       
-      return { data, error: null };
+      return transformDBPendingVCFirmToPendingVCFirm(data);
     } catch (error) {
       console.error("Error updating pending VC Firm:", error);
-      return { data: null, error };
+      throw error;
     }
   },
   
