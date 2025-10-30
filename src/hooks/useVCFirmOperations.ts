@@ -3,9 +3,8 @@ import { useState } from "react";
 import { VCFirm } from "@/data/vcData";
 import { toast } from "@/hooks/use-toast";
 import { vcFirmService } from "@/services/supabaseService";
-import { PendingVCFirm } from "@/types/vcTypes";
 
-export function useVCFirmOperations(initialData: VCFirm[], isSupabaseConnected: boolean) {
+export function useVCFirmOperations(initialData: VCFirm[]) {
   const [vcFirms, setVcFirmsState] = useState<VCFirm[]>(initialData);
 
   const setVcFirms = async (firms: VCFirm[]) => {
@@ -15,52 +14,34 @@ export function useVCFirmOperations(initialData: VCFirm[], isSupabaseConnected: 
 
   const addVCFirm = async (firm: Omit<VCFirm, "id">) => {
     try {
-      console.log("Adding VC firm with isSupabaseConnected:", isSupabaseConnected);
-      
-      // Remove id field so database can auto-generate it
-      const { id, ...firmWithoutId } = firm as VCFirm;
-      
-      if (firmWithoutId.contactPerson) {
-        firmWithoutId.contactPerson = {
-          name: firmWithoutId.contactPerson.name || "",
-          email: firmWithoutId.contactPerson.email || "",
-          linkedinUrl: firmWithoutId.contactPerson.linkedinUrl || "",
-        };
-        
-        if (!firmWithoutId.contactPerson.name && !firmWithoutId.contactPerson.email && 
-            !firmWithoutId.contactPerson.linkedinUrl) {
-          firmWithoutId.contactPerson = undefined;
-        }
-      }
-      
-      console.log("Adding VC firm with contactPerson:", firmWithoutId.contactPerson);
-      
-      if (!isSupabaseConnected) {
-        // For local-only operation, generate a temporary ID
-        const tempFirm = {
-          ...firmWithoutId,
-          id: `temp-${Date.now()}`
-        };
-        setVcFirmsState(prevFirms => [...prevFirms, tempFirm]);
-        return;
-      }
+      console.log("Adding VC firm:", firm);
 
-      console.log("Attempting to save VC firm to Supabase:", firmWithoutId);
-      const result = await vcFirmService.createVCFirm(firmWithoutId);
+      // Clean up contactPerson data before sending to database
+      const firmToSave = {
+        ...firm,
+        contactPerson: firm.contactPerson ? {
+          name: firm.contactPerson.name || "",
+          email: firm.contactPerson.email || "",
+          linkedinUrl: firm.contactPerson.linkedinUrl || "",
+        } : undefined,
+      };
+
+      console.log("Creating VC firm in database");
+      const createdFirm = await vcFirmService.createVCFirm(firmToSave);
       
-      if (result.error) {
-        throw result.error;
+      if (createdFirm) {
+        console.log("VC firm created successfully:", createdFirm);
+        setVcFirmsState([...vcFirms, createdFirm]);
+        toast({
+          title: "Success",
+          description: "VC firm added successfully",
+        });
       }
-      
-      // Add the firm with the database-generated ID to the state
-      setVcFirmsState(prevFirms => [...prevFirms, result.data]);
-      
-      console.log("VC firm successfully saved to database:", result.data);
     } catch (error) {
       console.error("Error adding VC firm:", error);
       toast({
         title: "Error",
-        description: `Failed to add VC firm: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        description: "Failed to add VC firm",
         variant: "destructive",
       });
     }
@@ -68,42 +49,34 @@ export function useVCFirmOperations(initialData: VCFirm[], isSupabaseConnected: 
 
   const updateVCFirm = async (firm: VCFirm) => {
     try {
-      console.log("Updating VC firm with isSupabaseConnected:", isSupabaseConnected);
-      
-      if (firm.contactPerson) {
-        firm.contactPerson = {
+      console.log("Updating VC firm:", firm);
+
+      // Clean up contactPerson data before sending to database
+      const firmToSave = {
+        ...firm,
+        contactPerson: firm.contactPerson ? {
           name: firm.contactPerson.name || "",
           email: firm.contactPerson.email || "",
           linkedinUrl: firm.contactPerson.linkedinUrl || "",
-        };
-        
-        if (!firm.contactPerson.name && !firm.contactPerson.email && 
-            !firm.contactPerson.linkedinUrl) {
-          firm.contactPerson = undefined;
-        }
-      }
-      
-      console.log("Updating VC firm with contactPerson:", firm.contactPerson);
-      
-      setVcFirmsState(prevFirms => prevFirms.map(f => f.id === firm.id ? firm : f));
-      
-      if (!isSupabaseConnected) {
-        return;
-      }
+        } : undefined,
+      };
 
-      console.log("Attempting to update VC firm in Supabase:", firm);
-      const result = await vcFirmService.updateVCFirm(firm);
+      console.log("Updating VC firm in database");
+      await vcFirmService.updateVCFirm(firmToSave);
+      console.log("VC firm updated successfully");
       
-      if (result.error) {
-        throw result.error;
-      }
+      // Update local state after successful database update
+      setVcFirmsState(vcFirms.map(f => f.id === firm.id ? firm : f));
       
-      console.log("VC firm successfully updated in database:", result.data);
+      toast({
+        title: "Success",
+        description: "VC firm updated successfully",
+      });
     } catch (error) {
       console.error("Error updating VC firm:", error);
       toast({
         title: "Error",
-        description: `Failed to update VC firm: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        description: "Failed to update VC firm",
         variant: "destructive",
       });
     }
@@ -111,27 +84,24 @@ export function useVCFirmOperations(initialData: VCFirm[], isSupabaseConnected: 
 
   const deleteVCFirm = async (id: string) => {
     try {
-      console.log("Deleting VC firm with isSupabaseConnected:", isSupabaseConnected);
-      
-      setVcFirmsState(prevFirms => prevFirms.filter(f => f.id !== id));
-      
-      if (!isSupabaseConnected) {
-        return;
-      }
+      console.log("Deleting VC firm:", id);
 
-      console.log("Attempting to delete VC firm from Supabase:", id);
-      const success = await vcFirmService.deleteVCFirm(id);
+      console.log("Deleting VC firm from database");
+      await vcFirmService.deleteVCFirm(id);
+      console.log("VC firm deleted successfully");
       
-      if (!success) {
-        throw new Error("Failed to delete VC firm from database");
-      }
+      // Update local state after successful database deletion
+      setVcFirmsState(vcFirms.filter(f => f.id !== id));
       
-      console.log("VC firm successfully deleted from database");
+      toast({
+        title: "Success",
+        description: "VC firm deleted successfully",
+      });
     } catch (error) {
       console.error("Error deleting VC firm:", error);
       toast({
         title: "Error",
-        description: `Failed to delete VC firm: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        description: "Failed to delete VC firm",
         variant: "destructive",
       });
     }

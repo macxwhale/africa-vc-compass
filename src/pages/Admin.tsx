@@ -39,7 +39,6 @@ const Admin = () => {
     setRegionItems, 
     setIndustryItems, 
     setStageItems,
-    isSupabaseConnected,
     addVCFirm,
     updateVCFirm,
     deleteVCFirm,
@@ -118,7 +117,7 @@ const Admin = () => {
     setNewRegion("");
     toast({
       title: "Success",
-      description: `Region added successfully${isSupabaseConnected ? " and saved to database" : " (local only)"}`,
+      description: "Region added successfully and saved to database",
     });
   };
 
@@ -137,7 +136,7 @@ const Admin = () => {
     setNewIndustry("");
     toast({
       title: "Success",
-      description: `Industry added successfully${isSupabaseConnected ? " and saved to database" : " (local only)"}`,
+      description: "Industry added successfully and saved to database",
     });
   };
 
@@ -156,7 +155,7 @@ const Admin = () => {
     setNewStage("");
     toast({
       title: "Success",
-      description: `Investment stage added successfully${isSupabaseConnected ? " and saved to database" : " (local only)"}`,
+      description: "Investment stage added successfully and saved to database",
     });
   };
 
@@ -198,7 +197,7 @@ const Admin = () => {
     setEditValue("");
     toast({
       title: "Success",
-      description: `Item updated successfully${isSupabaseConnected ? " and saved to database" : " (local only)"}`,
+      description: "Item updated successfully and saved to database",
     });
   };
 
@@ -213,7 +212,7 @@ const Admin = () => {
 
     toast({
       title: "Success",
-      description: `Item deleted successfully${isSupabaseConnected ? " and removed from database" : " (local only)"}`,
+      description: "Item deleted successfully and removed from database",
     });
   };
 
@@ -329,41 +328,15 @@ const Admin = () => {
                 <Button variant="outline" onClick={handleLogout}>
                   Logout
                 </Button>
-                {!isSupabaseConnected && (
-                  <Button variant="secondary" asChild>
-                    <Link to="/supabase-setup">
-                      <Database className="h-4 w-4 mr-2" />
-                      Setup Supabase
-                    </Link>
-                  </Button>
-                )}
               </div>
             </div>
             
-            {!isSupabaseConnected ? (
-              <Alert variant="destructive" className="mb-6">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertTitle>Database connection not detected</AlertTitle>
-                <AlertDescription>
-                  No Supabase connection detected. Changes will only persist during this session.
-                  <div className="mt-2 flex flex-col sm:flex-row gap-2">
-                    <Button variant="outline" size="sm" asChild>
-                      <Link to="/supabase-setup">
-                        <Database className="h-4 w-4 mr-2" />
-                        Setup Supabase
-                      </Link>
-                    </Button>
-                  </div>
-                </AlertDescription>
-              </Alert>
-            ) : (
-              <Alert variant="default" className="bg-green-50 border-green-200 mb-6">
-                <AlertTitle>Database connected</AlertTitle>
-                <AlertDescription>
-                  Changes are stored in the database and will persist between sessions.
-                </AlertDescription>
-              </Alert>
-            )}
+            <Alert variant="default" className="bg-green-50 border-green-200 mb-6">
+              <AlertTitle>Database connected</AlertTitle>
+              <AlertDescription>
+                Changes are stored in Lovable Cloud and will persist between sessions.
+              </AlertDescription>
+            </Alert>
             
             <Tabs defaultValue="regions" value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-6 mb-8">
@@ -393,11 +366,9 @@ const Admin = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-4">
-                      <div className={isSupabaseConnected ? "bg-green-50 border-l-4 border-green-400 p-4" : "bg-yellow-50 border-l-4 border-yellow-400 p-4"}>
-                        <p className={isSupabaseConnected ? "text-green-700" : "text-yellow-700"}>
-                          {isSupabaseConnected 
-                            ? "Changes are stored in the database and will persist between sessions."
-                            : "Supabase not connected. Changes will be lost when you refresh the page."}
+                      <div className="bg-green-50 border-l-4 border-green-400 p-4">
+                        <p className="text-green-700">
+                          Changes are stored in Lovable Cloud and will persist between sessions.
                         </p>
                       </div>
                       
@@ -428,11 +399,9 @@ const Admin = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-4">
-                      <div className={isSupabaseConnected ? "bg-green-50 border-l-4 border-green-400 p-4" : "bg-yellow-50 border-l-4 border-yellow-400 p-4"}>
-                        <p className={isSupabaseConnected ? "text-green-700" : "text-yellow-700"}>
-                          {isSupabaseConnected 
-                            ? "Changes are stored in the database and will persist between sessions."
-                            : "Supabase not connected. Changes will be lost when you refresh the page."}
+                      <div className="bg-green-50 border-l-4 border-green-400 p-4">
+                        <p className="text-green-700">
+                          Changes are stored in Lovable Cloud and will persist between sessions.
                         </p>
                       </div>
                       
@@ -463,11 +432,9 @@ const Admin = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-4">
-                      <div className={isSupabaseConnected ? "bg-green-50 border-l-4 border-green-400 p-4" : "bg-yellow-50 border-l-4 border-yellow-400 p-4"}>
-                        <p className={isSupabaseConnected ? "text-green-700" : "text-yellow-700"}>
-                          {isSupabaseConnected 
-                            ? "Changes are stored in the database and will persist between sessions."
-                            : "Supabase not connected. Changes will be lost when you refresh the page."}
+                      <div className="bg-green-50 border-l-4 border-green-400 p-4">
+                        <p className="text-green-700">
+                          Changes are stored in Lovable Cloud and will persist between sessions.
                         </p>
                       </div>
                       
@@ -498,11 +465,9 @@ const Admin = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-4">
-                      <div className={isSupabaseConnected ? "bg-green-50 border-l-4 border-green-400 p-4" : "bg-yellow-50 border-l-4 border-yellow-400 p-4"}>
-                        <p className={isSupabaseConnected ? "text-green-700" : "text-yellow-700"}>
-                          {isSupabaseConnected 
-                            ? "Changes are stored in the database and will persist between sessions."
-                            : "Supabase not connected. Changes will be lost when you refresh the page."}
+                      <div className="bg-green-50 border-l-4 border-green-400 p-4">
+                        <p className="text-green-700">
+                          Changes are stored in Lovable Cloud and will persist between sessions.
                         </p>
                       </div>
                       
@@ -528,11 +493,9 @@ const Admin = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-4">
-                      <div className={isSupabaseConnected ? "bg-green-50 border-l-4 border-green-400 p-4" : "bg-yellow-50 border-l-4 border-yellow-400 p-4"}>
-                        <p className={isSupabaseConnected ? "text-green-700" : "text-yellow-700"}>
-                          {isSupabaseConnected 
-                            ? "Approved firms will be added to the public directory."
-                            : "Supabase not connected. Changes will be lost when you refresh the page."}
+                      <div className="bg-green-50 border-l-4 border-green-400 p-4">
+                        <p className="text-green-700">
+                          Approved firms will be added to the public directory.
                         </p>
                       </div>
                       
@@ -561,11 +524,9 @@ const Admin = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-4">
-                      <div className={isSupabaseConnected ? "bg-green-50 border-l-4 border-green-400 p-4" : "bg-yellow-50 border-l-4 border-yellow-400 p-4"}>
-                        <p className={isSupabaseConnected ? "text-green-700" : "text-yellow-700"}>
-                          {isSupabaseConnected 
-                            ? "AI-researched firms will be added to the pending queue for your review."
-                            : "Supabase not connected. Changes will be lost when you refresh the page."}
+                      <div className="bg-green-50 border-l-4 border-green-400 p-4">
+                        <p className="text-green-700">
+                          AI-researched firms will be added to the pending queue for your review.
                         </p>
                       </div>
                       

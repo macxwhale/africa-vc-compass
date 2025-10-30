@@ -7,9 +7,6 @@ import { useDataOperations } from "@/hooks/useDataOperations";
 import { Item } from "@/contexts/DataContext";
 
 export const DataProvider = ({ children }: { children: ReactNode }) => {
-  // Only show loading state once
-  const [showLoading, setShowLoading] = useState(true);
-  
   // Create default data objects
   const defaultRegions = useMemo(() => 
     initialRegions.map((name, index) => ({ id: `region-${index}`, name })), []);
@@ -31,7 +28,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   }), [defaultRegions, defaultIndustries, defaultStages, defaultVcFirms]);
 
   // Initialize database and connection
-  const { isLoading, isSupabaseConnected } = useDatabaseInitialization(
+  const { isLoading } = useDatabaseInitialization(
     {
       regions: defaultRegions,
       industries: defaultIndustries,
@@ -40,7 +37,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     }
   );
 
-  // Initialize data operations with the isSupabaseConnected flag
+  // Initialize data operations
   const {
     vcFirms,
     regionItems,
@@ -62,19 +59,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     submitVCFirm,
     approveVCFirm,
     rejectVCFirm
-  } = useDataOperations(initialData, isSupabaseConnected);
-
-  // Hide loading state after first load
-  useEffect(() => {
-    if (!isLoading && showLoading) {
-      setShowLoading(false);
-    }
-  }, [isLoading, showLoading]);
-
-  // Output the connection status for debugging - only once
-  useEffect(() => {
-    console.log("DataProvider - isSupabaseConnected:", isSupabaseConnected);
-  }, [isSupabaseConnected]);
+  } = useDataOperations(initialData);
 
   return (
     <DataContext.Provider 
@@ -93,7 +78,6 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         stageNames,
         getVCsByIndustry,
         getVCsByRegion,
-        isSupabaseConnected,
         addVCFirm,
         updateVCFirm,
         deleteVCFirm,
@@ -102,7 +86,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         rejectVCFirm
       }}
     >
-      {showLoading && isLoading ? <div>Loading data...</div> : children}
+      {isLoading ? <div>Loading data...</div> : children}
     </DataContext.Provider>
   );
 };

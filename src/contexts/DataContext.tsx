@@ -34,8 +34,6 @@ interface DataContextType {
   submitVCFirm: (firm: Omit<VCFirm, "id">) => Promise<PendingVCFirm | undefined>;
   approveVCFirm: (firm: PendingVCFirm) => Promise<void>;
   rejectVCFirm: (firm: PendingVCFirm, notes?: string) => Promise<void>;
-  
-  isSupabaseConnected: boolean;
 }
 
 export const DataContext = createContext<DataContextType>({} as DataContextType);

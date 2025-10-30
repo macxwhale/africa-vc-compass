@@ -5,25 +5,22 @@ import { PendingVCFirm } from "@/types/vcTypes";
 import { VCFirm } from "@/data/vcData";
 import { Item } from "@/contexts/DataContext";
 
-export function useDataLoader(
-  isSupabaseConnected: boolean,
-  setters: {
-    setVcFirms: (firms: VCFirm[]) => Promise<void>;
-    setRegionItems: (items: Item[]) => Promise<void>;
-    setIndustryItems: (items: Item[]) => Promise<void>;
-    setStageItems: (items: Item[]) => Promise<void>;
-    setPendingVCFirms: (firms: PendingVCFirm[]) => void;
-  }
-) {
+export function useDataLoader(setters: {
+  setVcFirms: (firms: VCFirm[]) => Promise<void>;
+  setRegionItems: (items: Item[]) => Promise<void>;
+  setIndustryItems: (items: Item[]) => Promise<void>;
+  setStageItems: (items: Item[]) => Promise<void>;
+  setPendingVCFirms: (firms: PendingVCFirm[]) => void;
+}) {
   const { setVcFirms, setRegionItems, setIndustryItems, setStageItems, setPendingVCFirms } = setters;
   const dataLoadedRef = useRef(false);
   
   useEffect(() => {
     const loadDataFromSupabase = async () => {
-      if (isSupabaseConnected && !dataLoadedRef.current) {
+      if (!dataLoadedRef.current) {
         dataLoadedRef.current = true;
         try {
-          console.log("Loading data from Supabase...");
+          console.log("Loading data from Lovable Cloud...");
           
           const dbRegions = await regionService.getAllRegions();
           if (dbRegions && dbRegions.length > 0) {
@@ -55,11 +52,11 @@ export function useDataLoader(
             setPendingVCFirms(dbPendingVCFirms);
           }
         } catch (error) {
-          console.error("Error loading data from Supabase:", error);
+          console.error("Error loading data from Lovable Cloud:", error);
         }
       }
     };
     
     loadDataFromSupabase();
-  }, [isSupabaseConnected, setVcFirms, setRegionItems, setIndustryItems, setStageItems, setPendingVCFirms]);
+  }, [setVcFirms, setRegionItems, setIndustryItems, setStageItems, setPendingVCFirms]);
 }

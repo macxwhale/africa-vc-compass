@@ -10,10 +10,7 @@ import { useDataLoader } from "./useDataLoader";
 
 export type { PendingVCFirm } from "@/types/vcTypes";
 
-export function useDataOperations(
-  initialData: DataOperationsInitialData,
-  isSupabaseConnected: boolean
-) {
+export function useDataOperations(initialData: DataOperationsInitialData) {
   // Use the hook for VC firm operations
   const {
     vcFirms,
@@ -23,7 +20,7 @@ export function useDataOperations(
     deleteVCFirm,
     getVCsByIndustry,
     getVCsByRegion
-  } = useVCFirmOperations(initialData.vcFirms, isSupabaseConnected);
+  } = useVCFirmOperations(initialData.vcFirms);
 
   // Use the hook for category operations
   const {
@@ -40,7 +37,7 @@ export function useDataOperations(
     regionItems: initialData.regionItems,
     industryItems: initialData.industryItems,
     stageItems: initialData.stageItems
-  }, isSupabaseConnected);
+  });
 
   // Helper function to update VC firms for the pending operations hook
   const updateVCFirmsState = (newFirm: VCFirm) => {
@@ -54,10 +51,10 @@ export function useDataOperations(
     submitVCFirm,
     approveVCFirm,
     rejectVCFirm
-  } = usePendingVCFirmOperations(isSupabaseConnected, updateVCFirmsState);
+  } = usePendingVCFirmOperations(updateVCFirmsState);
 
   // Use the data loader hook to load data from Supabase
-  useDataLoader(isSupabaseConnected, {
+  useDataLoader({
     setVcFirms,
     setRegionItems,
     setIndustryItems,
