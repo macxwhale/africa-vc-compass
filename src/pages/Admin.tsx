@@ -7,10 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { Edit, Trash, Plus, Check, X, AlertTriangle, Database, FileCheck, Search } from "lucide-react";
+import { Edit, Trash, Plus, Check, X, AlertTriangle, Database, FileCheck, Search, Upload } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useData } from "@/contexts/DataContext";
-import { VCFirm } from "@/data/vcData";
+import { VCFirm, vcFirms as staticVCFirms } from "@/data/vcData";
 import VCFirmForm from "@/components/admin/VCFirmForm";
 import VCFirmsList from "@/components/admin/VCFirmsList";
 import PendingVCFirmsList from "@/components/admin/PendingVCFirmsList";
@@ -20,6 +20,7 @@ import { PendingVCFirm } from "@/hooks/useDataOperations";
 import { Badge } from "@/components/ui/badge";
 import { AIResearchForm } from "@/components/admin/AIResearchForm";
 import AdminLogin from "@/components/admin/AdminLogin";
+import { vcFirmService } from "@/services/supabaseService";
 
 interface Item {
   id: string;
@@ -29,6 +30,7 @@ interface Item {
 const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState("regions");
+  const [isMigrating, setIsMigrating] = useState(false);
   
   const { 
     regionItems, 
@@ -43,7 +45,8 @@ const Admin = () => {
     updateVCFirm,
     deleteVCFirm,
     approveVCFirm,
-    rejectVCFirm
+    rejectVCFirm,
+    setVcFirms
   } = useData();
   
   const [newRegion, setNewRegion] = useState("");
@@ -267,6 +270,56 @@ const Admin = () => {
     }
   };
 
+  const handleMigrateVCFirms = async () => {
+    try {
+      setIsMigrating(true);
+      toast({
+        title: "Migration Started",
+        description: "Migrating all VC firms to Lovable Cloud...",
+      });
+
+      let successCount = 0;
+      let errorCount = 0;
+      const errors: string[] = [];
+      
+      for (const firm of staticVCFirms) {
+        try {
+          const { id, ...firmWithoutId } = firm;
+          await vcFirmService.createVCFirm(firmWithoutId);
+          successCount++;
+          console.log(`Migrated: ${firm.name}`);
+        } catch (error) {
+          console.error(`Error migrating firm ${firm.name}:`, error);
+          errors.push(firm.name);
+          errorCount++;
+        }
+      }
+      
+      // Reload VC firms from database
+      const updatedFirms = await vcFirmService.getAllVCFirms();
+      setVcFirms(updatedFirms);
+      
+      toast({
+        title: "Migration Complete",
+        description: `Successfully migrated ${successCount} VC firms. ${errorCount > 0 ? `${errorCount} errors.` : ''}`,
+        variant: errorCount > 0 ? "destructive" : "default",
+      });
+
+      if (errors.length > 0) {
+        console.error('Failed to migrate:', errors);
+      }
+    } catch (error) {
+      console.error("Migration error:", error);
+      toast({
+        title: "Migration Failed",
+        description: "Failed to migrate VC firms. Check console for details.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsMigrating(false);
+    }
+  };
+
   const renderItem = (item: Item, type: "region" | "industry" | "stage") => (
     <div key={item.id} className="p-4 border rounded-md flex justify-between items-center">
       {editingId === item.id ? (
@@ -470,6 +523,24 @@ const Admin = () => {
                           Changes are stored in Lovable Cloud and will persist between sessions.
                         </p>
                       </div>
+
+                      {vcFirms.length === 0 && (
+                        <Alert variant="default" className="bg-blue-50 border-blue-200">
+                          <Database className="h-4 w-4" />
+                          <AlertTitle>No VC Firms Found</AlertTitle>
+                          <AlertDescription>
+                            <p className="mb-3">Your database is empty. Would you like to migrate the {staticVCFirms.length} default VC firms?</p>
+                            <Button 
+                              onClick={handleMigrateVCFirms}
+                              disabled={isMigrating}
+                              size="sm"
+                            >
+                              <Upload className="h-4 w-4 mr-2" />
+                              {isMigrating ? 'Migrating...' : `Migrate ${staticVCFirms.length} VC Firms to Cloud`}
+                            </Button>
+                          </AlertDescription>
+                        </Alert>
+                      )}
                       
                       <VCFirmsList
                         firms={vcFirms}

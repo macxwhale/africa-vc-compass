@@ -66,28 +66,19 @@ export const initializeDatabaseWithDefaultData = async (
     
     console.log("Inserting default VC firms...");
     try {
-      // Delete any existing firms first
-      const { data: existingFirms } = await supabase
-        .from('vc_firms')
-        .select('id');
-        
-      if (existingFirms && existingFirms.length > 0) {
-        for (const firm of existingFirms) {
-          await supabase
-            .from('vc_firms')
-            .delete()
-            .eq('id', firm.id);
+      // Check if any firms exist
+      const existingFirms = await vcFirmService.getAllVCFirms();
+      
+      if (existingFirms.length === 0) {
+        // Insert each firm using the service layer for proper transformation
+        for (const firm of defaultVcFirms) {
+          const { id, ...firmWithoutId } = firm; // Remove ID, let DB generate it
+          await vcFirmService.createVCFirm(firmWithoutId);
         }
+        console.log(`Successfully initialized ${defaultVcFirms.length} VC firms`);
+      } else {
+        console.log(`VC firms already exist (${existingFirms.length}), skipping initialization`);
       }
-      
-      // Insert default firms one by one
-      for (const firm of defaultVcFirms) {
-        await supabase
-          .from('vc_firms')
-          .insert(firm);
-      }
-      
-      console.log('Successfully initialized VC firms table with default data');
     } catch (vcFirmsError) {
       console.error('Error initializing VC firms:', vcFirmsError);
     }
@@ -195,14 +186,18 @@ export const loadDataFromCloud = async (
       // If VC firms data exists in database, use it
       if (dbVCFirmsData && dbVCFirmsData.length > 0) {
         setItems.setVcFirms(dbVCFirmsData);
-        console.log("Loaded VC firms from database:", dbVCFirmsData);
+        console.log(`Loaded ${dbVCFirmsData.length} VC firms from database`);
       } else {
         // Otherwise initialize with default data
+        console.log("No VC firms found, initializing with default data...");
         for (const firm of defaultVcFirms) {
-          await vcFirmService.createVCFirm(firm);
+          const { id, ...firmWithoutId } = firm;
+          await vcFirmService.createVCFirm(firmWithoutId);
         }
-        setItems.setVcFirms(defaultVcFirms);
-        console.log("Initialized VC firms with default data:", defaultVcFirms);
+        // Reload to get the database-generated IDs
+        const newFirms = await vcFirmService.getAllVCFirms();
+        setItems.setVcFirms(newFirms);
+        console.log(`Initialized ${newFirms.length} VC firms with default data`);
       }
     } catch (vcFirmsError) {
       console.error('Error loading VC firms:', vcFirmsError);
