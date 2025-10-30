@@ -12,8 +12,6 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    mode === 'development' &&
-    componentTagger(),
     viteStaticCopy({
       targets: [
         {
@@ -21,7 +19,8 @@ export default defineConfig(({ mode }) => ({
           dest: '.'
         }
       ]
-    })
+    }),
+    mode === 'development' && componentTagger(),
   ].filter(Boolean),
   resolve: {
     alias: {
