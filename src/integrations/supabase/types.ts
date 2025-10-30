@@ -14,7 +14,219 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      industries: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      pending_vc_firms: {
+        Row: {
+          contact_person: Json | null
+          created_at: string | null
+          description: string | null
+          founded_year: number | null
+          headquarters: string | null
+          id: string
+          industries: string[] | null
+          investment_focus: string[] | null
+          linkedin_url: string | null
+          logo: string | null
+          name: string
+          notable_investments: string[] | null
+          portfolio_companies: string[] | null
+          review_notes: string | null
+          reviewed_at: string | null
+          stage_preference: string[] | null
+          status: string | null
+          submitted_at: string | null
+          ticket_size: string | null
+          twitter_url: string | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          contact_person?: Json | null
+          created_at?: string | null
+          description?: string | null
+          founded_year?: number | null
+          headquarters?: string | null
+          id?: string
+          industries?: string[] | null
+          investment_focus?: string[] | null
+          linkedin_url?: string | null
+          logo?: string | null
+          name: string
+          notable_investments?: string[] | null
+          portfolio_companies?: string[] | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          stage_preference?: string[] | null
+          status?: string | null
+          submitted_at?: string | null
+          ticket_size?: string | null
+          twitter_url?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          contact_person?: Json | null
+          created_at?: string | null
+          description?: string | null
+          founded_year?: number | null
+          headquarters?: string | null
+          id?: string
+          industries?: string[] | null
+          investment_focus?: string[] | null
+          linkedin_url?: string | null
+          logo?: string | null
+          name?: string
+          notable_investments?: string[] | null
+          portfolio_companies?: string[] | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          stage_preference?: string[] | null
+          status?: string | null
+          submitted_at?: string | null
+          ticket_size?: string | null
+          twitter_url?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
+      regions: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      settings: {
+        Row: {
+          created_at: string | null
+          key: string
+          updated_at: string | null
+          value: string
+        }
+        Insert: {
+          created_at?: string | null
+          key: string
+          updated_at?: string | null
+          value: string
+        }
+        Update: {
+          created_at?: string | null
+          key?: string
+          updated_at?: string | null
+          value?: string
+        }
+        Relationships: []
+      }
+      stages: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      vc_firms: {
+        Row: {
+          contact_person: Json | null
+          created_at: string | null
+          description: string | null
+          founded_year: number | null
+          headquarters: string | null
+          id: string
+          industries: string[] | null
+          investment_focus: string[] | null
+          linkedin_url: string | null
+          logo: string | null
+          name: string
+          notable_investments: string[] | null
+          portfolio_companies: string[] | null
+          stage_preference: string[] | null
+          ticket_size: string | null
+          twitter_url: string | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          contact_person?: Json | null
+          created_at?: string | null
+          description?: string | null
+          founded_year?: number | null
+          headquarters?: string | null
+          id?: string
+          industries?: string[] | null
+          investment_focus?: string[] | null
+          linkedin_url?: string | null
+          logo?: string | null
+          name: string
+          notable_investments?: string[] | null
+          portfolio_companies?: string[] | null
+          stage_preference?: string[] | null
+          ticket_size?: string | null
+          twitter_url?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          contact_person?: Json | null
+          created_at?: string | null
+          description?: string | null
+          founded_year?: number | null
+          headquarters?: string | null
+          id?: string
+          industries?: string[] | null
+          investment_focus?: string[] | null
+          linkedin_url?: string | null
+          logo?: string | null
+          name?: string
+          notable_investments?: string[] | null
+          portfolio_companies?: string[] | null
+          stage_preference?: string[] | null
+          ticket_size?: string | null
+          twitter_url?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
