@@ -16,7 +16,7 @@ export function useDataLoader(setters: {
   const dataLoadedRef = useRef(false);
   
   useEffect(() => {
-    const loadDataFromSupabase = async () => {
+    const loadDataFromCloud = async () => {
       if (!dataLoadedRef.current) {
         dataLoadedRef.current = true;
         try {
@@ -57,6 +57,6 @@ export function useDataLoader(setters: {
       }
     };
     
-    loadDataFromSupabase();
+    loadDataFromCloud();
   }, [setVcFirms, setRegionItems, setIndustryItems, setStageItems, setPendingVCFirms]);
 }

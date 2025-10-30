@@ -1,4 +1,4 @@
-import { supabase, executeSQL, testDatabaseConnection, createAllTables, regionService, industryService, stageService, vcFirmService } from "@/services/supabaseService";
+import { supabase, testDatabaseConnection, createAllTables, regionService, industryService, stageService, vcFirmService } from "@/services/supabaseService";
 import { Item } from "@/contexts/DataContext";
 import { VCFirm } from "@/data/vcData";
 import { toast } from "@/hooks/use-toast";
@@ -99,8 +99,8 @@ export const initializeDatabaseWithDefaultData = async (
   }
 };
 
-// Helper function to load data from Supabase
-export const loadDataFromSupabase = async (
+// Helper function to load data from Lovable Cloud
+export const loadDataFromCloud = async (
   defaultRegions: Item[], 
   defaultIndustries: Item[], 
   defaultStages: Item[],

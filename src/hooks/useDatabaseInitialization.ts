@@ -6,7 +6,7 @@ import { Item } from "@/contexts/DataContext";
 import { 
   createTablesIfNeeded, 
   initializeDatabaseWithDefaultData, 
-  loadDataFromSupabase 
+  loadDataFromCloud 
 } from "@/utils/databaseUtils";
 
 type DefaultData = {
@@ -18,10 +18,10 @@ type DefaultData = {
 
 export function useDatabaseInitialization(defaultData: DefaultData) {
   const [isLoading, setIsLoading] = useState(true);
-  const [isSupabaseConnected, setIsSupabaseConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
   const initAttemptedRef = useRef(false);
 
-  // Test Supabase connection and initialize tables if connected
+  // Test database connection and initialize tables if needed
   useEffect(() => {
     // Use ref to prevent multiple initialization attempts
     if (initAttemptedRef.current) return;
@@ -39,10 +39,10 @@ export function useDatabaseInitialization(defaultData: DefaultData) {
         
         if (!isConnected) {
           console.error("Failed to connect to Lovable Cloud");
-          setIsSupabaseConnected(false);
+          setIsConnected(false);
         } else {
           console.log("Successfully connected to Lovable Cloud!");
-          setIsSupabaseConnected(true);
+          setIsConnected(true);
           
           // Create tables if they don't exist
           await createTablesIfNeeded();
@@ -62,14 +62,14 @@ export function useDatabaseInitialization(defaultData: DefaultData) {
         }
       } catch (error) {
         console.error('Error initializing database:', error);
-        setIsSupabaseConnected(false);
+        setIsConnected(false);
       } finally {
         setIsLoading(false);
       }
     };
 
     initializeTablesIfNeeded();
-  }, []); // Remove defaultData from dependency array to prevent multiple initializations
+  }, []);
 
   // Helper function to check if tables have data
   const checkTablesHaveData = async () => {
@@ -90,5 +90,5 @@ export function useDatabaseInitialization(defaultData: DefaultData) {
     }
   };
 
-  return { isLoading, isSupabaseConnected };
+  return { isLoading, isConnected };
 }

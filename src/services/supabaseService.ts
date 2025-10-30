@@ -282,28 +282,32 @@ export const regionService = {
     try {
       console.log("Updating all regions...");
       
-      // Delete existing regions
+      // Delete all existing regions
       const { error: deleteError } = await supabase
         .from('regions')
         .delete()
-        .neq('id', 'null');
+        .not('id', 'is', null);
         
       if (deleteError) {
         console.error("Error deleting existing regions:", deleteError);
         throw deleteError;
       }
       
-      // Insert new regions
-      const { data, error: insertError } = await supabase
-        .from('regions')
-        .insert(regions);
+      // Insert new regions if there are any
+      if (regions.length > 0) {
+        const { data, error: insertError } = await supabase
+          .from('regions')
+          .insert(regions);
+          
+        if (insertError) {
+          console.error("Error inserting regions:", insertError);
+          throw insertError;
+        }
         
-      if (insertError) {
-        console.error("Error inserting regions:", insertError);
-        throw insertError;
+        return data;
       }
       
-      return data;
+      return [];
     } catch (error) {
       console.error("Error updating regions:", error);
       throw error;
@@ -336,28 +340,32 @@ export const industryService = {
     try {
       console.log("Updating all industries...");
       
-      // Delete existing industries
+      // Delete all existing industries
       const { error: deleteError } = await supabase
         .from('industries')
         .delete()
-        .neq('id', 'null');
+        .not('id', 'is', null);
         
       if (deleteError) {
         console.error("Error deleting existing industries:", deleteError);
         throw deleteError;
       }
       
-      // Insert new industries
-      const { data, error: insertError } = await supabase
-        .from('industries')
-        .insert(industries);
+      // Insert new industries if there are any
+      if (industries.length > 0) {
+        const { data, error: insertError } = await supabase
+          .from('industries')
+          .insert(industries);
+          
+        if (insertError) {
+          console.error("Error inserting industries:", insertError);
+          throw insertError;
+        }
         
-      if (insertError) {
-        console.error("Error inserting industries:", insertError);
-        throw insertError;
+        return data;
       }
       
-      return data;
+      return [];
     } catch (error) {
       console.error("Error updating industries:", error);
       throw error;
@@ -390,28 +398,32 @@ export const stageService = {
     try {
       console.log("Updating all stages...");
       
-      // Delete existing stages
+      // Delete all existing stages
       const { error: deleteError } = await supabase
         .from('stages')
         .delete()
-        .neq('id', 'null');
+        .not('id', 'is', null);
         
       if (deleteError) {
         console.error("Error deleting existing stages:", deleteError);
         throw deleteError;
       }
       
-      // Insert new stages
-      const { data, error: insertError } = await supabase
-        .from('stages')
-        .insert(stages);
+      // Insert new stages if there are any
+      if (stages.length > 0) {
+        const { data, error: insertError } = await supabase
+          .from('stages')
+          .insert(stages);
+          
+        if (insertError) {
+          console.error("Error inserting stages:", insertError);
+          throw insertError;
+        }
         
-      if (insertError) {
-        console.error("Error inserting stages:", insertError);
-        throw insertError;
+        return data;
       }
       
-      return data;
+      return [];
     } catch (error) {
       console.error("Error updating stages:", error);
       throw error;
